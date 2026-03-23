@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { getTranslations, getLocale } from "next-intl/server";
 import { TypesIcons } from "@/features/icons-explorer";
 import { AppearanceSwitcher } from "@/components/controllers/AppearanceSwitcher";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { serverEnv } from "@/config/env.server";
 import { UserProfileCard } from "@/features/user/components";
 
@@ -26,7 +26,7 @@ export default async function Home() {
         </div>
       </header>
       <main className="flex flex-col gap-12 sm:gap-16 md:gap-20">
-        <Link href={`/${locale}/icons`} className="flex flex-col self-start sm:self-end" style={{ viewTransitionName: "title" }}>
+        <Link href="/icons" className="flex flex-col self-start sm:self-end" style={{ viewTransitionName: "title" }}>
           <h3 className="leading-tight" style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>{home("tagline.line1")}</h3>
           <p className="leading-2" style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>{home("tagline.line2")}</p>
         </Link>

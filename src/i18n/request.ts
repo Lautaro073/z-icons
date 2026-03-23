@@ -15,6 +15,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       common: (await import(`../messages/${locale}/common.json`)).default,
       home: (await import(`../messages/${locale}/home.json`)).default,
       auth: (await import(`../messages/${locale}/auth.json`)).default,
+      premium: (await import(`../messages/${locale}/premium.json`)).default,
     }
   };
 });

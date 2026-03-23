@@ -8,7 +8,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group"
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ZIcon } from "@zcorvus/z-icons/react";
 import { IconGrid, IconGroup, IconCategories, IconCategoriesInfo, IconContentData } from "@/features/icons-explorer";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,15 @@ export default function IconsTypeAllPage({ params }: IconsTypeAllPageProps) {
 
   return (
     <>
-      <Link href={`/${locale}/icons`} className="absolute top-0 left-0 bg-background pr-4 pb-4">
+      <Link
+        href="/icons"
+        className="absolute top-0 left-0 bg-background pr-4 pb-4 group flex items-center gap-3 hover:gap-5 transition-all duration-300"
+      >
+        <ZIcon
+          type="mina"
+          name="arrow-left"
+          className="size-8 text-muted-foreground group-hover:text-foreground transition-colors duration-300"
+        />
         <h1 className="leading-tight capitalize" style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>{type}</h1>
       </Link>
       <div className="flex flex-col gap-6 h-full ">

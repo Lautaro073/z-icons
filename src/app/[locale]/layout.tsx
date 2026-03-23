@@ -8,6 +8,7 @@ import { AppearanceSync } from "@/components/controllers/AppearanceSync";
 import Script from "next/script";
 import "../globals.css";
 import { UIStoreProvider } from "@/store/ui/ui.provider";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { getServerPreferences } from "@/lib/server/preferences";
 
 export const metadata: Metadata = {
@@ -47,13 +48,15 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             strategy="beforeInteractive"
           />
           <NextIntlClientProvider locale={locale} messages={messages}>
-            <ViewTransition>
-              <UIStoreProvider initialState={prefs}>
-                {children}
-                <Toaster />
-                <AppearanceSync />
-              </UIStoreProvider>
-            </ViewTransition>
+            <AuthProvider>
+              <ViewTransition>
+                <UIStoreProvider initialState={prefs}>
+                  {children}
+                  <Toaster />
+                  <AppearanceSync />
+                </UIStoreProvider>
+              </ViewTransition>
+            </AuthProvider>
           </NextIntlClientProvider>
         </div>
       </body>

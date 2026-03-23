@@ -4,11 +4,13 @@
 /node_modules
 /.pnp
 .pnp.*
+.git-original-sacar-video-commits-viejos
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+skills-lock.json
 
 # testing
 /coverage
@@ -42,6 +44,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.agents
 
 # md
 README-BACKEND.md
