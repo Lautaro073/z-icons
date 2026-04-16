@@ -1,7 +1,54 @@
 {
   "fields": {
     "email": "Email",
-    "password": "Password"
+    "password": "Password",
+    "username": "Username",
+    "confirmPassword": "Confirm password"
+  },
+  "actions": {
+    "loading": "Loading...",
+    "tryAgain": "Try again",
+    "goHome": "Go home",
+    "previous": "Previous",
+    "next": "Next",
+    "search": "Search...",
+    "layers": "Layers",
+    "copy": "Copy",
+    "download": "Download",
+    "showAll": "Show all",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "signOut": "Sign out",
+    "openAdmin": "Open admin",
+    "update": "Update",
+    "softDelete": "Soft delete"
+  },
+  "toasts": {
+    "iconNameCopied": "Icon name copied!",
+    "reactCodeCopied": "React code copied!",
+    "htmlCodeCopied": "HTML code copied!",
+    "codeSnippetCopied": "Code snippet copied!",
+    "errorCopyIcon": "Could not copy icon name.",
+    "errorCopyCode": "Could not copy code snippet."
+  },
+  "icons": {
+    "library": "Icon library",
+    "sets": "Icon sets",
+    "category": "Category",
+    "set": "Set",
+    "pro": "Pro",
+    "categories": {
+      "local": "Local",
+      "external": "External",
+      "premium": "Premium"
+    }
+  },
+  "states": {
+    "loading": "Loading..."
+  },
+  "errors": {
+    "somethingWentWrong": "Something went wrong",
+    "unexpectedError": "An unexpected error occurred while loading the page. Please try again."
   },
   "profile": {
     "name": "Name",

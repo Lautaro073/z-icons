@@ -1,9 +1,10 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { toast } from "sonner";
 import type { MouseEvent } from "react";
 
-import { IconsSVG } from "@/features/icons-explorer";
-import type { IconTypeInfo } from "@/types/icons/icons.types";
+import { getIconsSVG } from "@/features/icons-explorer";
+import type { IconTypeInfo, IconSet } from "@/types/icons/icons.types";
+import { useTranslations } from "next-intl";
 
 export type IconExportState = "react" | "svg" | "html";
 
@@ -13,18 +14,28 @@ interface UseIconExportArgs {
   icon: IconTypeInfo;
   state: IconExportState;
 }
+
 const useIconExport = ({ icon, state }: UseIconExportArgs) => {
   const isFontAwesome = icon.type === 'fa-solid' || icon.type === 'fa-regular';
+  const common = useTranslations("common");
   
-  const svgMarkup = useMemo(() => {
-    if (isFontAwesome) {
-      const iconDef = IconsSVG[icon.type]?.[icon.name];
-      if (!iconDef) return "";
-      // Convertir FontAwesome IconDefinition a SVG string
-      const [width, height, , , path] = iconDef.icon;
-      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}"><path d="${Array.isArray(path) ? path.join(' ') : path}"/></svg>`;
-    }
-    return IconsSVG[icon.type]?.[icon.variant]?.[icon.name] ?? "";
+  const [svgMarkup, setSvgMarkup] = useState<string>("");
+
+  useEffect(() => {
+    let mounted = true;
+    getIconsSVG(icon.type as IconSet).then((iconsMap) => {
+      if (!mounted || !iconsMap) return;
+      if (isFontAwesome) {
+        const iconDef = iconsMap[icon.name as string];
+        if (!iconDef) return;
+        const [width, height, , , path] = (iconDef as { icon: unknown[] }).icon;
+        setSvgMarkup(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}"><path d="${Array.isArray(path) ? path.join(' ') : path}"/></svg>`);
+      } else {
+        const variantMap = iconsMap[icon.variant || ""] as Record<string, string> | undefined;
+        setSvgMarkup(variantMap?.[icon.name as string] ?? "");
+      }
+    });
+    return () => { mounted = false; };
   }, [icon, isFontAwesome]);
 
   const reactSnippet = useMemo(() => {
@@ -98,12 +109,12 @@ const useIconExport = ({ icon, state }: UseIconExportArgs) => {
   const handleCopyIcon = useCallback(() => {
     void navigator.clipboard.writeText(icon.name).then(
       () =>
-        toast.success("Icon name copied!", {
+        toast.success(common("toasts.iconNameCopied"), {
           description: icon.name,
         }),
-      () => toast.error("Could not copy icon name.")
+      () => toast.error(common("toasts.errorCopyIcon"))
     );
-  }, [icon.name]);
+  }, [icon.name, common]);
 
   const handleCopyCode = useCallback(
     (e?: MouseEvent<HTMLButtonElement>) => {
@@ -112,13 +123,13 @@ const useIconExport = ({ icon, state }: UseIconExportArgs) => {
       const snippet = infoByState[state];
       void navigator.clipboard.writeText(snippet).then(
         () =>
-          toast.success("Code snippet copied!", {
+          toast.success(common("toasts.codeSnippetCopied"), {
             description: snippet,
           }),
-        () => toast.error("Could not copy code snippet.")
+        () => toast.error(common("toasts.errorCopyCode"))
       );
     },
-    [infoByState, state]
+    [infoByState, state, common]
   );
 
   const handleDownloadIcon = useCallback(

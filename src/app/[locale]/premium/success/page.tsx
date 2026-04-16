@@ -9,232 +9,307 @@ import { ZIcon } from "@zcorvus/z-icons/react";
 import { getUserToken } from "@/lib/api/backend";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import Cookies from "js-cookie";
+import { cn } from "@/lib/utils";
+
+const MAX_TOKEN_ATTEMPTS = 3;
 
 export default function SuccessPage() {
-    const t = useTranslations('premium');
-    const router = useRouter();
-    const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-    const searchParams = useSearchParams();
-    const sessionId = searchParams.get('session_id');
-    const [npmToken, setNpmToken] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [retryCount, setRetryCount] = useState(0);
-    const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
+  const t = useTranslations("premium");
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading: authLoading, refreshSession } = useAuth();
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+  const [npmToken, setNpmToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
 
-    useEffect(() => {
-        async function fetchToken() {
-            // Esperar a que termine de cargar el auth
-            if (authLoading) {
-                return;
-            }
+  useEffect(() => {
+    async function fetchToken() {
+      if (authLoading || hasCheckedAuth) {
+        return;
+      }
 
-            // Marcar que ya verificamos auth
-            if (!hasCheckedAuth) {
-                setHasCheckedAuth(true);
-            }
+      setHasCheckedAuth(true);
 
-            try {
-                // Verificar si está autenticado
-                if (!isAuthenticated || !user) {
-                    // Redirigir al login si no está autenticado
-                    router.push('/auth/login');
-                    return;
-                }
-
-                // Intentar obtener el token NPM con reintentos
-                const maxRetries = 10; // 10 intentos = ~30 segundos
-                let attempts = 0;
-
-                while (attempts < maxRetries) {
-                    attempts++;
-                    setRetryCount(attempts);
-
-                    try {
-                        const tokenData = await getUserToken();
-
-                        if (tokenData && typeof tokenData.token === 'string' && tokenData.token.length > 0) {
-                            setNpmToken(tokenData.token);
-                            localStorage.setItem('zcorvus_npm_token', tokenData.token);
-                            setLoading(false);
-                            toast.success(t('success.tokenGenerated') || 'Token generado exitosamente');
-                            return;
-                        }
-                    } catch (err) {
-                        // Error al obtener token
-                    }
-
-                    // Esperar 3 segundos antes del siguiente intento
-                    if (attempts < maxRetries) {
-                        await new Promise(resolve => setTimeout(resolve, 3000));
-                    }
-                }
-
-                // Si después de todos los intentos no hay token
-                toast.error(t('success.tokenNotFound') || 'No se pudo generar el token. Contacta soporte.');
-                setLoading(false);
-            } catch (error) {
-                toast.error(t('errors.unknown') || 'Error inesperado');
-                setLoading(false);
-            }
+      try {
+        if (!isAuthenticated || !user) {
+          router.push("/auth/login");
+          return;
         }
 
-        fetchToken();
-    }, [router, t, isAuthenticated, user, authLoading, hasCheckedAuth]);
+        await refreshSession();
 
-    const copyToken = () => {
-        if (npmToken) {
-            navigator.clipboard.writeText(npmToken);
-            toast.success(t('success.tokenCopied') || 'Token copiado');
+        let attempts = 0;
+        while (attempts < MAX_TOKEN_ATTEMPTS) {
+          attempts += 1;
+          setRetryCount(attempts);
+
+          try {
+            const tokenData = await getUserToken();
+            if (tokenData && typeof tokenData.token === "string" && tokenData.token.length > 0) {
+              setNpmToken(tokenData.token);
+              localStorage.setItem("zcorvus_npm_token", tokenData.token);
+              setLoading(false);
+              toast.success(t("success.tokenGenerated"));
+              return;
+            }
+          } catch {}
+
+          if (attempts < MAX_TOKEN_ATTEMPTS) {
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+          }
         }
-    };
 
-    const downloadNpmrc = () => {
-        if (!npmToken) return;
+        toast.error(t("success.tokenNotFound"));
+        setLoading(false);
+      } catch {
+        toast.error(t("errors.unknown"));
+        setLoading(false);
+      }
+    }
 
-        const content = `# zCorvus Premium Access Token
-# Token generado el ${new Date().toLocaleDateString()}
+    fetchToken();
+  }, [router, t, isAuthenticated, user, authLoading, hasCheckedAuth, refreshSession]);
+
+  const copyToken = () => {
+    if (!npmToken) {
+      return;
+    }
+
+    navigator.clipboard.writeText(npmToken);
+    toast.success(t("success.tokenCopied"));
+  };
+
+  const downloadNpmrc = () => {
+    if (!npmToken) {
+      return;
+    }
+
+    const content = `# zCorvus Premium Access Token
+# Generated on ${new Date().toLocaleDateString()}
 
 @zcorvus:registry=https://registry.npmjs.org/
 //registry.npmjs.org/:_authToken=${npmToken}
 `;
 
-        const blob = new Blob([content], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = '.npmrc';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        toast.success(t('success.fileDownloaded') || 'Archivo descargado');
-    };
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = ".npmrc";
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+    toast.success(t("success.fileDownloaded"));
+  };
 
-    return (
-        <div className="container mx-auto px-4 py-16 relative">
-            <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push('/icons')}
-                className="absolute top-4 left-4 group"
-            >
-                <ZIcon
-                    type="mina"
-                    name="arrow-left"
-                    className="size-6 group-hover:text-foreground transition-colors"
-                />
-            </Button>
-            <div className="max-w-2xl mx-auto text-center">
-                <div className="mb-8">
-                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/20 mb-4">
-                        <ZIcon type="mina" name="check" className="text-green-600 dark:text-green-400" style={{ fontSize: '2.5rem' }} />
-                    </div>
-                    <h1 className="text-4xl font-bold mb-4">
-                        {t('success.title')}
-                    </h1>
-                    <p className="text-xl text-muted-foreground">
-                        {t('success.subtitle')}
-                    </p>
-                </div>
+  const isProvisioning = authLoading || loading;
+  const hasToken = Boolean(npmToken);
+  const checkpoints = [
+    t("success.checkpoints.auth"),
+    t("success.checkpoints.token"),
+    t("success.checkpoints.ready"),
+  ];
 
-                {(authLoading || loading) ? (
-                    <div className="py-8 space-y-4">
-                        <div className="flex items-center justify-center gap-2">
-                            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                        </div>
-                        <p className="text-muted-foreground">{t('success.generatingToken')}</p>
-                        <p className="text-sm text-muted-foreground">Intento {retryCount} de 10...</p>
-                    </div>
-                ) : npmToken ? (
-                    <div className="space-y-6">
-                        {/* Token Display */}
-                        <div className="bg-card border-2 border-green-500/50 rounded-lg p-6">
-                            <div className="flex items-center gap-2 mb-3">
-                                <h2 className="font-semibold text-lg">{t('success.npmToken')}</h2>
-                            </div>
-                            <p className="text-sm text-muted-foreground mb-4">
-                                {t('success.npmInstructions')}
-                            </p>
+  return (
+    <div className="ui-page-shell py-2">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => router.push("/icons")}
+        className="w-fit rounded-full"
+        aria-label={t("backToIcons")}
+      >
+        <ZIcon type="mina" name="arrow-left" className="size-5 text-muted-foreground" />
+      </Button>
 
-                            <div className="bg-muted p-4 rounded-md font-mono text-xs break-all mb-4 border">
-                                {npmToken}
-                            </div>
-
-                            <div className="flex flex-wrap gap-2 justify-center">
-                                <Button onClick={copyToken} variant="outline" size="sm">
-                                    {t('success.copyToken')}
-                                </Button>
-
-                                <Button onClick={downloadNpmrc} variant="outline" size="sm">
-                                    Descargar .npmrc
-                                </Button>
-                            </div>
-                        </div>
-
-                        {/* Instrucciones */}
-                        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 text-left">
-                            <h3 className="font-semibold mb-4 flex items-center gap-2">
-                                {t('success.setupTitle')}
-                            </h3>
-                            <ol className="list-decimal list-inside space-y-3 text-sm">
-                                <li className="text-muted-foreground">
-                                    <strong className="text-foreground">Opción 1:</strong> Haz click en "Descargar .npmrc" y coloca el archivo en la raíz de tu proyecto
-                                </li>
-                                <li className="text-muted-foreground">
-                                    <strong className="text-foreground">Opción 2:</strong> Crea manualmente un archivo <code className="bg-muted px-1 py-0.5 rounded">.npmrc</code> en la raíz de tu proyecto con este contenido:
-                                    <pre className="bg-muted p-3 rounded mt-2 overflow-x-auto text-xs font-mono">
-                                        {`@zcorvus:registry=https://registry.npmjs.org/
-//registry.npmjs.org/:_authToken=${npmToken}`}
-                                    </pre>
-                                </li>
-                                <li className="text-muted-foreground">
-                                    <strong className="text-foreground">Instala el paquete:</strong>
-                                    <pre className="bg-muted p-3 rounded mt-2 overflow-x-auto text-xs font-mono">
-                                        npm install @zcorvus/z-icons-premium
-                                        # o
-                                        pnpm add @zcorvus/z-icons-premium
-                                    </pre>
-                                </li>
-                            </ol>
-                        </div>
-
-                        {/* Botón para ver iconos */}
-                        <div>
-                            <Button onClick={() => router.push('/icons/premium/fa-solid')} variant="default" size="lg" className="w-full">
-                                Ver Iconos Premium Ahora
-                            </Button>
-                            <p className="text-xs text-muted-foreground mt-2">¡Ya tienes acceso completo a todos los iconos premium!</p>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="py-8 space-y-4">
-                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/20 mb-4">
-                            <ZIcon type="mina" name="info" className="text-amber-600 dark:text-amber-400" style={{ fontSize: '2rem' }} />
-                        </div>
-                        <p className="text-muted-foreground mb-4">
-                            El token está siendo generado. Esto puede tomar unos segundos.
-                        </p>
-                        <div className="space-y-2">
-                            <Button onClick={() => window.location.reload()} variant="outline">
-                                <ZIcon type="mina" name="refresh" className="mr-2" />
-                                Reintentar
-                            </Button>
-                            <p className="text-xs text-muted-foreground">
-                                Si el problema persiste, contacta a soporte
-                            </p>
-                        </div>
-                    </div>
-                )}
-
-                {sessionId && (
-                    <p className="text-xs text-muted-foreground mt-8">
-                        Session ID: {sessionId}
-                    </p>
-                )}
+      <section className="ui-surface-panel-muted rounded-[2rem] p-6 sm:p-8 lg:p-10">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.8fr)] lg:items-end">
+          <div className="max-w-3xl space-y-4">
+            <span className="inline-flex rounded-full bg-emerald-500/12 px-3 py-1 text-xs uppercase tracking-[0.28em] text-emerald-700 dark:text-emerald-300">
+              {t("success.eyebrow")}
+            </span>
+            <div className="inline-flex size-20 items-center justify-center rounded-full bg-emerald-500/12 text-emerald-600 dark:text-emerald-300">
+              <ZIcon type="mina" name="check" className="size-10" />
             </div>
+            <div className="space-y-3">
+              <h1 className="ui-display-title text-4xl leading-[0.94] sm:text-5xl">
+                {t("success.title")}
+              </h1>
+              <p className="text-base leading-7 text-muted-foreground sm:text-lg">
+                {t("success.subtitle")}
+              </p>
+            </div>
+          </div>
+
+          <div className="ui-surface-panel rounded-[1.6rem] bg-card/88 p-5">
+            <p className="ui-section-header">{t("success.statusLabel")}</p>
+            <p
+              className={cn(
+                "mt-3 text-lg tracking-tight",
+                isProvisioning
+                  ? "text-amber-700 dark:text-amber-300"
+                  : hasToken
+                    ? "text-emerald-700 dark:text-emerald-300"
+                    : "text-amber-700 dark:text-amber-300"
+              )}
+            >
+              {isProvisioning
+                ? t("success.statusProcessing")
+                : hasToken
+                  ? t("success.statusReady")
+                  : t("success.statusAttention")}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              {hasToken ? t("success.fullAccessMessage") : t("success.generatingMessage")}
+            </p>
+            {sessionId ? (
+              <div className="mt-4">
+                <p className="ui-section-header">{t("success.sessionLabel")}</p>
+                <p className="mt-2 break-all font-mono text-xs text-muted-foreground" title={sessionId}>
+                  {sessionId}
+                </p>
+              </div>
+            ) : null}
+          </div>
         </div>
-    );
+      </section>
+
+      {isProvisioning ? (
+        <section className="grid gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(300px,0.95fr)]">
+          <div className="ui-surface-panel rounded-[2rem] p-6 sm:p-8">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center gap-2" aria-hidden>
+                <span className="size-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "0ms" }} />
+                <span className="size-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "150ms" }} />
+                <span className="size-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "300ms" }} />
+              </div>
+              <p className="text-lg text-foreground">{t("success.generatingToken")}</p>
+            </div>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              {t("success.retryAttempt", { count: retryCount, total: MAX_TOKEN_ATTEMPTS })}
+            </p>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              {checkpoints.map((item, index) => (
+                <div key={item} className="ui-surface-panel rounded-[1.5rem] bg-background/72 p-4">
+                  <p className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
+                    {String(index + 1).padStart(2, "0")}
+                  </p>
+                  <p className="mt-3 text-sm leading-6 text-foreground/88">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <aside className="ui-surface-panel rounded-[2rem] p-6 sm:p-8">
+            <p className="ui-section-header">{t("success.setupCardTitle")}</p>
+            <p className="mt-4 text-sm leading-7 text-muted-foreground">
+              {t("success.generatingMessage")}
+            </p>
+          </aside>
+        </section>
+      ) : hasToken ? (
+        <section className="grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
+          <div className="ui-surface-panel rounded-[2rem] border-emerald-500/22 p-6 sm:p-8">
+            <div className="flex flex-col gap-4 border-b border-border/60 pb-5 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="ui-section-header">{t("success.statusReady")}</p>
+                <h2 className="mt-2 text-2xl tracking-tight text-foreground sm:text-3xl">
+                  {t("success.npmToken")}
+                </h2>
+              </div>
+              <p className="max-w-sm text-sm leading-6 text-muted-foreground">
+                {t("success.npmInstructions")}
+              </p>
+            </div>
+
+            <div className="ui-code-block mt-6 overflow-x-auto p-4 sm:p-5">
+              <pre className="break-all font-mono text-xs text-foreground sm:text-sm">{npmToken}</pre>
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button onClick={copyToken} variant="default" className="rounded-full">
+                {t("success.copyToken")}
+              </Button>
+              <Button onClick={downloadNpmrc} variant="outline" className="rounded-full">
+                {t("success.downloadNpmrc")}
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-5">
+            <aside className="ui-surface-panel rounded-[2rem] p-6 sm:p-8">
+              <p className="ui-section-header">{t("success.setupCardTitle")}</p>
+              <ol className="mt-5 space-y-4 text-sm leading-7 text-muted-foreground">
+                <li>
+                  <strong className="text-foreground">{t("success.option1")}</strong>
+                </li>
+                <li>
+                  <strong className="text-foreground">{t("success.option2")}</strong>
+                  <pre className="ui-code-block mt-3 overflow-x-auto p-4 font-mono text-xs text-foreground">
+{`@zcorvus:registry=https://registry.npmjs.org/
+//registry.npmjs.org/:_authToken=${npmToken}`}
+                  </pre>
+                </li>
+                <li>
+                  <strong className="text-foreground">{t("success.installPackage")}</strong>
+                  <pre className="ui-code-block mt-3 overflow-x-auto p-4 font-mono text-xs text-foreground">
+{`npm install @zcorvus/z-icons-premium
+pnpm add @zcorvus/z-icons-premium`}
+                  </pre>
+                </li>
+              </ol>
+            </aside>
+
+            <aside className="ui-surface-panel-muted rounded-[2rem] p-6 sm:p-8">
+              <p className="ui-section-header">{t("success.quickAccessTitle")}</p>
+              <p className="mt-4 text-sm leading-7 text-muted-foreground">
+                {t("success.fullAccessMessage")}
+              </p>
+              <Button
+                onClick={() => router.push("/icons/premium/fa-solid")}
+                size="lg"
+                className="mt-6 w-full rounded-full"
+              >
+                {t("success.viewIconsNow")}
+              </Button>
+            </aside>
+          </div>
+        </section>
+      ) : (
+        <section className="grid gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(300px,0.95fr)]">
+          <div className="ui-surface-panel rounded-[2rem] border-amber-500/22 p-6 sm:p-8">
+            <div className="inline-flex size-16 items-center justify-center rounded-full bg-amber-500/12 text-amber-600 dark:text-amber-300">
+              <ZIcon type="mina" name="info" className="size-8" />
+            </div>
+            <h2 className="mt-6 text-2xl tracking-tight text-foreground sm:text-3xl">
+              {t("success.statusAttention")}
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">
+              {t("success.generatingMessage")}
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button onClick={() => window.location.reload()} variant="outline" className="rounded-full">
+                <ZIcon type="mina" name="refresh" className="mr-2 size-4" />
+                {t("success.retry")}
+              </Button>
+              <Button onClick={() => router.push("/premium")} variant="secondary" className="rounded-full">
+                {t("success.continue")}
+              </Button>
+            </div>
+          </div>
+
+          <aside className="ui-surface-panel rounded-[2rem] p-6 sm:p-8">
+            <p className="ui-section-header">{t("success.setupCardTitle")}</p>
+            <p className="mt-4 text-sm leading-7 text-muted-foreground">
+              {t("success.contactSupport")}
+            </p>
+          </aside>
+        </section>
+      )}
+    </div>
+  );
 }

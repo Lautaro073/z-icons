@@ -2,5 +2,19 @@
   "tagline": {
     "line1": "Estilo infinito,",
     "line2": "con un toque."
+  },
+  "icons": {
+    "local": {
+      "title": "LOCAL / TODOS",
+      "description": "Iconos clásicos especializados para organizaciones"
+    },
+    "external": {
+      "title": "EXTERNO / TODOS",
+      "description": "Iconos de Praveen Juge - Licencia MIT"
+    },
+    "premium": {
+      "title": "PREMIUM / TODOS",
+      "description": "Iconos Premium de Font Awesome"
+    }
   }
 }

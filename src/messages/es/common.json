@@ -1,15 +1,62 @@
 {
   "fields": {
     "email": "Correo electrónico",
-    "password": "Contraseña"
+    "password": "Contraseña",
+    "username": "Usuario",
+    "confirmPassword": "Confirmar contraseña"
+  },
+  "actions": {
+    "loading": "Cargando...",
+    "tryAgain": "Intentar de nuevo",
+    "goHome": "Volver al inicio",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "search": "Buscar...",
+    "layers": "Capas",
+    "copy": "Copiar",
+    "download": "Descargar",
+    "showAll": "Mostrar todos",
+    "cancel": "Cancelar",
+    "apply": "Aplicar",
+    "signOut": "Cerrar sesión",
+    "openAdmin": "Abrir admin",
+    "update": "Actualizar",
+    "softDelete": "Deshabilitar"
+  },
+  "toasts": {
+    "iconNameCopied": "¡Nombre del ícono copiado!",
+    "reactCodeCopied": "¡Código React copiado!",
+    "htmlCodeCopied": "¡Código HTML copiado!",
+    "codeSnippetCopied": "¡Fragmento de código copiado!",
+    "errorCopyIcon": "No se pudo copiar el nombre del ícono.",
+    "errorCopyCode": "No se pudo copiar el fragmento de código."
+  },
+  "icons": {
+    "library": "Biblioteca de iconos",
+    "sets": "Conjuntos de iconos",
+    "category": "Categoría",
+    "set": "Conjunto",
+    "pro": "Pro",
+    "categories": {
+      "local": "Local",
+      "external": "Externo",
+      "premium": "Premium"
+    }
+  },
+  "states": {
+    "loading": "Cargando..."
+  },
+  "errors": {
+    "somethingWentWrong": "Algo salió mal",
+    "unexpectedError": "Ha ocurrido un error inesperado cargando la página. Por favor, intentá de nuevo."
   },
   "profile": {
     "name": "Nombre",
-    "email": "Correo Electrónico",
+    "email": "Correo electrónico",
     "language": "Idioma",
-    "editProfile": "Editar Perfil",
+    "editProfile": "Editar perfil",
     "role": "Rol",
-    "memberSince": "Miembro Desde",
+    "memberSince": "Miembro desde",
     "tokenExpires": "Expira el",
     "roles": {
       "user": "Usuario",
