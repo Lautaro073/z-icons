@@ -47,17 +47,17 @@ export default async function Home() {
 
   return (
     <div className="ui-page-shell h-full overflow-hidden py-2">
-      <header className="flex flex-none flex-col gap-4 rounded-[1.75rem] p-3 sm:flex-row sm:items-center sm:justify-between sm:p-4">
-        <div className="flex items-center gap-3">
-          <div className="ui-surface-panel grid size-12 place-items-center rounded-[1.15rem] bg-card">
-            <ZCorvusLogo className="size-8" />
+      <header className="flex flex-none flex-row items-center justify-between gap-2 rounded-[1.75rem] p-3 sm:p-4">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="ui-surface-panel grid size-10 place-items-center rounded-[1rem] bg-card sm:size-12 sm:rounded-[1.15rem]">
+            <ZCorvusLogo className="size-6 sm:size-8" />
           </div>
           <div className="space-y-0.5">
-            <p className="font-display text-2xl leading-none tracking-tight text-foreground">ZCorvus</p>
+            <p className="hidden font-display text-xl leading-none tracking-tight text-foreground sm:block sm:text-2xl">ZCorvus</p>
           </div>
         </div>
 
-        <div className="flex min-w-0 items-center justify-end gap-3">
+        <div className="flex min-w-0 items-center justify-end gap-2 sm:gap-3">
           <AppearanceSwitcher />
           <UserProfileCard />
         </div>
