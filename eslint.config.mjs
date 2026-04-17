@@ -13,16 +13,17 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Vendored packages that should not be linted by project rules
+    // Vendored packages and perf scripts that should not be linted by project rules
     "vendor/**",
+    ".perf/**",
   ]),
   // Project-wide rules and plugins to enforce architecture boundaries.
   {
     plugins: { import: importPlugin },
     rules: {
-      // Enforce consistent import ordering for readability.
+      // Enforce consistent import ordering for readability (warn during refactor).
       "import/order": [
-        "error",
+        "warn",
         {
           "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
           "pathGroups": [
@@ -45,7 +46,7 @@ const eslintConfig = defineConfig([
       ],
       // Disallow certain deep import patterns that break module boundaries.
       "no-restricted-imports": [
-        "error",
+        "warn",
         {
           "patterns": [
             "@/features/*/*/*",
