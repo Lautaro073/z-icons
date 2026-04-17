@@ -13,6 +13,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored packages that should not be linted by project rules
+    "vendor/**",
   ]),
   // Project-wide rules and plugins to enforce architecture boundaries.
   {
@@ -53,14 +55,13 @@ const eslintConfig = defineConfig([
         }
       ]
     },
-    overrides: [
-      {
-        files: ["**/*.test.*", "**/tests/**", "tests/**"],
-        rules: {
-          "import/no-extraneous-dependencies": "off"
-        }
-      }
-    ]
+  }
+,
+  {
+    files: ["**/*.test.*", "**/tests/**", "tests/**"],
+    rules: {
+      "import/no-extraneous-dependencies": "off"
+    }
   }
 ]);
 
