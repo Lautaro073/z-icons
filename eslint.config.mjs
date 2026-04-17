@@ -13,6 +13,54 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  // Project-wide rules and plugins to enforce architecture boundaries.
+  {
+    plugins: ["import"],
+    rules: {
+      // Enforce consistent import ordering for readability.
+      "import/order": [
+        "error",
+        {
+          "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+          "pathGroups": [
+            { pattern: "@/**", group: "internal" }
+          ],
+          "alphabetize": { order: "asc", caseInsensitive: true }
+        }
+      ],
+      // Prevent importing deep internal modules; prefer barrels/public API.
+      "import/no-internal-modules": [
+        "error",
+        {
+          "allow": [
+            "@/lib/**",
+            "@/components/**",
+            "@/features/*/index",
+            "@/types/**"
+          ]
+        }
+      ],
+      // Disallow certain deep import patterns that break module boundaries.
+      "no-restricted-imports": [
+        "error",
+        {
+          "patterns": [
+            "@/features/*/*/*",
+            "@/components/*/*/*",
+            "@/lib/**/internal/**"
+          ]
+        }
+      ]
+    },
+    overrides: [
+      {
+        files: ["**/*.test.*", "**/tests/**", "tests/**"],
+        rules: {
+          "import/no-extraneous-dependencies": "off"
+        }
+      }
+    ]
+  }
 ]);
 
 export default eslintConfig;
