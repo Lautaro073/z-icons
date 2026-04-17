@@ -49,7 +49,7 @@ export default async function Home() {
     <div className="ui-page-shell h-full overflow-hidden py-2">
       <header className="flex flex-none flex-row items-center justify-between gap-2 rounded-[1.75rem] p-3 sm:p-4">
         <div className="flex items-center gap-2 sm:gap-3">
-          <div className="ui-surface-panel grid size-12 place-items-center rounded-[1rem] bg-card">
+          <div className="ui-surface-panel grid size-13 place-items-center rounded-[1rem] bg-card">
             <ZCorvusLogo className="size-8" />
           </div>
           <div className="space-y-0.5">
