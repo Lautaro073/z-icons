@@ -1,4 +1,3 @@
-import { PencilLine, RotateCcw, Trash2, UserRoundX } from "lucide-react";
 import type {
     AdminPlanType,
     AdminPreferenceColumnKey,
@@ -6,7 +5,7 @@ import type {
     AdminUser,
 } from "@/lib/api/backend";
 import type { MutationState, PendingAction } from "@/types";
-import { ActionIconButton } from "./AdminTableActionButton";
+import { AdminTableRowActions } from "./AdminTableRowActions";
 
 export interface AdminTableRowProps {
     item: AdminUser;
@@ -52,12 +51,6 @@ export function AdminTableRow({
     const subscriptionStartDate = subscription?.start_date;
     const subscriptionFinishDate = item.token_finish_date ?? subscription?.finish_date;
     const accountStatus = item.accountStatus === "disabled" ? "disabled" : "active";
-    const isSelf = currentUserId === item.id;
-    const isMutatingRow =
-        (updateMutationIsPending && editingUser?.id === item.id) ||
-        (reEnableMutation.isPending && reEnableMutation.variables === item.id) ||
-        (disableMutation.isPending && pendingAction?.type === "disable" && pendingAction.user.id === item.id) ||
-        (deleteMutation.isPending && pendingAction?.type === "delete" && pendingAction.user.id === item.id);
 
     return (
         <tr className="border-b border-border/40 transition-colors duration-150 hover:bg-muted/16">
@@ -89,46 +82,22 @@ export function AdminTableRow({
                 <td className="px-3 py-4 text-muted-foreground">{formatDate(subscriptionFinishDate)}</td>
             )}
             <td className="px-3 py-4">
-                <div className="flex justify-end gap-1.5">
-                    {accountStatus === "active" ? (
-                        <>
-                            <ActionIconButton
-                                label={`${common("actions.update")} ${item.username}`}
-                                onClick={() => openEditModal(item)}
-                                disabled={isMutatingRow}
-                            >
-                                <PencilLine className="size-3.5" />
-                            </ActionIconButton>
-                            <ActionIconButton
-                                label={isSelf ? admin("actions.selfProtected") : admin("actions.disable")}
-                                onClick={() => setPendingAction({ type: "disable", user: item })}
-                                disabled={isMutatingRow || isSelf}
-                            >
-                                <UserRoundX className="size-3.5" />
-                            </ActionIconButton>
-                        </>
-                    ) : (
-                        <>
-                            {isDisabledAccountsView && (
-                                <ActionIconButton
-                                    label={admin("actions.reEnable")}
-                                    onClick={() => reEnableMutation.mutate(item.id)}
-                                    disabled={isMutatingRow}
-                                >
-                                    <RotateCcw className="size-3.5" />
-                                </ActionIconButton>
-                            )}
-                            <ActionIconButton
-                                label={isSelf ? admin("actions.selfProtected") : admin("actions.deletePermanent")}
-                                onClick={() => setPendingAction({ type: "delete", user: item })}
-                                disabled={isMutatingRow || isSelf}
-                                destructive
-                            >
-                                <Trash2 className="size-3.5" />
-                            </ActionIconButton>
-                        </>
-                    )}
-                </div>
+                <AdminTableRowActions
+                    item={item}
+                    currentUserId={currentUserId}
+                    accountStatus={accountStatus}
+                    common={common}
+                    admin={admin}
+                    openEditModal={openEditModal}
+                    setPendingAction={setPendingAction}
+                    reEnableMutation={reEnableMutation}
+                    disableMutation={disableMutation}
+                    deleteMutation={deleteMutation}
+                    updateMutationIsPending={updateMutationIsPending}
+                    editingUser={editingUser}
+                    pendingAction={pendingAction}
+                    isDisabledAccountsView={isDisabledAccountsView}
+                />
             </td>
         </tr>
     );
