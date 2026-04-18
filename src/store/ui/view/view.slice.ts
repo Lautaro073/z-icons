@@ -1,6 +1,6 @@
 import { createInitialUIState } from "./view.initial";
 import { uiActions } from "./view.actions";
-import type { InitialUIState, UISlice, UISliceStore } from "./view.types";
+import type { InitialUIState, UISlice, UISliceStore } from "@/types";
 
 export const createUISlice = (
   set: Parameters<UISliceStore>[0],

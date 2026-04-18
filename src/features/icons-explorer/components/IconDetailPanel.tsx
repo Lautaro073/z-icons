@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { ZIcon } from "@zcorvus/z-icons/react"
 import { UnifiedIcon } from "@/components/common/UnifiedIcon"
-import { IconTypeInfo } from "@/types/icons/icons.types"
+import { IconTypeInfo } from "@/types"
 import { IconExportState, useIconExport } from "@/hooks/useIconExport"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"

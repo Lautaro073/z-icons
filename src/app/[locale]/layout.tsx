@@ -7,7 +7,7 @@ import { AppearanceSync } from "@/components/controllers/AppearanceSync";
 import { UIStoreProvider } from "@/store/ui/ui.provider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { getServerPreferences } from "@/lib/server/preferences";
-import type { Theme } from "@/types/icons/icons.types";
+import type { Theme } from "@/types";
 
 interface LocaleLayoutProps {
   children: React.ReactNode;

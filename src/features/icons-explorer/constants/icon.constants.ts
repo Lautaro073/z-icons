@@ -1,5 +1,5 @@
 import { minaIconNames, neoIconNames, coreIconNames, AllIconNames } from '@zcorvus/z-icons/icons';
-import { IconCategory, IconContent, IconSet, IconView, Layer } from '@/types/icons/icons.types';
+import { IconCategory, IconContent, IconSet, IconView, Layer } from '@/types';
 
 export const IconSets: IconSet[] = ["neo", "core", "mina", "fa-solid", "fa-regular"];
 

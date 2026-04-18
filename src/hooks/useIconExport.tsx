@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import type { MouseEvent } from "react";
 
 import { getIconsSVG } from "@/features/icons-explorer";
-import type { IconTypeInfo, IconSet } from "@/types/icons/icons.types";
+import type { IconTypeInfo, IconSet } from "@/types";
 import { useTranslations } from "next-intl";
 
 export type IconExportState = "react" | "svg" | "html";

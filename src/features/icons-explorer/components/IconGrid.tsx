@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import { IconDetailPanel } from "./IconDetailPanel";
 import { IconGridList } from "./IconGridList";
-import { IconTypeInfo } from "@/types/icons/icons.types";
+import { IconTypeInfo } from "@/types";
 import { cn } from "@/lib/utils";
 import { IconGroup } from "../constants/icon.constants";
 

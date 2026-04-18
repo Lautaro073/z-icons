@@ -1,6 +1,6 @@
 import { LayerModes as LM } from "@/features/icons-explorer";
-import type { IconSet } from "@/types/icons/icons.types";
-import type { UIActions, UIState } from "./view.types";
+import type { IconSet } from "@/types";
+import type { UIActions, UIState } from "@/types";
 
 export const uiActions = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

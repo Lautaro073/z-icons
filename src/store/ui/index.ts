@@ -6,6 +6,6 @@ export type {
   UIActions,
   UISlice,
   UISliceStore,
-} from "./view/view.types";
+} from "@/types/ui";
 
 export { useUIStoreApi, useUIStore } from "./ui.provider";

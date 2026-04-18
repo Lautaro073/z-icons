@@ -12,7 +12,7 @@ import { ZIcon } from "@zcorvus/z-icons/react";
 import { IconGrid, IconGroup, IconCategories, IconCategoriesInfo, getIconContentData } from "@/features/icons-explorer";
 import { Button } from "@/components/ui/button";
 import { useUIStore } from "@/store";
-import { IconCategory } from "@/types/icons/icons.types";
+import { IconCategory } from "@/types";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 interface IconsTypeAllPageProps {

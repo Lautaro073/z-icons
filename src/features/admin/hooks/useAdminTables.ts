@@ -1,15 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import type {
-  AdminPreferenceColumnKey,
   AdminPlanType,
-  AdminSubscription,
-  AdminSubscriptionStatus,
   AdminUser,
   GetAdminUsersParams,
   UpdateAdminUserPayload,
@@ -21,47 +18,15 @@ import {
   reEnableAdminUser,
   updateAdminUser,
 } from "@/lib/api/backend";
-import { useAdminSubscriptions, useAdminUsers } from "@/features/admin";
-
-type UserColumnKey = AdminPreferenceColumnKey;
-
-type PendingAction =
-  | { type: "disable"; user: AdminUser }
-  | { type: "delete"; user: AdminUser }
-  | null;
-
-interface EditUserDraft {
-  username: string;
-  email: string;
-  role: "admin" | "user" | "pro";
-}
-
-function buildSubscriptionByEmailMap(rows: AdminSubscription[] = []) {
-  return new Map(rows.map((row) => [row.user_email, row]));
-}
-
-function mapSubscriptionStatusForPlanFilter(
-  status?: AdminSubscriptionStatus
-): Exclude<AdminSubscriptionStatus, "none"> | undefined {
-  if (!status || status === "none") {
-    return undefined;
-  }
-
-  return status;
-}
-
-function resolvePlanForUser(user: AdminUser, planByEmail: Map<string, AdminPlanType>): AdminPlanType | undefined {
-  const planFromSubscription = planByEmail.get(user.email);
-  if (planFromSubscription) {
-    return planFromSubscription;
-  }
-
-  if (user.role_name === "pro") {
-    return "pro";
-  }
-
-  return undefined;
-}
+import type { EditUserDraft, PendingAction } from "@/types";
+import {
+  buildSubscriptionByEmailMap,
+  mapSubscriptionStatusForPlanFilter,
+  resolvePlanForUser,
+  normalizeAccountStatus,
+} from "../utils";
+import { useAdminSubscriptions } from "./useAdminSubscriptions";
+import { useAdminUsers } from "./useAdminUsers";
 
 function getMutationErrorMessage(error: unknown, fallback: string) {
   if (error instanceof BackendApiError && error.message) {
@@ -73,10 +38,6 @@ function getMutationErrorMessage(error: unknown, fallback: string) {
   }
 
   return fallback;
-}
-
-function normalizeAccountStatus(status: AdminUser["accountStatus"] | undefined): "active" | "disabled" {
-  return status === "disabled" ? "disabled" : "active";
 }
 
 export function useAdminTables({
@@ -123,7 +84,7 @@ export function useAdminTables({
     [admin]
   );
 
-  const visibleColumnCount = columnOptions.reduce((total, option) => total + 1, 0);
+  const visibleColumnCount = columnOptions.length;
 
   const usersQuery = useAdminUsers(usersParams, { keepPreviousData: true, enabled });
   const subscriptionsQuery = useAdminSubscriptions(

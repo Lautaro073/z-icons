@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 import { IconCategories, IconCategoriesInfo, IconSets } from "../constants/icon.constants"
 import { Link } from "@/i18n/navigation"
 import { useUIStore } from "@/store"
-import { IconSet } from "@/types/icons/icons.types"
+import { IconSet } from "@/types"
 import { useTranslations } from "next-intl"
 
 const TypesIcons = () => {

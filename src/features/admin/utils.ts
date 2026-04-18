@@ -1,8 +1,11 @@
 import type {
   AdminMetricsGranularity,
   AdminAccountStatus,
+  AdminPlanType,
   AdminRole,
+  AdminSubscription,
   AdminSubscriptionStatus,
+  AdminUser,
   AdminSortBy,
   AdminSortDir,
   GetAdminMetricsParams,
@@ -104,6 +107,37 @@ export function parseMetricsParamsFromSearch(searchParams: URLSearchParams): Get
     from: fromRaw && isIsoLike(fromRaw) ? fromRaw : undefined,
     to: toRaw && isIsoLike(toRaw) ? toRaw : undefined,
   };
+}
+
+export function buildSubscriptionByEmailMap(rows: AdminSubscription[] = []) {
+  return new Map(rows.map((row) => [row.user_email, row]));
+}
+
+export function mapSubscriptionStatusForPlanFilter(
+  status?: AdminSubscriptionStatus
+): Exclude<AdminSubscriptionStatus, "none"> | undefined {
+  if (!status || status === "none") {
+    return undefined;
+  }
+
+  return status;
+}
+
+export function resolvePlanForUser(user: AdminUser, planByEmail: Map<string, AdminPlanType>): AdminPlanType | undefined {
+  const planFromSubscription = planByEmail.get(user.email);
+  if (planFromSubscription) {
+    return planFromSubscription;
+  }
+
+  if (user.role_name === "pro") {
+    return "pro";
+  }
+
+  return undefined;
+}
+
+export function normalizeAccountStatus(status: AdminUser["accountStatus"] | undefined): "active" | "disabled" {
+  return status === "disabled" ? "disabled" : "active";
 }
 
 export function setSearchParam(searchParams: URLSearchParams, key: string, value: string | number | undefined) {
