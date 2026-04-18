@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAdminTables } from "@/features/admin/index";
 import type {
@@ -9,8 +8,10 @@ import type {
   AdminPlanType,
   GetAdminUsersParams,
 } from "@/lib/api/backend";
+import { AdminTableColumnsControl } from "./AdminTableColumnsControl";
 import { AdminTableRow } from "./AdminTableRow";
 import { ConfirmActionModal, EditUserModal } from "./AdminTablesModals";
+import { AdminTablesPlaceholder } from "./AdminTablesPlaceholder";
 
 interface AdminTablesSectionProps {
   usersParams: GetAdminUsersParams;
@@ -86,64 +87,32 @@ export function AdminTablesSection({
             <div />
 
             {!isLoading && !isError && !isEmpty && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="rounded-full">
-                    {admin("table.users.columnsControl")}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="end" className="w-56 rounded-[1.4rem] p-3">
-                  <div className="grid gap-2">
-                    {columnOptions.map((columnOption) => (
-                      <label key={columnOption.key} className="flex items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 accent-primary"
-                          checked={visibleColumns[columnOption.key]}
-                          onChange={() => onToggleColumnVisibility(columnOption.key)}
-                          disabled={visibleColumnCount === 1 && visibleColumns[columnOption.key]}
-                        />
-                        <span>{columnOption.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </PopoverContent>
-              </Popover>
+              <AdminTableColumnsControl
+                columnOptions={columnOptions}
+                visibleColumns={visibleColumns}
+                visibleColumnCount={visibleColumnCount}
+                onToggleColumnVisibility={onToggleColumnVisibility}
+                admin={admin}
+              />
             )}
           </div>
 
-          <div className="mt-4 min-h-[20rem] min-w-0">
+          <div className="mt-4 min-h-80 min-w-0">
             {isLoading && (
-              <div className="overflow-x-auto overscroll-x-contain">
-                <div className="min-w-[56rem] space-y-2 md:min-w-[52rem]">
-                  {Array.from({ length: 6 }).map((_, rowIdx) => (
-                    <div key={rowIdx} className="grid grid-cols-9 gap-2 animate-pulse">
-                      {Array.from({ length: 9 }).map((__, colIdx) => (
-                        <div key={`${rowIdx}-${colIdx}`} className="h-10 rounded-[1rem] bg-muted/75" />
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <AdminTablesPlaceholder type="loading" isPlanFilterEnabled={isPlanFilterEnabled} admin={admin} />
             )}
 
             {isError && (
-              <div className="rounded-[1.25rem] border border-destructive/30 bg-destructive/5 p-4">
-                <p className="text-sm text-destructive">
-                  {isPlanFilterEnabled ? admin("errors.loadSubscriptions") : admin("errors.loadUsers")}
-                </p>
-              </div>
+              <AdminTablesPlaceholder type="error" isPlanFilterEnabled={isPlanFilterEnabled} admin={admin} />
             )}
 
             {isEmpty && (
-              <div className="rounded-[1.25rem] border border-border/60 bg-muted/20 p-4">
-                <p className="text-sm text-muted-foreground">{admin("states.emptyUsers")}</p>
-              </div>
+              <AdminTablesPlaceholder type="empty" isPlanFilterEnabled={isPlanFilterEnabled} admin={admin} />
             )}
 
             {!isLoading && !isError && !isEmpty && (
               <div className="overflow-x-auto overscroll-x-contain">
-                <table className="w-full min-w-[76rem] text-left text-sm md:min-w-[72rem]">
+                <table className="w-full min-w-304 text-left text-sm md:min-w-6xl">
                   <thead className="sticky top-0 z-10 border-b border-border/60 text-[11px]">
                     <tr className="border-b border-border/60 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
                       {visibleColumns.username && <th className="px-3 py-3">{admin("table.users.username")}</th>}
