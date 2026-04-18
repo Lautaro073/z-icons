@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAdminTables } from "@/features/admin/index";
 import type {
@@ -9,6 +8,8 @@ import type {
   GetAdminUsersParams,
 } from "@/lib/api/backend";
 import { AdminTableColumnsControl } from "./AdminTableColumnsControl";
+import { AdminTableHeader } from "./AdminTableHeader";
+import { AdminTablePagination } from "./AdminTablePagination";
 import { AdminTableRow } from "./AdminTableRow";
 import { ConfirmActionModal, EditUserModal } from "./AdminTablesModals";
 import { AdminTablesPlaceholder } from "./AdminTablesPlaceholder";
@@ -82,7 +83,7 @@ export function AdminTablesSection({
   return (
     <TooltipProvider>
       <section className="grid gap-4 overflow-x-clip">
-        <article className="ui-surface-panel flex min-h-[30rem] min-w-0 flex-col rounded-[1.85rem] p-4 sm:p-5">
+        <article className="ui-surface-panel flex min-h-120 min-w-0 flex-col rounded-[1.85rem] p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div />
 
@@ -97,7 +98,7 @@ export function AdminTablesSection({
             )}
           </div>
 
-          <div className="mt-4 min-h-80 min-w-0">
+          <div className="mt-4 min-h-120 min-w-0">
             {isLoading && (
               <AdminTablesPlaceholder type="loading" isPlanFilterEnabled={isPlanFilterEnabled} admin={admin} />
             )}
@@ -113,19 +114,7 @@ export function AdminTablesSection({
             {!isLoading && !isError && !isEmpty && (
               <div className="overflow-x-auto overscroll-x-contain">
                 <table className="w-full min-w-304 text-left text-sm md:min-w-6xl">
-                  <thead className="sticky top-0 z-10 border-b border-border/60 text-[11px]">
-                    <tr className="border-b border-border/60 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                      {visibleColumns.username && <th className="px-3 py-3">{admin("table.users.username")}</th>}
-                      {visibleColumns.email && <th className="px-3 py-3">{admin("table.users.email")}</th>}
-                      {visibleColumns.role && <th className="px-3 py-3">{admin("table.users.role")}</th>}
-                      {visibleColumns.accountStatus && <th className="px-3 py-3">{admin("table.users.accountStatus")}</th>}
-                      {visibleColumns.status && <th className="px-3 py-3">{admin("table.users.status")}</th>}
-                      {visibleColumns.plan && <th className="px-3 py-3">{admin("table.subscriptions.plan")}</th>}
-                      {visibleColumns.startDate && <th className="px-3 py-3">{admin("table.users.startDate")}</th>}
-                      {visibleColumns.tokenExpiry && <th className="px-3 py-3">{admin("table.users.tokenExpiry")}</th>}
-                      <th className="px-3 py-3 text-right">{admin("table.users.actions")}</th>
-                    </tr>
-                  </thead>
+                  <AdminTableHeader columnOptions={columnOptions} visibleColumns={visibleColumns} admin={admin} />
                   <tbody>
                     {filteredUsers.map((item) => (
                       <AdminTableRow
@@ -156,31 +145,11 @@ export function AdminTablesSection({
           </div>
 
           {usersPagination && (
-            <div className="mt-5 flex items-center justify-between gap-3">
-              <p className="text-xs text-muted-foreground">
-                {usersPagination.page} / {usersPagination.totalPages}
-              </p>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={!usersPagination.hasPrev}
-                  onClick={() => onUsersPageChange(Math.max(1, usersPagination.page - 1))}
-                  className="rounded-full"
-                >
-                  {common("actions.previous")}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={!usersPagination.hasNext}
-                  onClick={() => onUsersPageChange(usersPagination.page + 1)}
-                  className="rounded-full"
-                >
-                  {common("actions.next")}
-                </Button>
-              </div>
-            </div>
+            <AdminTablePagination
+              usersPagination={usersPagination}
+              common={common}
+              onUsersPageChange={onUsersPageChange}
+            />
           )}
         </article>
       </section>
