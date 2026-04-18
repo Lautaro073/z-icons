@@ -57,7 +57,7 @@ const eslintConfig = defineConfig([
       ]
     },
   }
-,
+  ,
   {
     files: ["**/*.test.*", "**/tests/**", "tests/**"],
     rules: {

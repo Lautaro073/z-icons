@@ -230,5 +230,33 @@ Para cada commit se indica mensaje (Conventional Commits) y archivos objetivo (e
 
 ---
 
+## Próximos pasos inmediatos
+
+1. Crear el branch `refactor/clean-architecture` y confirmar estado limpio de Git antes de empezar.
+2. Implementar el primer commit:
+   - `chore(arch): enforce strict lint and ts boundaries`
+   - Archivos: `eslint.config.mjs`, `tsconfig.json`, `package.json`, `README.md` si aplica.
+   - Objetivo: habilitar reglas de importación y límites de capa, dejando el repositorio con un baseline de compilación estable.
+3. Agregar barrels iniciales para `src/lib/api`, `src/lib/preferences`, `src/lib/query`, `src/lib/server`, y las carpetas de feature que ya tienen importaciones cruzadas visibles.
+4. Validación de línea base:
+   - Ejecutar `pnpm run lint` y `pnpm run build`.
+   - Confirmar que los errores se limiten a warnings de `import/no-internal-modules` y `import/order` pendientes de reordenar.
+5. Crear un plan de trabajo por PRs:
+   - PR 1: reglas de arquitectura + baseline.
+   - PR 2: barrels y contratos públicos.
+   - PR 3: refactor de admin (hooks y componentes).
+   - PR 4: refactor de `src/lib/api` y `src/lib/server`.
+
+---
+
+## Criterios de avance para la siguiente iteración
+
+- El primer PR debe dejar una base estable con build verde.
+- El segundo PR debe exponer las APIs públicas necesarias a través de `index.ts` sin cambiar lógica de negocio.
+- El tercer PR debe extraer un dominio completo, idealmente `src/features/admin`, a hooks y servicios separados.
+- Cada PR debe contener un resumen claro de la dirección de dependencia aplicada y los límites de módulo respetados.
+
+---
+
 Si quieres, genero los PRs y aplico los primeros commits de ejemplo para arrancar (p. ej. baseline ESLint/TS y barrels). ¿Comienzo con el commit `chore(arch): enforce strict lint and ts boundaries` y CR en `refactor/clean-architecture`? 
 

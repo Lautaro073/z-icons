@@ -1282,7 +1282,9 @@ export function isTokenExpired(): boolean {
   if (!token) return true;
 
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const part = token.split('.')[1];
+    if (!part) return true;
+    const payload = JSON.parse(atob(part));
     return payload.exp * 1000 < Date.now();
   } catch {
     return true;

@@ -1,4 +1,5 @@
 import { LayerModes as LM } from "@/features/icons-explorer";
+import type { IconSet } from "@/types/icons/icons.types";
 import type { UIActions, UIState } from "./view.types";
 
 export const uiActions = (
@@ -22,7 +23,8 @@ export const uiActions = (
         if (currentIndex === -1) {
           state.iconSet = freeIconSets[0];
         } else {
-          state.iconSet = freeIconSets[(currentIndex + 1) % freeIconSets.length];
+          const nextIndex = (currentIndex + 1) % freeIconSets.length;
+          state.iconSet = freeIconSets[nextIndex] as IconSet;
         }
       }
     ),
