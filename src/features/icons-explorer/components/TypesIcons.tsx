@@ -64,7 +64,7 @@ const TypesIcons = () => {
                     getCategoryTone(icon)
                   )}
                 >
-                {premium ? common("icons.pro") : common(`icons.categories.${category}`)}
+                  {premium ? common("icons.pro") : common(`icons.categories.${category}`)}
                 </span>
                 <span className="text-lg text-foreground/65 transition-transform duration-200 ease-[var(--ease-out)]">
                   &gt;

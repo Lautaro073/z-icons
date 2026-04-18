@@ -2,29 +2,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { AdminUser } from "@/lib/api/backend";
 import type {
-  ConfirmActionModalLabels,
-  EditUserDraft,
-  EditUserModalLabels,
-  PendingAction,
+    ConfirmActionModalLabels,
+    EditUserDraft,
+    EditUserModalLabels,
+    PendingAction,
 } from "@/types";
 
 type EditUserModalProps = {
-  open: boolean;
-  user: AdminUser | null;
-  draft: EditUserDraft;
-  onDraftChange: (next: EditUserDraft) => void;
-  onClose: () => void;
-  onSubmit: () => void;
-  isPending: boolean;
-  labels: EditUserModalLabels;
+    open: boolean;
+    user: AdminUser | null;
+    draft: EditUserDraft;
+    onDraftChange: (next: EditUserDraft) => void;
+    onClose: () => void;
+    onSubmit: () => void;
+    isPending: boolean;
+    labels: EditUserModalLabels;
 };
 
 type ConfirmActionModalProps = {
-  pendingAction: PendingAction;
-  onClose: () => void;
-  onConfirm: () => void;
-  isPending: boolean;
-  labels: ConfirmActionModalLabels;
+    pendingAction: PendingAction;
+    onClose: () => void;
+    onConfirm: () => void;
+    isPending: boolean;
+    labels: ConfirmActionModalLabels;
 };
 
 export function EditUserModal({
