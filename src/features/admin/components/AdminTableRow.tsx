@@ -5,6 +5,7 @@ import type {
     AdminUser,
 } from "@/lib/api/backend";
 import type { MutationState, PendingAction } from "@/types";
+import { AdminTableCell } from "./AdminTableCell";
 import { AdminTableRowActions } from "./AdminTableRowActions";
 
 export interface AdminTableRowProps {
@@ -54,34 +55,34 @@ export function AdminTableRow({
 
     return (
         <tr className="border-b border-border/40 transition-colors duration-150 hover:bg-muted/16">
-            {visibleColumns.username && <td className="px-3 py-4 font-medium text-foreground">{item.username}</td>}
-            {visibleColumns.email && <td className="px-3 py-4 text-muted-foreground">{item.email}</td>}
-            {visibleColumns.role && <td className="px-3 py-4">{admin(`roles.${item.role_name}`)}</td>}
+            {visibleColumns.username && <AdminTableCell className="font-medium text-foreground">{item.username}</AdminTableCell>}
+            {visibleColumns.email && <AdminTableCell className="text-muted-foreground">{item.email}</AdminTableCell>}
+            {visibleColumns.role && <AdminTableCell>{admin(`roles.${item.role_name}`)}</AdminTableCell>}
             {visibleColumns.accountStatus && (
-                <td className="px-3 py-4">
+                <AdminTableCell>
                     <div className="inline-flex min-w-0 items-center gap-2">
                         <span className={`size-2 rounded-full ${accountStatus === "disabled" ? "bg-amber-300/85" : "bg-emerald-300/85"}`} />
                         <span className={`text-sm ${accountStatus === "disabled" ? "text-amber-100/90" : "text-foreground/88"}`}>
                             {admin(`accountStatuses.${accountStatus}`)}
                         </span>
                     </div>
-                </td>
+                </AdminTableCell>
             )}
-            {visibleColumns.status && <td className="px-3 py-4">{admin(`statuses.${item.subscriptionStatus}`)}</td>}
+            {visibleColumns.status && <AdminTableCell>{admin(`statuses.${item.subscriptionStatus}`)}</AdminTableCell>}
             {visibleColumns.plan && (
-                <td className="px-3 py-4">
+                <AdminTableCell>
                     <span className="inline-flex rounded-full border border-border/60 bg-muted/30 px-2.5 py-1 text-[11px] uppercase tracking-[0.18em]">
                         {resolvedPlan ?? "-"}
                     </span>
-                </td>
+                </AdminTableCell>
             )}
             {visibleColumns.startDate && (
-                <td className="px-3 py-4 text-muted-foreground">{formatDate(subscriptionStartDate)}</td>
+                <AdminTableCell className="text-muted-foreground">{formatDate(subscriptionStartDate)}</AdminTableCell>
             )}
             {visibleColumns.tokenExpiry && (
-                <td className="px-3 py-4 text-muted-foreground">{formatDate(subscriptionFinishDate)}</td>
+                <AdminTableCell className="text-muted-foreground">{formatDate(subscriptionFinishDate)}</AdminTableCell>
             )}
-            <td className="px-3 py-4">
+            <AdminTableCell>
                 <AdminTableRowActions
                     item={item}
                     currentUserId={currentUserId}
@@ -98,7 +99,7 @@ export function AdminTableRow({
                     pendingAction={pendingAction}
                     isDisabledAccountsView={isDisabledAccountsView}
                 />
-            </td>
+            </AdminTableCell>
         </tr>
     );
 }
