@@ -39,8 +39,14 @@ const eslintConfig = defineConfig([
           "allow": [
             "@/lib/**",
             "@/components/**",
+            "@/contexts/**",
+            "@/features/auth",
             "@/features/*/index",
-            "@/types/**"
+            "@/hooks/**",
+            "@/i18n/**",
+            "@/types/**",
+            "@zcorvus/**",
+            "next/**"
           ]
         }
       ],

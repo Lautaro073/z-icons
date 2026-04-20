@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLoginForm } from "@/features/auth";
+import { useFormDraft } from "@/hooks/useFormDraft";
 import { Link, useRouter } from "@/i18n/navigation";
-import { useSessionDraft } from "@/hooks/useSessionDraft";
 
 const initialLoginFormData = {
   email: "",
@@ -23,11 +24,22 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData, clearLoginDraft] = useFormDraft("auth:login:draft", initialLoginFormData);
   const handledSessionFeedback = useRef(false);
-  const [formData, setFormData, clearLoginDraft] = useSessionDraft("auth:login:draft", initialLoginFormData);
-  const [formError, setFormError] = useState<string | null>(null);
-  const requires2FA = formData.requires2FA;
+
+  const loginForm = useLoginForm({
+    formData,
+    setFormData,
+    clearLoginDraft,
+    login,
+    onSuccess: (role) => {
+      if (role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/icons");
+      }
+    },
+  });
 
   useEffect(() => {
     if (handledSessionFeedback.current) {
@@ -43,49 +55,8 @@ export default function LoginPage() {
     }
   }, [auth, router, searchParams]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormError(null);
-    setIsLoading(true);
-
-    try {
-      const loggedUser = await login(
-        formData.email,
-        formData.password,
-        formData.twoFactorCode || undefined
-      );
-
-      clearLoginDraft();
-      toast.success(auth("success.loginSuccess"));
-
-      if (loggedUser.role_name === "admin") {
-        router.push("/admin");
-      } else {
-        router.push("/icons");
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message === "2FA_REQUIRED") {
-          setFormData((current) => ({ ...current, requires2FA: true }));
-          setFormError(null);
-          toast.info(auth("actions.enter2FA"));
-        } else {
-          const normalizedMessage =
-            error.message === "Invalid credentials"
-              ? auth("errors.invalidCredentials")
-              : error.message || auth("errors.loginFailed");
-
-          setFormError(normalizedMessage);
-          toast.error(normalizedMessage);
-        }
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+    <form onSubmit={loginForm.handleSubmit} className="flex flex-col gap-8">
       <div className="space-y-3">
         <h1 className="ui-display-title text-4xl leading-none sm:text-5xl">
           {auth("screens.signIn.title")}
@@ -98,20 +69,22 @@ export default function LoginPage() {
           <Input
             type="email"
             placeholder={common("fields.email")}
-            value={formData.email}
+            value={loginForm.formData.email}
             required
-            disabled={isLoading}
+            disabled={loginForm.isLoading}
             autoComplete="email"
-            aria-invalid={Boolean(formError)}
-            className={formError ? "border-destructive/70 focus-visible:border-destructive" : undefined}
+            aria-invalid={Boolean(loginForm.formError)}
+            className={loginForm.formError ? "border-destructive/70 focus-visible:border-destructive" : undefined}
             onChange={(e) => {
-              setFormData((current) => ({
+              loginForm.setFormData((current) => ({
                 ...current,
                 email: e.target.value,
                 requires2FA: false,
                 twoFactorCode: "",
               }));
-              if (formError) setFormError(null);
+              if (loginForm.formError) {
+                loginForm.clearFormError();
+              }
             }}
           />
         </label>
@@ -121,46 +94,48 @@ export default function LoginPage() {
           <Input
             type="password"
             placeholder={common("fields.password")}
-            value={formData.password}
+            value={loginForm.formData.password}
             required
-            disabled={isLoading}
+            disabled={loginForm.isLoading}
             autoComplete="current-password"
-            aria-invalid={Boolean(formError)}
-            className={formError ? "border-destructive/70 focus-visible:border-destructive" : undefined}
+            aria-invalid={Boolean(loginForm.formError)}
+            className={loginForm.formError ? "border-destructive/70 focus-visible:border-destructive" : undefined}
             onChange={(e) => {
-              setFormData((current) => ({
+              loginForm.setFormData((current) => ({
                 ...current,
                 password: e.target.value,
                 requires2FA: false,
                 twoFactorCode: "",
               }));
-              if (formError) setFormError(null);
+              if (loginForm.formError) {
+                loginForm.clearFormError();
+              }
             }}
           />
         </label>
 
-        {formError && (
+        {loginForm.formError && (
           <p
             role="alert"
-            className="rounded-[1rem] border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+            className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
           >
-            {formError}
+            {loginForm.formError}
           </p>
         )}
 
-        {requires2FA && (
+        {loginForm.requires2FA && (
           <div className="rounded-[1.4rem] border border-primary/18 bg-primary/8 p-4">
-            <p className="ui-section-header !tracking-[0.22em]">{auth("actions.enter2FA")}</p>
+            <p className="ui-section-header tracking-[0.22em]!">{auth("actions.enter2FA")}</p>
             <label className="mt-3 grid gap-2">
               <span className="text-sm font-medium text-foreground">{auth("twoFactor.code")}</span>
               <Input
                 type="text"
                 inputMode="numeric"
                 placeholder={auth("twoFactor.placeholder")}
-                value={formData.twoFactorCode}
-                onChange={(e) => setFormData((current) => ({ ...current, twoFactorCode: e.target.value }))}
+                value={loginForm.formData.twoFactorCode}
+                onChange={(e) => loginForm.setFormData((current) => ({ ...current, twoFactorCode: e.target.value }))}
                 maxLength={6}
-                disabled={isLoading}
+                disabled={loginForm.isLoading}
               />
             </label>
           </div>
@@ -168,8 +143,8 @@ export default function LoginPage() {
       </div>
 
       <div className="space-y-4">
-        <Button type="submit" className="w-full rounded-full" size="lg" disabled={isLoading}>
-          {isLoading ? auth("actions.signingIn") : auth("actions.signIn")}
+        <Button type="submit" className="w-full rounded-full" size="lg" disabled={loginForm.isLoading}>
+          {loginForm.isLoading ? auth("actions.signingIn") : auth("actions.signIn")}
         </Button>
 
         <p className="text-center text-sm leading-6 text-muted-foreground">
