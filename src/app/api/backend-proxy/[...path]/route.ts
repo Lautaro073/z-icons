@@ -33,8 +33,9 @@ function buildTargetUrl(pathSegments: string[] | undefined, searchParams: string
   return `${base}${path}${searchParams}`;
 }
 
-async function proxyRequest(request: NextRequest, { params }: { params: { path?: string[] } }) {
-  const targetUrl = buildTargetUrl(params.path, new URL(request.url).search);
+async function proxyRequest(request: NextRequest, context: { params: Promise<{ path: string[] }> }) {
+  const { path } = await context.params;
+  const targetUrl = buildTargetUrl(path, new URL(request.url).search);
   const headers = new Headers(request.headers);
   headers.delete("host");
 

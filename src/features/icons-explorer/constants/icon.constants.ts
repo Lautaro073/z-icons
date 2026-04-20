@@ -81,9 +81,4 @@ export const getIconsSVG = async (type: IconSet) => {
   return null;
 };
 
-export interface IconGroup {
-  icons: Partial<AllIconNames>[] | undefined;
-  name: IconSet;
-  type: string[];
-}
 

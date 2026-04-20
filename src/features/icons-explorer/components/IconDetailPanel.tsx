@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
 import { ZIcon } from "@zcorvus/z-icons/react"
-import { UnifiedIcon } from "@/components/common/UnifiedIcon"
-import { IconTypeInfo } from "@/types"
-import { IconExportState, useIconExport } from "@/hooks/useIconExport"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { IconExportState, useIconExport } from "@/hooks/useIconExport"
+import { IconTypeInfo } from "@/types"
+import { IconDetailActions } from "./IconDetailActions"
+import { IconDetailExportTabs } from "./IconDetailExportTabs"
+import { IconDetailPreview } from "./IconDetailPreview"
 
 interface IconDetailPanelProps {
   icon: IconTypeInfo
@@ -24,8 +25,6 @@ const IconDetailPanel = ({ icon, onClose }: IconDetailPanelProps) => {
 
   const { codeSnippet, handleCopyIcon, handleCopyCode, handleDownloadIcon } =
     useIconExport({ icon, state })
-
-  const formatTabs: IconExportState[] = ["react", "svg", "html"]
 
   const actionButtons: ActionButton[] = [
     { key: "download", iconName: "download", onClick: handleDownloadIcon },
@@ -52,29 +51,10 @@ const IconDetailPanel = ({ icon, onClose }: IconDetailPanelProps) => {
 
       <div className="mt-5 min-h-0 flex-1 overflow-y-auto pr-1">
         <div className="grid gap-4 max-[820px]:gap-3">
-          <div className="rounded-3xl border border-surface-border bg-secondary/68 p-5 max-[820px]:p-4 max-[720px]:p-3">
-            <div className="grid min-h-[220px] place-items-center rounded-[1.2rem] border border-border/60 bg-background/72 max-[820px]:min-h-[180px] max-[720px]:min-h-[148px]">
-              <UnifiedIcon
-                {...icon}
-                size={132}
-                className="text-foreground max-[820px]:scale-[0.86] max-[720px]:scale-[0.74]"
-              />
-            </div>
-          </div>
+          <IconDetailPreview icon={icon} />
 
           <div className="min-w-0 space-y-3 max-[820px]:space-y-2">
-            <div className="flex flex-wrap gap-2">
-              {formatTabs.map((tab) => (
-                <Button
-                  key={tab}
-                  variant={state === tab ? "secondary" : "ghost"}
-                  className={cn("rounded-full px-3 capitalize", state === tab && "shadow-(--shadow-soft)")}
-                  onClick={() => setState(tab)}
-                >
-                  {tab}
-                </Button>
-              ))}
-            </div>
+            <IconDetailExportTabs state={state} onChange={setState} />
 
             <div className="ui-code-block min-w-0 max-w-full overflow-auto p-4 max-[820px]:max-h-42 max-[720px]:max-h-32">
               <code className="block max-w-full select-all whitespace-pre-wrap wrap-anywhere">
@@ -85,13 +65,7 @@ const IconDetailPanel = ({ icon, onClose }: IconDetailPanelProps) => {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-none items-center justify-end gap-2">
-        {actionButtons.map((button) => (
-          <Button key={button.key} variant="outline" size="sm" className="rounded-full" onClick={button.onClick}>
-            <ZIcon type="mina" name={button.iconName} className="size-4" />
-          </Button>
-        ))}
-      </div>
+      <IconDetailActions actionButtons={actionButtons} />
     </aside>
   )
 }
