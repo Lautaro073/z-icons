@@ -41,9 +41,12 @@ const eslintConfig = defineConfig([
             "@/components/**",
             "@/contexts/**",
             "@/features/auth",
+            "@/features/icons-explorer",
+            "@/features/icons-explorer/**",
             "@/features/*/index",
             "@/hooks/**",
             "@/i18n/**",
+            "@/store/**",
             "@/types/**",
             "@zcorvus/**",
             "next/**"

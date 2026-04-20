@@ -1,9 +1,9 @@
 "use server";
 
-import { IconCategories, IconCategoriesInfo } from "@/features/icons-explorer";
-import { getTranslations } from "@/i18n/server";
-import { Link } from "@/i18n/navigation";
 import { ZIcon } from "@zcorvus/z-icons/react";
+import { IconCategories, IconCategoriesInfo } from "@/features/icons-explorer";
+import { Link } from "@/i18n/navigation";
+import { getTranslations } from "@/i18n/server";
 
 const categorySections = ["local", "external", "premium"] as const;
 
@@ -13,10 +13,10 @@ export default async function IconsLocalePage() {
 
   return (
     <div className="ui-page-shell py-2">
-      <section className="ui-surface-panel-muted rounded-[2rem] p-5 sm:p-6 lg:p-8">
+      <section className="ui-surface-panel-muted rounded-4xl p-5 sm:p-6 lg:p-8">
         <Link
           href="/"
-          className="inline-flex items-start gap-4 rounded-[1.4rem] p-2 transition-[transform,background-color,color] duration-[180ms] ease-[var(--ease-out)] hover:bg-background/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="inline-flex items-start gap-4 rounded-[1.4rem] p-2 transition-transform duration-180 ease-out hover:bg-background/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           style={{ viewTransitionName: "title" }}
         >
           <span className="grid size-12 place-items-center">
@@ -50,7 +50,7 @@ export default async function IconsLocalePage() {
                 : "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300";
 
           return (
-            <section key={category} className="ui-surface-panel-muted rounded-[2rem] p-5 sm:p-6">
+            <section key={category} className="ui-surface-panel-muted rounded-4xl p-5 sm:p-6">
               <div className="flex flex-col gap-5 border-b border-border/60 pb-5 lg:flex-row lg:items-end lg:justify-between">
                 <div className="space-y-3">
                   <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.24em] ${tone}`}>
@@ -60,7 +60,7 @@ export default async function IconsLocalePage() {
                     <Link
                       href={`/icons/${category}/all`}
                       style={index === 0 ? { viewTransitionName: "title-type" } : undefined}
-                      className="inline-flex items-center gap-3 text-xl text-foreground transition-[transform,color] duration-[180ms] ease-[var(--ease-out)] hover:text-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-2xl"
+                      className="inline-flex items-center gap-3 text-xl text-foreground transition-transform duration-180 ease-out hover:text-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-2xl"
                     >
                       <span>{title}</span>
                     </Link>
@@ -85,7 +85,7 @@ export default async function IconsLocalePage() {
                     <li key={set} className="h-full">
                       <Link
                         href={`/icons/${category}/${set}`}
-                        className="ui-panel-interactive group flex h-full min-h-[172px] flex-col justify-between rounded-[1.5rem] border border-surface-border bg-surface/84 px-4 py-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                        className="ui-panel-interactive group flex h-full min-h-[172px] flex-col justify-between rounded-3xl border border-surface-border bg-surface/84 px-4 py-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                       >
                         <div className="space-y-3">
                           <span className="inline-flex rounded-full bg-secondary px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.24em] text-muted-foreground">
@@ -100,7 +100,7 @@ export default async function IconsLocalePage() {
                           </div>
                         </div>
                         <div className="mt-5 flex items-center justify-end border-t border-border/60 pt-3 text-xs uppercase tracking-[0.22em] text-foreground/78">
-                          <span className="transition-transform duration-200 ease-[var(--ease-out)] group-hover:translate-x-1">&gt;</span>
+                          <span className="transition-transform duration-200 ease-out group-hover:translate-x-1">&gt;</span>
                         </div>
                       </Link>
                     </li>

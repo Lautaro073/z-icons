@@ -1,16 +1,16 @@
 "use client"
 
-import { memo, useCallback, useEffect, useEffectEvent, useMemo, useRef, useState } from "react"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { ZIcon } from "@zcorvus/z-icons/react"
-import { UnifiedIcon } from "@/components/common/UnifiedIcon"
+import { useTranslations } from "next-intl"
+import { useCallback, useEffect, useEffectEvent, useMemo, useRef, useState } from "react"
 import { toast } from "sonner"
+import { UnifiedIcon } from "@/components/common/UnifiedIcon"
+import { Button } from "@/components/ui/button"
 import { IconGroup, LayerModes as LM } from "@/features/icons-explorer"
-import { IconTypeInfo } from "@/types"
 import { cn } from "@/lib/utils"
 import { useUIStore } from "@/store"
-import { Button } from "@/components/ui/button"
-import { useTranslations } from "next-intl"
+import { IconTypeInfo } from "@/types"
 
 interface IconGridListProps {
   iconsData: IconGroup[]
@@ -20,7 +20,7 @@ interface IconGridListProps {
 
 const MAX_ICONS = 500
 
-const IconGridListComponent = memo(({ iconsData, onShowDetail, showDetail }: IconGridListProps) => {
+const IconGridListComponent = ({ iconsData, onShowDetail, showDetail }: IconGridListProps) => {
   const parentRef = useRef<HTMLDivElement>(null)
   const [columns, setColumns] = useState(1)
   const [showAll, setShowAll] = useState(false)
@@ -73,6 +73,7 @@ const IconGridListComponent = memo(({ iconsData, onShowDetail, showDetail }: Ico
 
   const estimateSize = useCallback(() => itemWidth, [itemWidth])
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const rowVirtualizer = useVirtualizer({
     count: rows,
     getScrollElement: () => parentRef.current,
@@ -151,7 +152,7 @@ const IconGridListComponent = memo(({ iconsData, onShowDetail, showDetail }: Ico
                     key={id}
                     data-icon-id={iconId}
                     className={cn(
-                      "group relative grid cursor-pointer justify-center rounded-[1.25rem] border border-surface-border bg-surface/92 px-2 py-2 shadow-[var(--shadow-soft)] transition-[transform,border-color,background-color,box-shadow] duration-[180ms] ease-[var(--ease-out)] hover:-translate-y-[1px] hover:border-foreground/14 hover:bg-surface",
+                      "group relative grid cursor-pointer justify-center rounded-2xl border border-surface-border bg-surface/92 px-2 py-2 shadow-(--shadow-soft) transition-transform duration-180 ease-out hover:-translate-y-px hover:border-foreground/14 hover:bg-surface",
                       isCompact ? "h-12 w-12 grid-rows-1" : "h-28 w-28 gap-2 grid-rows-[4fr_3fr]"
                     )}
                     onClick={() => {
@@ -162,7 +163,7 @@ const IconGridListComponent = memo(({ iconsData, onShowDetail, showDetail }: Ico
                     <UnifiedIcon
                       {...icon}
                       className={cn(
-                        "justify-self-center text-foreground transition-transform duration-200 ease-[var(--ease-out)]",
+                        "justify-self-center text-foreground transition-transform duration-200 ease-out",
                         isCompact ? "self-center" : "self-end"
                       )}
                     />
@@ -171,7 +172,7 @@ const IconGridListComponent = memo(({ iconsData, onShowDetail, showDetail }: Ico
                     </p>
 
                     {!isCompact && (
-                      <div className="absolute -right-px -top-px flex h-[calc(100%+2px)] w-8 flex-col items-center justify-center gap-1 rounded-r-[1.25rem] rounded-tl-none border border-surface-border bg-background/94 opacity-0 transition-opacity duration-150 ease-[var(--ease-out)] group-hover:opacity-100">
+                      <div className="absolute -right-px -top-px flex h-[calc(100%+2px)] w-8 flex-col items-center justify-center gap-1 rounded-r-2xl rounded-tl-none border border-surface-border bg-background/94 opacity-0 transition-opacity duration-150 ease-out group-hover:opacity-100">
                         <button
                           onClick={(event) => {
                             event.stopPropagation()
@@ -209,7 +210,7 @@ const IconGridListComponent = memo(({ iconsData, onShowDetail, showDetail }: Ico
       )}
     </div>
   )
-})
+}
 
 IconGridListComponent.displayName = "IconGridListComponent"
 export const IconGridList = IconGridListComponent

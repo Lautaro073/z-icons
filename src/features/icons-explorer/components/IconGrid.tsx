@@ -27,7 +27,7 @@ const IconGrid = ({ data }: IconGridProps) => {
   return (
     <div
       data-active-icon={idIcon}
-      className={cn("flex h-full min-h-[32rem] flex-col gap-4 lg:flex-row")}
+      className={cn("flex h-full min-h-128 flex-col gap-4 lg:flex-row")}
     >
       <style
         dangerouslySetInnerHTML={{
@@ -41,7 +41,7 @@ const IconGrid = ({ data }: IconGridProps) => {
         }}
       />
 
-      <div className="min-h-[24rem] min-w-0 flex-1 overflow-hidden rounded-[1.6rem] border border-surface-border bg-background/58 p-3 sm:p-4">
+      <div className="min-h-96 min-w-0 flex-1 overflow-hidden rounded-[1.6rem] border border-surface-border bg-background/58 p-3 sm:p-4">
         <IconGridList iconsData={data} onShowDetail={handleShowDetail} showDetail={Boolean(showDetail)} />
       </div>
 

@@ -1,20 +1,20 @@
 "use client";
 
-import { use, useMemo, useState } from "react";
+import { ZIcon } from "@zcorvus/z-icons/react";
 import { useTranslations } from "next-intl";
+import { use, useMemo, useState } from "react";
+import { PremiumGuard } from "@/components/guards/PremiumGuard";
+import { Button } from "@/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { Link } from "@/i18n/navigation";
-import { ZIcon } from "@zcorvus/z-icons/react";
 import { IconGrid, IconCategoriesInfo, getIconContentData, IconGroup } from "@/features/icons-explorer";
-import { Button } from "@/components/ui/button";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { Link } from "@/i18n/navigation";
 import { useUIStore } from "@/store";
 import { IconCategory, IconSet } from "@/types";
-import { PremiumGuard } from "@/components/guards/PremiumGuard";
-import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 interface IconsTypeIdPageProps {
   params: Promise<{ type: IconCategory; id: IconSet }>;
@@ -66,12 +66,12 @@ export default function IconsTypeIdPage({ params }: IconsTypeIdPageProps) {
 
   const content = (
     <div className="ui-page-shell py-2">
-      <section className="ui-surface-panel-muted rounded-[2rem] px-4 py-5 sm:px-6 sm:py-6">
+      <section className="ui-surface-panel-muted rounded-4xl px-4 py-5 sm:px-6 sm:py-6">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-3">
             <Link
               href="/icons"
-              className="inline-flex items-center gap-3 rounded-[1.25rem] p-1.5 transition-[transform,background-color,color] duration-[180ms] ease-[var(--ease-out)] hover:bg-background/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="inline-flex items-center gap-3 rounded-[1.25rem] p-1.5 transition-transform duration-180 ease-out hover:bg-background/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <span className="grid size-12 place-items-center">
                 <ZIcon type="mina" name="arrow-left" className="size-5 text-muted-foreground" />
@@ -107,7 +107,7 @@ export default function IconsTypeIdPage({ params }: IconsTypeIdPageProps) {
         </div>
       </section>
 
-      <section className="ui-surface-panel min-h-[36rem] rounded-[2rem] p-3 sm:p-4">
+      <section className="ui-surface-panel min-h-144 rounded-4xl p-3 sm:p-4">
         <IconGrid data={filteredData} />
       </section>
     </div>

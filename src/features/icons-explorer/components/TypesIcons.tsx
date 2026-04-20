@@ -43,7 +43,7 @@ const TypesIcons = () => {
             key={icon}
             className={cn(
               "ui-panel-interactive rounded-[1.35rem] border border-surface-border bg-surface/84 p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-              iconSet === icon && "border-foreground/14 bg-secondary/82 shadow-[var(--shadow-soft)]",
+              iconSet === icon && "border-foreground/14 bg-secondary/82 shadow-(--shadow-soft)",
               premium && iconSet !== icon && "border-amber-500/24"
             )}
           >
@@ -66,7 +66,7 @@ const TypesIcons = () => {
                 >
                   {premium ? common("icons.pro") : common(`icons.categories.${category}`)}
                 </span>
-                <span className="text-lg text-foreground/65 transition-transform duration-200 ease-[var(--ease-out)]">
+                <span className="text-lg text-foreground/65 transition-transform duration-200 ease-out">
                   &gt;
                 </span>
               </div>
