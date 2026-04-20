@@ -1,19 +1,20 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
-import { useRouter } from '@/i18n/navigation';
-import { 
-    setCurrentAccessToken, 
-    clearTokens, 
-    getRefreshToken,
-    setRefreshToken,
-    login as backendLogin, 
-    register as backendRegister, 
-    logout as backendLogout, 
+import {
+    login as backendLogin,
+    register as backendRegister,
+    logout as backendLogout,
     getRefreshTokenFromServer,
     refreshAccessToken as backendRefreshAccessToken,
+} from '@/lib/api/auth';
+import {
+    setCurrentAccessToken,
+    clearTokens,
+    getRefreshToken,
+    setRefreshToken,
     setUserRoleHint,
-    type User 
+    type User,
 } from '@/lib/api/backend';
 
 interface AuthContextType {
@@ -41,11 +42,35 @@ const runtimeAuthSnapshot: RuntimeAuthSnapshot = {
     initialized: false,
 };
 
+const normalizeUserRole = (userObj: User | null): User | null => {
+    if (!userObj) {
+        return null;
+    }
+
+    if (userObj.role_name || !(userObj as unknown as { role?: string }).role) {
+        return userObj;
+    }
+
+    return {
+        ...userObj,
+        role_name: (userObj as unknown as { role: 'admin' | 'user' | 'pro' }).role,
+    } as User;
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(() => runtimeAuthSnapshot.user);
     const [accessToken, setAccessToken] = useState<string | null>(() => runtimeAuthSnapshot.accessToken);
     const [isLoading, setIsLoading] = useState(() => !runtimeAuthSnapshot.initialized);
-    const router = useRouter();
+
+    const synchronizeAuthState = (accessToken: string, userObj: User | null) => {
+        setAccessToken(accessToken);
+        setUser(userObj);
+        setCurrentAccessToken(accessToken);
+        setUserRoleHint(userObj?.role_name ?? (userObj as { role?: string } | undefined)?.role ?? null);
+        runtimeAuthSnapshot.user = userObj;
+        runtimeAuthSnapshot.accessToken = accessToken;
+        runtimeAuthSnapshot.initialized = true;
+    };
 
     // Sincronizar token con backend.ts cada vez que cambie
     useEffect(() => {
@@ -65,20 +90,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         try {
             const data = await backendRefreshAccessToken();
-            
-            // Mapear role a role_name si es necesario
-            const userObj = data.user;
-            if (userObj && !userObj.role_name && (userObj as { role?: string }).role) {
-                userObj.role_name = (userObj as unknown as { role: 'admin' | 'user' | 'pro' }).role;
-            }
 
-            setAccessToken(data.accessToken);
-            setCurrentAccessToken(data.accessToken);
-            setUser(userObj);
-            setUserRoleHint(userObj?.role_name ?? (userObj as { role?: string } | undefined)?.role ?? null);
-            runtimeAuthSnapshot.user = userObj;
-            runtimeAuthSnapshot.accessToken = data.accessToken;
-            runtimeAuthSnapshot.initialized = true;
+            // Mapear role a role_name si es necesario
+            const normalizedUser = normalizeUserRole(data.user);
+            synchronizeAuthState(data.accessToken, normalizedUser);
             return data.accessToken;
         } catch {
             await logoutInternal();
@@ -99,40 +114,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Login
     const login = async (email: string, password: string, twoFactorCode?: string): Promise<User> => {
         const data = await backendLogin(email, password, twoFactorCode);
-        setAccessToken(data.accessToken);
-        
-        const userObj = data.user;
-        if (userObj && !userObj.role_name && (userObj as { role?: string }).role) {
-            userObj.role_name = (userObj as unknown as { role: 'admin' | 'user' | 'pro' }).role;
-        }
-        setUser(userObj);
+        const normalizedUser = normalizeUserRole(data.user);
 
-        // Actualizamos backend.ts para que las llamadas subsecuentes tengan auth
-        setCurrentAccessToken(data.accessToken);
-        setUserRoleHint(userObj?.role_name ?? (userObj as { role?: string } | undefined)?.role ?? null);
-        runtimeAuthSnapshot.user = userObj;
-        runtimeAuthSnapshot.accessToken = data.accessToken;
-        runtimeAuthSnapshot.initialized = true;
+        synchronizeAuthState(data.accessToken, normalizedUser);
         await storeRefreshToken();
-        return userObj;
+        return normalizedUser!;
     };
 
     // Register
     const register = async (username: string, email: string, password: string, confirmPassword: string) => {
         const data = await backendRegister(username, email, password, confirmPassword);
-        setAccessToken(data.accessToken);
+        const normalizedUser = normalizeUserRole(data.user);
 
-        const userObj = data.user;
-        if (userObj && !userObj.role_name && (userObj as { role?: string }).role) {
-            userObj.role_name = (userObj as unknown as { role: 'admin' | 'user' | 'pro' }).role;
-        }
-        setUser(userObj);
-
-        setCurrentAccessToken(data.accessToken);
-        setUserRoleHint(userObj?.role_name ?? (userObj as { role?: string } | undefined)?.role ?? null);
-        runtimeAuthSnapshot.user = userObj;
-        runtimeAuthSnapshot.accessToken = data.accessToken;
-        runtimeAuthSnapshot.initialized = true;
+        synchronizeAuthState(data.accessToken, normalizedUser);
         await storeRefreshToken();
     };
 
@@ -159,7 +153,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             console.error('Logout error:', error);
         } finally {
             await logoutInternal();
-            router.push('/auth/login');
+            if (typeof window !== 'undefined') {
+                window.location.assign('/auth/login');
+            }
         }
     };
 

@@ -15,7 +15,8 @@ Plan-refactor.md
 
 # testing
 /coverage
-
+/scripts
+/reports
 # next.js
 /.next/
 /out/

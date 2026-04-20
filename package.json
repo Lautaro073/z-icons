@@ -7,7 +7,14 @@
     "build": "next build",
     "start": "next start",
     "check": "npm run lint && npm run build",
-    "lint": "eslint"
+    "lint": "eslint",
+    "scoutqa:run": "bash ./scripts/scoutqa.sh",
+    "scoutqa:report": "bash ./scripts/scoutqa-report.sh",
+    "scoutqa:run:wsl": "wsl.exe -d Ubuntu -- bash -lc \"cd '/mnt/c/Users/El Yisus Pai/Desktop/.worktrees/z-icons' && bash ./scripts/scoutqa.sh\"",
+    "scoutqa:report:wsl": "wsl.exe -d Ubuntu -- bash -lc \"cd '/mnt/c/Users/El Yisus Pai/Desktop/.worktrees/z-icons' && bash ./scripts/scoutqa-report.sh\"",
+    "scoutqa:admin": "bash ./scripts/admin-scoutqa.sh",
+    "scoutqa:admin:report": "bash ./scripts/admin-scoutqa-report.sh",
+    "scoutqa:admin:report:wsl": "wsl.exe -d Ubuntu -- bash -lc \"cd '/mnt/c/Users/El Yisus Pai/Desktop/.worktrees/z-icons' && bash ./scripts/admin-scoutqa-report.sh\""
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "file:./vendor/@fortawesome/fontawesome-svg-core",
@@ -48,6 +55,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.59.1",
+    "@scoutqa/cli": "0.10.4-alpha.1",
     "@swc/helpers": "^0.5.19",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/js-cookie": "^3.0.6",
