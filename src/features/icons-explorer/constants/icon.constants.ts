@@ -37,6 +37,9 @@ export const IconCategoriesInfo: Record<IconSet, IconView> = {
   },
 };
 
+export const getIconSetInfo = (icon: IconSet) => IconCategoriesInfo[icon]
+export const getIconSetsByCategory = (category: IconCategory) => IconCategories[category]
+
 export const LayerModes: Record<Uppercase<Layer>, Layer> = {
   COMPACT: "compact",
   EXPANDED: "expanded",

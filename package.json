@@ -7,14 +7,7 @@
     "build": "next build",
     "start": "next start",
     "check": "npm run lint && npm run build",
-    "lint": "eslint",
-    "scoutqa:run": "bash ./scripts/scoutqa.sh",
-    "scoutqa:report": "bash ./scripts/scoutqa-report.sh",
-    "scoutqa:run:wsl": "wsl.exe -d Ubuntu -- bash -lc \"cd '/mnt/c/Users/El Yisus Pai/Desktop/.worktrees/z-icons' && bash ./scripts/scoutqa.sh\"",
-    "scoutqa:report:wsl": "wsl.exe -d Ubuntu -- bash -lc \"cd '/mnt/c/Users/El Yisus Pai/Desktop/.worktrees/z-icons' && bash ./scripts/scoutqa-report.sh\"",
-    "scoutqa:admin": "bash ./scripts/admin-scoutqa.sh",
-    "scoutqa:admin:report": "bash ./scripts/admin-scoutqa-report.sh",
-    "scoutqa:admin:report:wsl": "wsl.exe -d Ubuntu -- bash -lc \"cd '/mnt/c/Users/El Yisus Pai/Desktop/.worktrees/z-icons' && bash ./scripts/admin-scoutqa-report.sh\""
+    "lint": "eslint"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "file:./vendor/@fortawesome/fontawesome-svg-core",

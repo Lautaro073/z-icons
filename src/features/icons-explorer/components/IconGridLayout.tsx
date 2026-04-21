@@ -10,7 +10,6 @@ interface IconGridLayoutProps {
     data: IconGroup[]
     activeIcon: IconTypeInfo | null
     activeIconId: string
-    showDetail: boolean
     onShowDetail: (icon: IconTypeInfo) => void
     onClose: () => void
 }
@@ -19,7 +18,6 @@ export const IconGridLayout = ({
     data,
     activeIcon,
     activeIconId,
-    showDetail,
     onShowDetail,
     onClose,
 }: IconGridLayoutProps) => (
@@ -27,7 +25,7 @@ export const IconGridLayout = ({
         <IconGridHighlightStyles activeIconId={activeIconId} />
 
         <div className="min-h-96 min-w-0 flex-1 overflow-hidden rounded-[1.6rem] border border-surface-border bg-background/58 p-3 sm:p-4">
-            <IconGridList iconsData={data} onShowDetail={onShowDetail} showDetail={showDetail} />
+            <IconGridList iconsData={data} onShowDetail={onShowDetail} />
         </div>
 
         {activeIcon && (

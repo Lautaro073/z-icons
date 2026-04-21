@@ -1,1 +1,1 @@
-export * from "./icon.constants"
+export { IconSets, IconCategories, LayerModes, getIconContentData, getIconsSVG, getIconSetInfo, getIconSetsByCategory } from "./icon.constants"

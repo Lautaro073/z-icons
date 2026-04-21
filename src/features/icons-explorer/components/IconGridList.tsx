@@ -3,19 +3,14 @@
 import { useIconGrid, IconGroup } from "@/features/icons-explorer"
 import { IconTypeInfo } from "@/types"
 import { IconGridListContent } from "./IconGridListContent"
-import { IconGridSkeleton } from "./IconGridSkeleton"
 
 interface IconGridListProps {
   iconsData: IconGroup[]
-  showDetail: boolean
   onShowDetail: (arg: IconTypeInfo) => void
 }
 
-const IconGridListComponent = ({ iconsData, onShowDetail, showDetail }: IconGridListProps) => {
+const IconGridListComponent = ({ iconsData, onShowDetail }: IconGridListProps) => {
   const {
-    parentRef,
-    columns,
-    loading,
     showAll,
     setShowAll,
     isCompact,
@@ -25,17 +20,12 @@ const IconGridListComponent = ({ iconsData, onShowDetail, showDetail }: IconGrid
     handleCopyIcon,
     handleCopyReact,
     handleCopyHtml,
-  } = useIconGrid(iconsData, showDetail)
-
-  if (loading) {
-    return <IconGridSkeleton count={Math.max(15, icons.length || 15)} isCompact={isCompact} />
-  }
+  } = useIconGrid(iconsData)
 
   return (
-    <div ref={parentRef} className="relative h-full overflow-y-auto pr-1">
+    <div className="relative h-full overflow-y-auto pr-1">
       <IconGridListContent
         icons={icons}
-        columns={columns}
         itemWidth={itemWidth}
         isCompact={isCompact}
         hasMore={hasMore}

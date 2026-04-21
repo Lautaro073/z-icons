@@ -8,14 +8,13 @@ interface IconGridProps {
 }
 
 const IconGrid = ({ data }: IconGridProps) => {
-  const { activeIcon, showDetail, handleShowDetail, handleCloseDetail, activeIconId } = useActiveIcon();
+  const { activeIcon, handleShowDetail, handleCloseDetail, activeIconId } = useActiveIcon();
 
   return (
     <IconGridLayout
       data={data}
       activeIcon={activeIcon}
       activeIconId={activeIconId}
-      showDetail={showDetail}
       onShowDetail={handleShowDetail}
       onClose={handleCloseDetail}
     />

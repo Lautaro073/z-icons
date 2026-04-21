@@ -6,7 +6,6 @@ import { IconGridShowAllButton } from "./IconGridShowAllButton"
 
 interface IconGridListContentProps {
     icons: IconTypeInfo[]
-    columns: number
     itemWidth: number
     isCompact: boolean
     hasMore: boolean
@@ -20,7 +19,6 @@ interface IconGridListContentProps {
 
 export const IconGridListContent = ({
     icons,
-    columns,
     itemWidth,
     isCompact,
     hasMore,
@@ -34,7 +32,6 @@ export const IconGridListContent = ({
     <>
         <IconGridListBody
             icons={icons}
-            columns={columns}
             itemWidth={itemWidth}
             isCompact={isCompact}
             onShowDetail={onShowDetail}

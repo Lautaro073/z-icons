@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl"
 import {
-  IconCategoriesInfo,
+  getIconSetInfo,
   IconSets,
   getCategoryForIcon,
   getCategoryTone,
@@ -18,7 +18,7 @@ const TypesIcons = () => {
   return (
     <div className="grid w-full gap-2.5">
       {IconSets.map((icon) => {
-        const currentIcon = IconCategoriesInfo[icon]
+        const currentIcon = getIconSetInfo(icon)
         const category = getCategoryForIcon(icon)
         const premium = isPremiumIcon(icon)
         const active = iconSet === icon

@@ -5,7 +5,6 @@ import { IconTileCard } from "./IconTileCard"
 
 interface IconGridListBodyProps {
     icons: IconTypeInfo[]
-    columns: number
     itemWidth: number
     isCompact: boolean
     onShowDetail: (icon: IconTypeInfo) => void
@@ -16,7 +15,6 @@ interface IconGridListBodyProps {
 
 export const IconGridListBody = ({
     icons,
-    columns,
     itemWidth,
     isCompact,
     onShowDetail,
@@ -25,8 +23,8 @@ export const IconGridListBody = ({
     onCopyHtml,
 }: IconGridListBodyProps) => (
     <div
-        className="grid justify-center gap-3"
-        style={{ gridTemplateColumns: `repeat(${columns}, ${itemWidth}px)` }}
+        className="grid gap-3"
+        style={{ gridTemplateColumns: `repeat(auto-fit, minmax(${itemWidth}px, ${itemWidth}px))` }}
     >
         {icons.map((icon, idx) => {
             const id = `${icon.type}:${icon.name}:${icon.variant}:${idx}`
