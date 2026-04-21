@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
 import { ZIcon } from "@zcorvus/z-icons/react";
-import { getUserToken } from "@/lib/api/backend";
-import { useAuth } from "@/contexts/AuthContext";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "@/i18n/navigation";
+import { getUserToken } from "@/lib/api/backend";
 import { cn } from "@/lib/utils";
 
 const MAX_TOKEN_ATTEMPTS = 3;
@@ -54,7 +54,7 @@ export default function SuccessPage() {
               toast.success(t("success.tokenGenerated"));
               return;
             }
-          } catch {}
+          } catch { }
 
           if (attempts < MAX_TOKEN_ATTEMPTS) {
             await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -125,7 +125,7 @@ export default function SuccessPage() {
         <ZIcon type="mina" name="arrow-left" className="size-5 text-muted-foreground" />
       </Button>
 
-      <section className="ui-surface-panel-muted rounded-[2rem] p-6 sm:p-8 lg:p-10">
+      <section className="ui-surface-panel-muted rounded-4xl p-6 sm:p-8 lg:p-10">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.8fr)] lg:items-end">
           <div className="max-w-3xl space-y-4">
             <span className="inline-flex rounded-full bg-emerald-500/12 px-3 py-1 text-xs uppercase tracking-[0.28em] text-emerald-700 dark:text-emerald-300">
@@ -179,7 +179,7 @@ export default function SuccessPage() {
 
       {isProvisioning ? (
         <section className="grid gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(300px,0.95fr)]">
-          <div className="ui-surface-panel rounded-[2rem] p-6 sm:p-8">
+          <div className="ui-surface-panel rounded-4xl p-6 sm:p-8">
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center gap-2" aria-hidden>
                 <span className="size-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "0ms" }} />
@@ -194,7 +194,7 @@ export default function SuccessPage() {
 
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               {checkpoints.map((item, index) => (
-                <div key={item} className="ui-surface-panel rounded-[1.5rem] bg-background/72 p-4">
+                <div key={item} className="ui-surface-panel rounded-3xl bg-background/72 p-4">
                   <p className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
                     {String(index + 1).padStart(2, "0")}
                   </p>
@@ -204,7 +204,7 @@ export default function SuccessPage() {
             </div>
           </div>
 
-          <aside className="ui-surface-panel rounded-[2rem] p-6 sm:p-8">
+          <aside className="ui-surface-panel rounded-4xl p-6 sm:p-8">
             <p className="ui-section-header">{t("success.setupCardTitle")}</p>
             <p className="mt-4 text-sm leading-7 text-muted-foreground">
               {t("success.generatingMessage")}
@@ -213,7 +213,7 @@ export default function SuccessPage() {
         </section>
       ) : hasToken ? (
         <section className="grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
-          <div className="ui-surface-panel rounded-[2rem] border-emerald-500/22 p-6 sm:p-8">
+          <div className="ui-surface-panel rounded-4xl border-emerald-500/22 p-6 sm:p-8">
             <div className="flex flex-col gap-4 border-b border-border/60 pb-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="ui-section-header">{t("success.statusReady")}</p>
@@ -241,7 +241,7 @@ export default function SuccessPage() {
           </div>
 
           <div className="flex flex-col gap-5">
-            <aside className="ui-surface-panel rounded-[2rem] p-6 sm:p-8">
+            <aside className="ui-surface-panel rounded-4xl p-6 sm:p-8">
               <p className="ui-section-header">{t("success.setupCardTitle")}</p>
               <ol className="mt-5 space-y-4 text-sm leading-7 text-muted-foreground">
                 <li>
@@ -250,21 +250,21 @@ export default function SuccessPage() {
                 <li>
                   <strong className="text-foreground">{t("success.option2")}</strong>
                   <pre className="ui-code-block mt-3 overflow-x-auto p-4 font-mono text-xs text-foreground">
-{`@zcorvus:registry=https://registry.npmjs.org/
+                    {`@zcorvus:registry=https://registry.npmjs.org/
 //registry.npmjs.org/:_authToken=${npmToken}`}
                   </pre>
                 </li>
                 <li>
                   <strong className="text-foreground">{t("success.installPackage")}</strong>
                   <pre className="ui-code-block mt-3 overflow-x-auto p-4 font-mono text-xs text-foreground">
-{`npm install @zcorvus/z-icons-premium
+                    {`npm install @zcorvus/z-icons-premium
 pnpm add @zcorvus/z-icons-premium`}
                   </pre>
                 </li>
               </ol>
             </aside>
 
-            <aside className="ui-surface-panel-muted rounded-[2rem] p-6 sm:p-8">
+            <aside className="ui-surface-panel-muted rounded-4xl p-6 sm:p-8">
               <p className="ui-section-header">{t("success.quickAccessTitle")}</p>
               <p className="mt-4 text-sm leading-7 text-muted-foreground">
                 {t("success.fullAccessMessage")}
@@ -281,7 +281,7 @@ pnpm add @zcorvus/z-icons-premium`}
         </section>
       ) : (
         <section className="grid gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(300px,0.95fr)]">
-          <div className="ui-surface-panel rounded-[2rem] border-amber-500/22 p-6 sm:p-8">
+          <div className="ui-surface-panel rounded-4xl border-amber-500/22 p-6 sm:p-8">
             <div className="inline-flex size-16 items-center justify-center rounded-full bg-amber-500/12 text-amber-600 dark:text-amber-300">
               <ZIcon type="mina" name="info" className="size-8" />
             </div>
@@ -302,7 +302,7 @@ pnpm add @zcorvus/z-icons-premium`}
             </div>
           </div>
 
-          <aside className="ui-surface-panel rounded-[2rem] p-6 sm:p-8">
+          <aside className="ui-surface-panel rounded-4xl p-6 sm:p-8">
             <p className="ui-section-header">{t("success.setupCardTitle")}</p>
             <p className="mt-4 text-sm leading-7 text-muted-foreground">
               {t("success.contactSupport")}
