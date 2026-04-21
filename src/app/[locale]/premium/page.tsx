@@ -9,38 +9,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/hooks/useLocale";
 import { useRouter } from "@/i18n/navigation";
 import { createCheckoutSession } from "@/lib/api/backend";
-import { PremiumPlanCard, type PremiumPlan } from "./PremiumPlanCard";
+import { PremiumPlanCard } from "./PremiumPlanCard";
+import { plans } from "./premiumPlans";
 
 type PlanType = "pro" | "enterprise";
-
-const plans: PremiumPlan[] = [
-  {
-    id: "pro",
-    price: "$29.99",
-    badge: "plans.pro.badge",
-    summary: "plans.pro.summary",
-    features: [
-      "plans.pro.features.icons",
-      "plans.pro.features.npm",
-      "plans.pro.features.updates",
-      "plans.pro.features.support",
-    ],
-    featured: false,
-  },
-  {
-    id: "enterprise",
-    price: "$49.99",
-    badge: "plans.enterprise.badge",
-    summary: "plans.enterprise.summary",
-    features: [
-      "plans.enterprise.features.everything",
-      "plans.enterprise.features.priority",
-      "plans.enterprise.features.custom",
-      "plans.enterprise.features.team",
-    ],
-    featured: true,
-  },
-];
 
 export default function PremiumPage() {
   const t = useTranslations("premium");
