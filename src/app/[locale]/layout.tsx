@@ -1,12 +1,12 @@
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "@/i18n/server";
-import { ViewTransition } from "react";
 import Script from "next/script";
-import { Toaster } from "@/components/ui/sonner";
+import { NextIntlClientProvider } from "next-intl";
+import { ViewTransition } from "react";
 import { AppearanceSync } from "@/components/controllers/AppearanceSync";
-import { UIStoreProvider } from "@/store/ui/ui.provider";
+import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { getMessages } from "@/i18n/server";
 import { getServerPreferences } from "@/lib/server/preferences";
+import { UIStoreProvider } from "@/store/ui/ui.provider";
 import type { Theme } from "@/types";
 
 interface LocaleLayoutProps {
