@@ -21,6 +21,8 @@ skills-lock.json
 
 # production
 /build
+/scripts
+/reports
 
 # misc
 .DS_Store
