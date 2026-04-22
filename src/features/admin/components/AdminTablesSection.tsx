@@ -1,15 +1,16 @@
 "use client";
 
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { useAdminTables } from "@/features/admin/index";
 import type {
   AdminPreferenceColumnKey,
   AdminPlanType,
-  AdminUser,
-  AdminSubscription,
+  GetAdminUsersParams,
 } from "@/lib/api/backend";
-import { AdminTablesView } from "./AdminTablesView";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { useAdminTables } from "@/features/admin/index";
 import { ConfirmActionModal, EditUserModal } from "./AdminTablesModals";
+import { AdminTablesView } from "./AdminTablesView";
+
+type UserColumnKey = AdminPreferenceColumnKey;
 
 interface AdminTablesSectionProps {
   usersParams: GetAdminUsersParams;
@@ -19,8 +20,6 @@ interface AdminTablesSectionProps {
   visibleColumns: Record<UserColumnKey, boolean>;
   onToggleColumnVisibility: (key: UserColumnKey) => void;
 }
-
-type UserColumnKey = AdminPreferenceColumnKey;
 
 const defaultVisibleColumns: Record<UserColumnKey, boolean> = {
   username: true,
