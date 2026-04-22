@@ -5,14 +5,11 @@ import { useAdminTables } from "@/features/admin/index";
 import type {
   AdminPreferenceColumnKey,
   AdminPlanType,
-  GetAdminUsersParams,
+  AdminUser,
+  AdminSubscription,
 } from "@/lib/api/backend";
-import { AdminTableColumnsControl } from "./AdminTableColumnsControl";
-import { AdminTableHeader } from "./AdminTableHeader";
-import { AdminTablePagination } from "./AdminTablePagination";
-import { AdminTableRow } from "./AdminTableRow";
+import { AdminTablesView } from "./AdminTablesView";
 import { ConfirmActionModal, EditUserModal } from "./AdminTablesModals";
-import { AdminTablesPlaceholder } from "./AdminTablesPlaceholder";
 
 interface AdminTablesSectionProps {
   usersParams: GetAdminUsersParams;
@@ -82,77 +79,34 @@ export function AdminTablesSection({
 
   return (
     <TooltipProvider>
-      <section className="grid gap-4 overflow-x-clip">
-        <article className="ui-surface-panel flex min-h-120 min-w-0 flex-col rounded-[1.85rem] p-4 sm:p-5">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div />
-
-            {!isLoading && !isError && !isEmpty && (
-              <AdminTableColumnsControl
-                columnOptions={columnOptions}
-                visibleColumns={visibleColumns}
-                visibleColumnCount={visibleColumnCount}
-                onToggleColumnVisibility={onToggleColumnVisibility}
-                admin={admin}
-              />
-            )}
-          </div>
-
-          <div className="mt-4 min-h-120 min-w-0">
-            {isLoading && (
-              <AdminTablesPlaceholder type="loading" isPlanFilterEnabled={isPlanFilterEnabled} admin={admin} />
-            )}
-
-            {isError && (
-              <AdminTablesPlaceholder type="error" isPlanFilterEnabled={isPlanFilterEnabled} admin={admin} />
-            )}
-
-            {isEmpty && (
-              <AdminTablesPlaceholder type="empty" isPlanFilterEnabled={isPlanFilterEnabled} admin={admin} />
-            )}
-
-            {!isLoading && !isError && !isEmpty && (
-              <div className="overflow-x-auto overscroll-x-contain">
-                <table className="w-full min-w-304 text-left text-sm md:min-w-6xl">
-                  <AdminTableHeader columnOptions={columnOptions} visibleColumns={visibleColumns} admin={admin} />
-                  <tbody>
-                    {filteredUsers.map((item) => (
-                      <AdminTableRow
-                        key={item.id}
-                        item={item}
-                        currentUserId={currentUser?.id}
-                        subscriptionByEmail={subscriptionByEmail}
-                        planByEmail={planByEmail}
-                        visibleColumns={visibleColumns}
-                        admin={admin}
-                        common={common}
-                        formatDate={formatDate}
-                        openEditModal={openEditModal}
-                        setPendingAction={setPendingAction}
-                        reEnableMutation={reEnableMutation}
-                        disableMutation={disableMutation}
-                        deleteMutation={deleteMutation}
-                        updateMutationIsPending={updateMutation.isPending}
-                        editingUser={editingUser}
-                        pendingAction={pendingAction}
-                        isDisabledAccountsView={isDisabledAccountsView}
-                      />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-
-          {usersPagination && (
-            <AdminTablePagination
-              usersPagination={usersPagination}
-              common={common}
-              onUsersPageChange={onUsersPageChange}
-            />
-          )}
-        </article>
-      </section>
+      <AdminTablesView
+        admin={admin}
+        common={common}
+        currentUserId={currentUser?.id ?? undefined}
+        filteredUsers={filteredUsers}
+        subscriptionByEmail={subscriptionByEmail}
+        planByEmail={planByEmail}
+        usersPagination={usersPagination ?? null}
+        isLoading={isLoading}
+        isError={isError}
+        isPlanFilterEnabled={isPlanFilterEnabled}
+        isDisabledAccountsView={isDisabledAccountsView}
+        isEmpty={isEmpty}
+        formatDate={formatDate}
+        columnOptions={columnOptions}
+        visibleColumnCount={visibleColumnCount}
+        visibleColumns={visibleColumns}
+        onToggleColumnVisibility={onToggleColumnVisibility}
+        openEditModal={openEditModal}
+        setPendingAction={setPendingAction}
+        reEnableMutation={reEnableMutation}
+        disableMutation={disableMutation}
+        deleteMutation={deleteMutation}
+        updateMutationIsPending={updateMutation.isPending}
+        editingUser={editingUser}
+        pendingAction={pendingAction}
+        onUsersPageChange={onUsersPageChange}
+      />
 
       <EditUserModal
         open={Boolean(editingUser)}

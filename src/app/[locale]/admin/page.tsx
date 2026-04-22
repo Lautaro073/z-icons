@@ -1,602 +1,96 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import { ZIcon } from "@zcorvus/z-icons/react";
-import { usePathname, useRouter } from "@/i18n/navigation";
-import { Link } from "@/i18n/navigation";
-import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import type { DateRange } from "react-day-picker";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
-  defaultVisibleColumns,
-  type UserColumnKey,
-  AdminAppearanceControls,
-  KPICards,
-  MetricsCharts,
-  setSearchParam,
-  parseUsersParamsFromSearch,
-  parseMetricsParamsFromSearch,
-  useAdminPreferences,
-  useAdminMetrics,
-} from "@/features/admin";
-import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { useLocale } from "@/hooks/useLocale";
-import { useAuth } from "@/contexts/AuthContext";
+  AdminDashboardHero,
+  AdminUserFilters,
+  AdminMetricsSection,
+  useAdminDashboardPage,
+} from "@/features/admin/index";
 
 const AdminTablesSection = dynamic(
-  () => import("@/features/admin/components/AdminTablesSection").then((module) => module.AdminTablesSection),
+  () => import("@/features/admin/index").then((module) => module.AdminTablesSection),
   { ssr: false }
 );
-
-const metricGranularityOptions = ["day", "month", "year", "custom"] as const;
-const selectClassName =
-  "ui-focus-ring ui-field-base h-11 rounded-[1.15rem] px-4 text-sm transition-[border-color,background-color,box-shadow] duration-[160ms] ease-[var(--ease-out)]";
-
-function PlaceholderBlock({ className }: { className?: string }) {
-  return <div className={`rounded-[1rem] bg-muted/70 ${className ?? ""}`} />;
-}
-
-function parseIsoToDate(rawIso?: string): Date | undefined {
-  if (!rawIso) {
-    return undefined;
-  }
-
-  const date = new Date(rawIso);
-  if (Number.isNaN(date.getTime())) {
-    return undefined;
-  }
-
-  return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
-}
-
-function toUtcRangeStart(date: Date): string {
-  return new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0)
-  ).toISOString();
-}
-
-function toUtcRangeEnd(date: Date): string {
-  return new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999)
-  ).toISOString();
-}
-
-function parseInputDateValue(rawValue: string): Date | undefined {
-  if (!rawValue) {
-    return undefined;
-  }
-
-  const [yearPart, monthPart, dayPart] = rawValue.split("-").map(Number);
-  if (!yearPart || !monthPart || !dayPart) {
-    return undefined;
-  }
-
-  const parsedDate = new Date(yearPart, monthPart - 1, dayPart);
-  if (Number.isNaN(parsedDate.getTime())) {
-    return undefined;
-  }
-
-  return parsedDate;
-}
-
-function toInputDateValue(date?: Date): string {
-  if (!date) {
-    return "";
-  }
-
-  const year = String(date.getFullYear());
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function startOfLocalDay(date: Date = new Date()): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-}
-
-function clampDateToMax(date: Date, maxDate: Date): Date {
-  return date > maxDate ? maxDate : date;
-}
-
-function normalizeRangeWithMax(range: DateRange | undefined, maxDate: Date): DateRange | undefined {
-  if (!range?.from) {
-    return undefined;
-  }
-
-  const fromDate = clampDateToMax(range.from, maxDate);
-  const toDate = clampDateToMax(range.to ?? range.from, maxDate);
-
-  if (fromDate <= toDate) {
-    return { from: fromDate, to: toDate };
-  }
-
-  return { from: toDate, to: fromDate };
-}
 
 export default function AdminDashboardPage() {
   const admin = useTranslations("admin");
   const common = useTranslations("common");
-  const router = useRouter();
-  const { currentLocale } = useLocale();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const { isLoading: authLoading, isAuthenticated, user } = useAuth();
 
-  const usersParams = useMemo(() => parseUsersParamsFromSearch(searchParams), [searchParams]);
-  const metricsParams = useMemo(() => parseMetricsParamsFromSearch(searchParams), [searchParams]);
-  const selectedPlanType = useMemo(() => {
-    const rawPlanType = searchParams.get("planType");
-    return rawPlanType === "pro" || rawPlanType === "enterprise"
-      ? (rawPlanType as "pro" | "enterprise")
-      : undefined;
-  }, [searchParams]);
-
-  const [isRangePopoverOpen, setIsRangePopoverOpen] = useState(false);
-  const [customRangeDraft, setCustomRangeDraft] = useState<DateRange | undefined>(undefined);
-  const [optimisticVisibleColumns, setOptimisticVisibleColumns] = useState<Record<UserColumnKey, boolean> | null>(null);
-  const [searchInputValue, setSearchInputValue] = useState(usersParams.search ?? "");
-  const debouncedSearchInput = useDebouncedValue(searchInputValue, 200);
-  const maxSelectableDate = useMemo(() => startOfLocalDay(), []);
-  const maxSelectableDateInput = useMemo(
-    () => toInputDateValue(maxSelectableDate),
-    [maxSelectableDate]
-  );
-  const canLoadAdminData = !authLoading && isAuthenticated && user?.role_name === "admin";
-  const preferencesQuery = useAdminPreferences({ enabled: canLoadAdminData });
-
-  const persistedVisibleColumns = useMemo<Record<UserColumnKey, boolean>>(() => {
-    const incomingVisibility = preferencesQuery.data?.data.columnVisibility;
-    if (!incomingVisibility) {
-      return defaultVisibleColumns;
-    }
-
-    const allowedKeys = Object.keys(defaultVisibleColumns) as UserColumnKey[];
-    const normalized = allowedKeys.reduce<Record<UserColumnKey, boolean>>((acc, key) => {
-      acc[key] = incomingVisibility[key] ?? defaultVisibleColumns[key];
-      return acc;
-    }, { ...defaultVisibleColumns });
-
-    if (!Object.values(normalized).some(Boolean)) {
-      return defaultVisibleColumns;
-    }
-
-    return normalized;
-  }, [preferencesQuery.data]);
-
-  const visibleColumns = optimisticVisibleColumns ?? persistedVisibleColumns;
-
-  const customRangeValue = useMemo<DateRange | undefined>(() => {
-    if (metricsParams.granularity !== "custom") {
-      return undefined;
-    }
-
-    const from = parseIsoToDate(metricsParams.from);
-    if (!from) {
-      return undefined;
-    }
-
-    return {
-      from,
-      to: parseIsoToDate(metricsParams.to) ?? from,
-    };
-  }, [metricsParams.from, metricsParams.granularity, metricsParams.to]);
-
-  const activeRangeForLabel = isRangePopoverOpen
-    ? customRangeDraft ?? customRangeValue
-    : customRangeValue;
-
-  const customRangeLabel = useMemo(() => {
-    const fallbackLabel = `${admin("filters.from")} - ${admin("filters.to")}`;
-    if (!activeRangeForLabel?.from) {
-      return fallbackLabel;
-    }
-
-    const formatter = new Intl.DateTimeFormat(currentLocale, {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-
-    const fromLabel = formatter.format(activeRangeForLabel.from);
-    const toLabel = formatter.format(activeRangeForLabel.to ?? activeRangeForLabel.from);
-    return `${fromLabel} - ${toLabel}`;
-  }, [activeRangeForLabel, admin, currentLocale]);
-
-  useEffect(() => {
-    if (authLoading) {
-      return;
-    }
-
-    if (!isAuthenticated) {
-      router.replace("/auth/login?session=expired");
-      return;
-    }
-
-    if (user?.role_name && user.role_name !== "admin") {
-      router.replace("/icons");
-    }
-  }, [authLoading, isAuthenticated, router, user?.role_name]);
-
-  const metricsQuery = useAdminMetrics(metricsParams, { enabled: canLoadAdminData });
-
-  const updateUrl = useCallback(
-    (
-      updater: (params: URLSearchParams) => void,
-      options?: { history?: "push" | "replace" }
-    ) => {
-      const next = new URLSearchParams(searchParams.toString());
-      updater(next);
-
-      const localizedPathname =
-        pathname === `/${currentLocale}` || pathname.startsWith(`/${currentLocale}/`)
-          ? pathname
-          : `/${currentLocale}${pathname === "/" ? "" : pathname}`;
-      const queryString = next.toString();
-      const nextUrl = queryString ? `${localizedPathname}?${queryString}` : localizedPathname;
-
-      if (options?.history === "push") {
-        window.history.pushState(null, "", nextUrl);
-      } else {
-        window.history.replaceState(null, "", nextUrl);
-      }
-    },
-    [currentLocale, pathname, searchParams]
-  );
-
-  const onGranularityChange = (granularity: string) => {
-    updateUrl((params) => {
-      setSearchParam(params, "granularity", granularity);
-      if (granularity === "custom") {
-        const hasFrom = Boolean(params.get("from"));
-        const hasTo = Boolean(params.get("to"));
-        if (!hasFrom || !hasTo) {
-          const today = new Date();
-          setSearchParam(params, "from", toUtcRangeStart(today));
-          setSearchParam(params, "to", toUtcRangeEnd(today));
-        }
-      } else {
-        params.delete("from");
-        params.delete("to");
-      }
-    });
-  };
-
-  const onCustomRangeChange = (range: DateRange | undefined) => {
-    setCustomRangeDraft(normalizeRangeWithMax(range, maxSelectableDate));
-  };
-
-  const onCustomRangeInputChange = (field: "from" | "to", rawValue: string) => {
-    const parsedDate = parseInputDateValue(rawValue);
-    const normalizedDate = parsedDate
-      ? clampDateToMax(parsedDate, maxSelectableDate)
-      : undefined;
-
-    setCustomRangeDraft((currentDraft) => {
-      const baseRange = currentDraft ?? customRangeValue;
-      const baseFrom = baseRange?.from;
-      const baseTo = baseRange?.to ?? baseRange?.from;
-
-      if (field === "from") {
-        if (!normalizedDate) {
-          return baseTo ? { from: baseTo, to: baseTo } : undefined;
-        }
-
-        if (!baseTo) {
-          return { from: normalizedDate, to: normalizedDate };
-        }
-
-        if (normalizedDate <= baseTo) {
-          return { from: normalizedDate, to: baseTo };
-        }
-
-        return { from: normalizedDate, to: normalizedDate };
-      }
-
-      if (!normalizedDate) {
-        return baseFrom ? { from: baseFrom, to: baseFrom } : undefined;
-      }
-
-      if (!baseFrom) {
-        return { from: normalizedDate, to: normalizedDate };
-      }
-
-      if (normalizedDate >= baseFrom) {
-        return { from: baseFrom, to: normalizedDate };
-      }
-
-      return { from: normalizedDate, to: baseFrom };
-    });
-  };
-
-  const onRangePopoverOpenChange = useCallback((open: boolean) => {
-    setIsRangePopoverOpen(open);
-
-    if (open) {
-      setCustomRangeDraft(normalizeRangeWithMax(customRangeValue, maxSelectableDate));
-      return;
-    }
-
-    setCustomRangeDraft(normalizeRangeWithMax(customRangeValue, maxSelectableDate));
-  }, [customRangeValue, maxSelectableDate]);
-
-  const cancelCustomRangeDraft = useCallback(() => {
-    setCustomRangeDraft(normalizeRangeWithMax(customRangeValue, maxSelectableDate));
-    setIsRangePopoverOpen(false);
-  }, [customRangeValue, maxSelectableDate]);
-
-  const applyCustomRangeDraft = useCallback(() => {
-    const normalizedDraft = normalizeRangeWithMax(customRangeDraft, maxSelectableDate);
-
-    if (metricsParams.granularity !== "custom" || !normalizedDraft?.from) {
-      setIsRangePopoverOpen(false);
-      return;
-    }
-
-    const nextFrom = toUtcRangeStart(normalizedDraft.from);
-    const nextTo = toUtcRangeEnd(normalizedDraft.to ?? normalizedDraft.from);
-
-    if (metricsParams.from === nextFrom && metricsParams.to === nextTo) {
-      setIsRangePopoverOpen(false);
-      return;
-    }
-
-    updateUrl((params) => {
-      setSearchParam(params, "from", nextFrom);
-      setSearchParam(params, "to", nextTo);
-    });
-
-    setIsRangePopoverOpen(false);
-  }, [customRangeDraft, maxSelectableDate, metricsParams.from, metricsParams.granularity, metricsParams.to, updateUrl]);
-
-  const applySearch = useCallback((value: string) => {
-    const trimmedValue = value.trim();
-    const nextSearch = trimmedValue || undefined;
-
-    if ((usersParams.search ?? undefined) === nextSearch) {
-      return;
-    }
-
-    updateUrl((params) => {
-      setSearchParam(params, "search", nextSearch);
-      setSearchParam(params, "usersPage", 1);
-    });
-  }, [updateUrl, usersParams.search]);
-
-  useEffect(() => {
-    applySearch(debouncedSearchInput);
-  }, [applySearch, debouncedSearchInput]);
-
-  const onToggleColumnVisibility = useCallback((key: UserColumnKey) => {
-    if (!canLoadAdminData) {
-      return;
-    }
-
-    const currentVisibleCount = Object.values(visibleColumns).filter(Boolean).length;
-    if (visibleColumns[key] && currentVisibleCount === 1) {
-      return;
-    }
-
-    const next = {
-      ...visibleColumns,
-      [key]: !visibleColumns[key],
-    };
-
-    setOptimisticVisibleColumns(next);
-    void preferencesQuery
-      .savePreferences({
-        columnVisibility: {
-          [key]: next[key],
-        },
-      })
-      .catch(() => {
-        setOptimisticVisibleColumns(null);
-      });
-  }, [canLoadAdminData, preferencesQuery, visibleColumns]);
-
-  const kpiCards = [
-    { key: "registrations", value: metricsQuery.data?.data.kpis.registrations ?? null },
-    { key: "salesCount", value: metricsQuery.data?.data.kpis.salesCount ?? null },
-    { key: "revenue", value: metricsQuery.data?.data.kpis.grossRevenue ?? null },
-  ];
+  const {
+    usersParams,
+    metricsParams,
+    selectedPlanType,
+    isRangePopoverOpen,
+    customRangeDraft,
+    searchInputValue,
+    setSearchInputValue,
+    maxSelectableDate,
+    maxSelectableDateInput,
+    canLoadAdminData,
+    visibleColumns,
+    customRangeValue,
+    customRangeLabel,
+    metricsQuery,
+    onGranularityChange,
+    onCustomRangeChange,
+    onCustomRangeInputChange,
+    onRangePopoverOpenChange,
+    cancelCustomRangeDraft,
+    applyCustomRangeDraft,
+    onRoleChange,
+    onSubscriptionStatusChange,
+    onAccountStatusChange,
+    onPlanTypeChange,
+    onUsersPageChange,
+    onToggleColumnVisibility,
+    kpiCards,
+  } = useAdminDashboardPage();
 
   return (
     <div className="ui-page-shell py-2">
-      <section className="ui-surface-panel-muted rounded-[2rem] p-5 sm:p-6 lg:p-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="max-w-3xl">
-            <Link
-              href="/"
-              className="group inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground transition-colors duration-[160ms] ease-[var(--ease-out)] hover:text-foreground"
-            >
-              <ZIcon
-                type="mina"
-                name="arrow-left"
-                className="size-3.5 -translate-y-px text-muted-foreground transition-transform duration-[160ms] ease-[var(--ease-out)] group-hover:-translate-x-0.5 group-hover:text-foreground"
-              />
-              <span>{common("actions.goHome")}</span>
-            </Link>
-            <h1 className="mt-2 text-[clamp(2.3rem,4.8vw,3.6rem)] leading-[0.95] tracking-tight text-foreground">
-              {admin("title")}
-            </h1>
-            <p className="mt-4 max-w-3xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
-              {admin("description")}
-            </p>
-          </div>
-          <AdminAppearanceControls />
-        </div>
+      <AdminDashboardHero
+        admin={admin}
+        common={common}
+        kpiCards={kpiCards.map((metric) => ({
+          key: metric.key,
+          label: admin(`kpis.${metric.key}`),
+          value: metric.value,
+          isCurrency: metric.key === "revenue",
+        }))}
+      />
 
-        <KPICards
-          items={kpiCards.map((metric) => ({
-            key: metric.key,
-            label: admin(`kpis.${metric.key}`),
-            value: metric.value,
-            isCurrency: metric.key === "revenue",
-          }))}
-        />
-      </section>
+      <AdminMetricsSection
+        admin={admin}
+        common={common}
+        metricsParams={metricsParams}
+        isRangePopoverOpen={isRangePopoverOpen}
+        customRangeDraft={customRangeDraft}
+        customRangeValue={customRangeValue}
+        customRangeLabel={customRangeLabel}
+        maxSelectableDate={maxSelectableDate}
+        maxSelectableDateInput={maxSelectableDateInput}
+        onGranularityChange={onGranularityChange}
+        onRangePopoverOpenChange={onRangePopoverOpenChange}
+        onCustomRangeInputChange={onCustomRangeInputChange}
+        onCustomRangeChange={onCustomRangeChange}
+        cancelCustomRangeDraft={cancelCustomRangeDraft}
+        applyCustomRangeDraft={applyCustomRangeDraft}
+        metricsQuery={metricsQuery}
+      />
 
-      <section
-        className="ui-surface-panel rounded-[1.85rem] p-4 sm:p-5"
-        style={{ contentVisibility: "auto", containIntrinsicSize: "360px" }}
-      >
-        <div className="flex flex-col gap-4">
-          <div>
-            <p className="ui-section-header">{admin("kpis.salesCount")} / {admin("kpis.revenue")}</p>
-            <p className="mt-2 text-sm text-muted-foreground">{admin("chartDescription")}</p>
-          </div>
-
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            <select
-              value={metricsParams.granularity ?? "day"}
-              onChange={(event) => onGranularityChange(event.target.value)}
-              className={selectClassName}
-              aria-label={admin("filters.granularity")}
-            >
-              {metricGranularityOptions.map((option) => (
-                <option key={option} value={option}>{admin(`filters.${option}`)}</option>
-              ))}
-            </select>
-
-            {metricsParams.granularity === "custom" && (
-              <Popover open={isRangePopoverOpen} onOpenChange={onRangePopoverOpenChange}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="h-11 justify-start rounded-[1.15rem] text-left font-normal"
-                    aria-label={`${admin("filters.from")} - ${admin("filters.to")}`}
-                  >
-                    {customRangeLabel}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-fit p-0" align="start">
-                  <div className="grid gap-2 border-b border-border/40 p-3">
-                    <Input
-                      type="date"
-                      aria-label={admin("filters.from")}
-                      value={toInputDateValue((customRangeDraft ?? customRangeValue)?.from)}
-                      onChange={(event) => onCustomRangeInputChange("from", event.currentTarget.value)}
-                      max={maxSelectableDateInput}
-                      className="h-10 text-sm"
-                    />
-                    <Input
-                      type="date"
-                      aria-label={admin("filters.to")}
-                      value={toInputDateValue((customRangeDraft ?? customRangeValue)?.to ?? (customRangeDraft ?? customRangeValue)?.from)}
-                      onChange={(event) => onCustomRangeInputChange("to", event.currentTarget.value)}
-                      max={maxSelectableDateInput}
-                      className="h-10 text-sm"
-                    />
-                  </div>
-                  <div className="flex justify-center p-2">
-                    <Calendar
-                      mode="range"
-                      selected={customRangeDraft ?? customRangeValue}
-                      onSelect={onCustomRangeChange}
-                      numberOfMonths={1}
-                      disabled={{ after: maxSelectableDate }}
-                    />
-                  </div>
-
-                  <div className="flex justify-end gap-2 border-t border-border/40 p-3">
-                    <Button type="button" variant="ghost" size="sm" onClick={cancelCustomRangeDraft} className="rounded-full">
-                      {common("actions.cancel")}
-                    </Button>
-                    <Button type="button" size="sm" className="rounded-full" onClick={applyCustomRangeDraft}>
-                      {common("actions.apply")}
-                    </Button>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            )}
-          </div>
-        </div>
-
-        <div className="mt-5 min-h-[22rem] min-w-0 overflow-x-clip">
-          {metricsQuery.state === "loading" && <PlaceholderBlock className="h-72 w-full" />}
-          {metricsQuery.state === "error" && <p className="text-sm text-destructive">{admin("errors.loadMetrics")}</p>}
-          {metricsQuery.state === "empty" && <p className="text-sm text-muted-foreground">{admin("states.emptyMetrics")}</p>}
-
-          {metricsQuery.state === "success" && (
-            <MetricsCharts points={metricsQuery.data?.data.timeseries ?? []} />
-          )}
-        </div>
-      </section>
-
-      <section className="ui-surface-panel rounded-[1.85rem] p-4 sm:p-5">
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-          <Input
-            placeholder={admin("filters.search")}
-            value={searchInputValue}
-            onChange={(event) => setSearchInputValue(event.currentTarget.value)}
-          />
-
-          <select
-            value={usersParams.role ?? ""}
-            onChange={(event) => updateUrl((params) => {
-              setSearchParam(params, "role", event.target.value || undefined);
-              setSearchParam(params, "usersPage", 1);
-            })}
-            className={selectClassName}
-            aria-label={admin("filters.role")}
-          >
-            <option value="">{admin("filters.role")}</option>
-            <option value="admin">{admin("roles.admin")}</option>
-            <option value="user">{admin("roles.user")}</option>
-            <option value="pro">{admin("roles.pro")}</option>
-          </select>
-
-          <select
-            value={usersParams.subscriptionStatus ?? ""}
-            onChange={(event) => updateUrl((params) => {
-              setSearchParam(params, "subscriptionStatus", event.target.value || undefined);
-              setSearchParam(params, "usersPage", 1);
-            })}
-            className={selectClassName}
-            aria-label={admin("filters.subscriptionStatus")}
-          >
-            <option value="">{admin("filters.subscriptionStatus")}</option>
-            <option value="active">{admin("statuses.active")}</option>
-            <option value="expiring">{admin("statuses.expiring")}</option>
-            <option value="expired">{admin("statuses.expired")}</option>
-            <option value="none">{admin("statuses.none")}</option>
-          </select>
-
-          <select
-            value={usersParams.accountStatus ?? ""}
-            onChange={(event) => updateUrl((params) => {
-              setSearchParam(params, "accountStatus", event.target.value || undefined);
-              setSearchParam(params, "usersPage", 1);
-            })}
-            className={selectClassName}
-            aria-label={admin("filters.accountStatus")}
-          >
-            <option value="">{admin("filters.accountStatus")}</option>
-            <option value="active">{admin("accountStatuses.active")}</option>
-            <option value="disabled">{admin("accountStatuses.disabled")}</option>
-          </select>
-
-          <select
-            value={searchParams.get("planType") ?? ""}
-            onChange={(event) =>
-              updateUrl((params) => {
-                setSearchParam(params, "planType", event.target.value || undefined);
-                setSearchParam(params, "usersPage", 1);
-              })
-            }
-            className={selectClassName}
-            aria-label={admin("filters.planType")}
-          >
-            <option value="">{admin("filters.planType")}</option>
-            <option value="pro">PRO</option>
-            <option value="enterprise">ENTERPRISE</option>
-          </select>
-        </div>
-      </section>
+      <AdminUserFilters
+        admin={admin}
+        searchInputValue={searchInputValue}
+        onSearchChange={setSearchInputValue}
+        usersParams={usersParams}
+        planType={selectedPlanType}
+        onRoleChange={onRoleChange}
+        onSubscriptionStatusChange={onSubscriptionStatusChange}
+        onAccountStatusChange={onAccountStatusChange}
+        onPlanTypeChange={onPlanTypeChange}
+      />
 
       <div className="overflow-x-clip" style={{ containIntrinsicSize: "1200px" }}>
         <AdminTablesSection
@@ -605,12 +99,7 @@ export default function AdminDashboardPage() {
           enabled={canLoadAdminData}
           visibleColumns={visibleColumns}
           onToggleColumnVisibility={onToggleColumnVisibility}
-          onUsersPageChange={(page) =>
-            updateUrl(
-              (params) => setSearchParam(params, "usersPage", Math.max(1, page)),
-              { history: "push" }
-            )
-          }
+          onUsersPageChange={onUsersPageChange}
         />
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AdminSelect } from "./AdminSelect";
 import type { AdminUser } from "@/lib/api/backend";
 import type {
     ConfirmActionModalLabels,
@@ -43,7 +44,7 @@ export function EditUserModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4 py-6 backdrop-blur-sm">
-            <div className="ui-surface-panel w-full max-w-xl rounded-[2rem] p-5 sm:p-6">
+            <div className="ui-surface-panel w-full max-w-xl rounded-4xl p-5 sm:p-6">
                 <div className="flex items-start justify-between gap-4">
                     <div>
                         <p className="ui-section-header">{labels.title}</p>
@@ -82,16 +83,17 @@ export function EditUserModal({
                         <label className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
                             {labels.role}
                         </label>
-                        <select
+                        <AdminSelect
                             value={draft.role}
-                            onChange={(event) => onDraftChange({ ...draft, role: event.currentTarget.value as EditUserDraft["role"] })}
+                            onChange={(value) => onDraftChange({ ...draft, role: value as EditUserDraft["role"] })}
+                            ariaLabel={labels.role}
                             disabled={isPending}
-                            className="ui-focus-ring ui-field-base h-11 rounded-[1.15rem] px-4 text-sm transition-[border-color,background-color,box-shadow] duration-[160ms] ease-[var(--ease-out)]"
-                        >
-                            <option value="admin">admin</option>
-                            <option value="user">user</option>
-                            <option value="pro">pro</option>
-                        </select>
+                            options={[
+                                { value: "admin", label: "admin" },
+                                { value: "user", label: "user" },
+                                { value: "pro", label: "pro" },
+                            ]}
+                        />
                     </div>
                 </div>
 
@@ -123,7 +125,7 @@ export function ConfirmActionModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4 py-6 backdrop-blur-sm">
-            <div className="ui-surface-panel w-full max-w-lg rounded-[2rem] p-5 sm:p-6">
+            <div className="ui-surface-panel w-full max-w-lg rounded-4xl p-5 sm:p-6">
                 <p className="ui-section-header">{isDelete ? labels.deleteTitle : labels.disableTitle}</p>
                 <h3 className="mt-2 text-2xl font-medium tracking-tight text-foreground">{pendingAction.user.username}</h3>
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">
