@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { cookies } from "next/headers";
+import { FormDraftProvider } from "@/hooks/FormDraftContext";
+import { DEFAULT_LOCALE, LOCALES, type Locale } from "@/i18n/routing";
 import { ReactQueryProvider } from "@/lib/query/provider";
 import { getServerPreferences } from "@/lib/server/preferences";
-import { DEFAULT_LOCALE, LOCALES, type Locale } from "@/i18n/routing";
-import { FormDraftProvider } from "@/hooks/FormDraftContext";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "ZCorvus",
   description: "Icon library, premium access, and admin tools for ZCorvus.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 const geist = Geist({
