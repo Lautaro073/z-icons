@@ -57,10 +57,6 @@ export function AdminMetricsSection({
             style={{ contentVisibility: "auto", containIntrinsicSize: "360px" }}
         >
             <div className="flex flex-col gap-4">
-                <div>
-                    <p className="ui-section-header">{admin("kpis.salesCount")} / {admin("kpis.revenue")}</p>
-                    <p className="mt-2 text-sm text-muted-foreground">{admin("chartDescription")}</p>
-                </div>
 
                 <AdminMetricsFilters
                     admin={admin}
