@@ -1,7 +1,7 @@
 import { createStore, Mutate, StoreApi } from "zustand"
 import { devtools, subscribeWithSelector } from "zustand/middleware"
 import { immer } from "zustand/middleware/immer";
-import { UISlice } from "./view/view.types";
+import { UISlice } from "@/types";
 import { createUISlice } from "./view/view.slice";
 
 export type UIStoreState = UISlice;

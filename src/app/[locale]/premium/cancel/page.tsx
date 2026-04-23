@@ -1,9 +1,9 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
+import { ZIcon } from "@zcorvus/z-icons/react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { ZIcon } from "@zcorvus/z-icons/react";
+import { useRouter } from "@/i18n/navigation";
 
 export default function CancelPage() {
   const t = useTranslations("premium");
@@ -21,7 +21,7 @@ export default function CancelPage() {
         <ZIcon type="mina" name="arrow-left" className="size-5 text-muted-foreground" />
       </Button>
 
-      <section className="ui-surface-panel mx-auto w-full max-w-3xl rounded-[2rem] px-6 py-10 text-center sm:px-10 sm:py-12">
+      <section className="ui-surface-panel mx-auto w-full max-w-3xl rounded-4xl px-6 py-10 text-center sm:px-10 sm:py-12">
         <div className="inline-flex size-20 items-center justify-center rounded-full bg-amber-500/12 text-amber-600 dark:text-amber-300">
           <ZIcon type="mina" name="x" className="size-10" />
         </div>

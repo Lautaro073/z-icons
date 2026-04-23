@@ -24,7 +24,7 @@ function getNextLocale(currentLocale: string): Locale {
 
   const currentIndex = LOCALES.indexOf(normalizedCurrent)
   const nextIndex = currentIndex + 1 < LOCALES.length ? currentIndex + 1 : 0
-  return LOCALES[nextIndex]
+  return LOCALES[nextIndex] as Locale
 }
 
 export function AdminAppearanceControls() {

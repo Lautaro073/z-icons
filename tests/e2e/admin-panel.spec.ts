@@ -210,6 +210,7 @@ async function mockAdminApis(
     usersRequests?: string[];
     subscriptionsRequests?: string[];
     preferencesRequests?: string[];
+    actionsRequests?: string[];
     resolvePreferencesAccountKey?: () => string | undefined;
     usersTotalPages?: number;
     subscriptionsTotalPages?: number;
@@ -219,6 +220,72 @@ async function mockAdminApis(
 ): Promise<void> {
   const statusCode = options.statusCode ?? 200;
   const preferencesStateByAccount = new Map<string, MockPreferencesState>();
+  const usersStateById = new Map<
+    string,
+    {
+      id: string;
+      username: string;
+      email: string;
+      roles_id: number;
+      role_name: "admin" | "user" | "pro";
+      token_id: string;
+      token_finish_date: string | null;
+      subscriptionStatus: "active" | "expiring" | "expired" | "none";
+      accountStatus: "active" | "disabled";
+      disabled_at: string | null;
+      two_factor_enabled: boolean;
+      created_at: string;
+      updated_at: string;
+    }
+  >();
+  const deletedUserIds = new Set<string>();
+
+  const getUserState = (
+    userId: string,
+    page: number,
+    defaultAccountStatus: "active" | "disabled"
+  ) => {
+    if (deletedUserIds.has(userId)) {
+      return undefined;
+    }
+
+    const existing = usersStateById.get(userId);
+    if (existing) {
+      return existing;
+    }
+
+    const state = {
+      id: userId,
+      username: `admin-visible-${page}`,
+      email: `admin-visible-${page}@example.com`,
+      roles_id: 1,
+      role_name: "admin" as const,
+      token_id: `qa-token-${page}`,
+      token_finish_date: "2027-04-10T00:00:00.000Z",
+      subscriptionStatus: "active" as const,
+      accountStatus: defaultAccountStatus,
+      disabled_at: defaultAccountStatus === "disabled" ? new Date().toISOString() : null,
+      two_factor_enabled: false,
+      created_at: "2026-04-01T00:00:00.000Z",
+      updated_at: "2026-04-01T00:00:00.000Z",
+    };
+
+    usersStateById.set(userId, state);
+    return state;
+  };
+
+  const updateUserState = (userId: string, updater: (state: ReturnType<typeof getUserState>) => void) => {
+    const existing = usersStateById.get(userId);
+    if (existing) {
+      updater(existing);
+      existing.updated_at = new Date().toISOString();
+      return existing;
+    }
+
+    const state = getUserState(userId, 1, "active");
+    updater(state);
+    return state;
+  };
 
   const resolvePreferencesAccountKey = (request: import("@playwright/test").Request): string => {
     const authHeader = request.headers()["authorization"];
@@ -343,6 +410,7 @@ async function mockAdminApis(
   await page.route("**/api/admin/users**", async (route) => {
     const request = route.request();
     const requestUrl = new URL(request.url());
+    const pathname = requestUrl.pathname;
     options.usersRequests?.push(requestUrl.toString());
 
     const hasAuthorizationHeader = Boolean(request.headers()["authorization"]?.trim());
@@ -373,29 +441,94 @@ async function mockAdminApis(
     const pageParam = Number(requestUrl.searchParams.get("page") ?? "1");
     const pageSizeParam = Number(requestUrl.searchParams.get("pageSize") ?? "20");
     const usersTotalPages = Math.max(1, options.usersTotalPages ?? 1);
+    const defaultAccountStatus = (requestUrl.searchParams.get("accountStatus") === "disabled" ? "disabled" : "active") as "active" | "disabled";
+
+    if (request.method() === "PUT" && /\/api\/admin\/users\/[^/]+$/.test(pathname)) {
+      const body = request.postDataJSON() as { username?: string; email?: string; role?: string };
+      const userId = pathname.split("/").pop()!;
+      const user = updateUserState(userId, (state) => {
+        if (typeof body.username === "string") {
+          state.username = body.username;
+        }
+        if (typeof body.email === "string") {
+          state.email = body.email;
+        }
+        if (typeof body.role === "string") {
+          state.role_name = body.role as "admin" | "user" | "pro";
+        }
+      });
+      options.actionsRequests?.push(`${request.method()} ${requestUrl.toString()}`);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          data: user,
+        }),
+      });
+      return;
+    }
+
+    if (request.method() === "PATCH" && /\/api\/admin\/users\/[^/]+\/disable$/.test(pathname)) {
+      const userId = pathname.split("/").slice(-2, -1)[0];
+      const user = updateUserState(userId, (state) => {
+        state.accountStatus = "disabled";
+        state.disabled_at = new Date().toISOString();
+      });
+      options.actionsRequests?.push(`${request.method()} ${requestUrl.toString()}`);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          data: user,
+        }),
+      });
+      return;
+    }
+
+    if (request.method() === "PATCH" && /\/api\/admin\/users\/[^/]+\/re-enable$/.test(pathname)) {
+      const userId = pathname.split("/").slice(-2, -1)[0];
+      const user = updateUserState(userId, (state) => {
+        state.accountStatus = "active";
+        state.disabled_at = null;
+      });
+      options.actionsRequests?.push(`${request.method()} ${requestUrl.toString()}`);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          data: user,
+        }),
+      });
+      return;
+    }
+
+    if (request.method() === "DELETE" && /\/api\/admin\/users\/[^/]+\/permanent$/.test(pathname)) {
+      const userId = pathname.split("/").slice(-2, -1)[0];
+      usersStateById.delete(userId);
+      deletedUserIds.add(userId);
+      options.actionsRequests?.push(`${request.method()} ${requestUrl.toString()}`);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          data: null,
+        }),
+      });
+      return;
+    }
+
+    const rowState = getUserState(`qa-admin-row-${pageParam}`, pageParam, defaultAccountStatus);
 
     await route.fulfill({
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({
         success: true,
-        data: [
-          {
-            id: `qa-admin-row-${pageParam}`,
-            username: `admin-visible-${pageParam}`,
-            email: `admin-visible-${pageParam}@example.com`,
-            roles_id: 1,
-            role_name: "admin",
-            token_id: `qa-token-${pageParam}`,
-            token_finish_date: "2027-04-10T00:00:00.000Z",
-            subscriptionStatus: "active",
-            accountStatus: "active",
-            disabled_at: null,
-            two_factor_enabled: false,
-            created_at: "2026-04-01T00:00:00.000Z",
-            updated_at: "2026-04-01T00:00:00.000Z",
-          },
-        ],
+        data: rowState ? [rowState] : [],
         pagination: {
           page: pageParam,
           pageSize: pageSizeParam,
@@ -575,6 +708,16 @@ async function mockAdminApis(
       }),
     });
   });
+}
+
+function findAdminUserRow(page: import("@playwright/test").Page, username: string) {
+  return page.locator("tbody tr", { hasText: username }).first();
+}
+
+async function clickAdminAction(page: import("@playwright/test").Page, username: string, ariaLabel: string | RegExp) {
+  const row = findAdminUserRow(page, username);
+  await expect(row).toBeVisible();
+  await row.getByLabel(ariaLabel).click();
 }
 
 test.describe("Admin panel QA regression", () => {
@@ -774,6 +917,100 @@ test.describe("Admin panel QA regression", () => {
     await startDateToggle.check();
 
     await expect(page.getByRole("columnheader", { name: /inicio|start date/i })).toBeVisible();
+  });
+
+  test("admin can edit a user and submit changes", async ({ page, baseURL }) => {
+    const actionsRequests: string[] = [];
+
+    await clearRoleHintCookie(page, baseURL!);
+    await seedRefreshSession(page, baseURL!);
+    await seedRoleHintCookie(page, baseURL!, "admin");
+    await mockRefreshAuth(page, "admin");
+    await mockAdminApis(page, { actionsRequests });
+
+    await page.goto("/es/admin", { waitUntil: "domcontentloaded" });
+    await activateAdminDetails(page);
+
+    const userRow = findAdminUserRow(page, "admin-visible-1");
+    await expect(userRow).toBeVisible();
+    await userRow.getByLabel(/Actualizar admin-visible-1/i).click();
+
+    const editModal = page.locator(".ui-surface-panel", { hasText: "Editar usuario" });
+    await expect(editModal).toBeVisible();
+    await editModal.getByRole("textbox").first().fill("admin-visible-1-updated");
+    await editModal.getByRole("button", { name: "Actualizar" }).click();
+
+    await expect.poll(() => actionsRequests.some((value) => value.startsWith("PUT") && value.includes("/api/admin/users/qa-admin-row-1"))).toBeTruthy();
+    await expect(findAdminUserRow(page, "admin-visible-1-updated")).toBeVisible();
+  });
+
+  test("admin can disable a user with confirmation", async ({ page, baseURL }) => {
+    const actionsRequests: string[] = [];
+
+    await clearRoleHintCookie(page, baseURL!);
+    await seedRefreshSession(page, baseURL!);
+    await seedRoleHintCookie(page, baseURL!, "admin");
+    await mockRefreshAuth(page, "admin");
+    await mockAdminApis(page, { actionsRequests });
+
+    await page.goto("/es/admin", { waitUntil: "domcontentloaded" });
+    await activateAdminDetails(page);
+
+    const userRow = findAdminUserRow(page, "admin-visible-1");
+    await userRow.getByLabel("Deshabilitar usuario").click();
+    await expect(page.getByText("Deshabilitar cuenta")).toBeVisible();
+    await page.getByRole("button", { name: "Deshabilitar" }).last().click();
+
+    await expect(page.getByText("Usuario deshabilitado correctamente.")).toBeVisible();
+    await expect.poll(() => actionsRequests.some((value) => value.startsWith("PATCH") && value.includes("/disable"))).toBeTruthy();
+    await expect(findAdminUserRow(page, "admin-visible-1")).toHaveCount(0);
+  });
+
+  test("admin can re-enable a disabled user from disabled accounts view", async ({ page, baseURL }) => {
+    const actionsRequests: string[] = [];
+
+    await clearRoleHintCookie(page, baseURL!);
+    await seedRefreshSession(page, baseURL!);
+    await seedRoleHintCookie(page, baseURL!, "admin");
+    await mockRefreshAuth(page, "admin");
+    await mockAdminApis(page, { actionsRequests });
+
+    await page.goto("/es/admin?accountStatus=disabled", { waitUntil: "domcontentloaded" });
+    await activateAdminDetails(page);
+
+    const disabledRow = findAdminUserRow(page, "admin-visible-1");
+    await expect(disabledRow).toBeVisible();
+    await expect(disabledRow.getByText("Deshabilitada")).toBeVisible();
+
+    await disabledRow.getByLabel("Reactivar usuario").click();
+    await expect(page.getByText("Usuario reactivado correctamente.")).toBeVisible();
+    await expect.poll(() => actionsRequests.some((value) => value.startsWith("PATCH") && value.includes("/re-enable"))).toBeTruthy();
+    await expect(findAdminUserRow(page, "admin-visible-1")).toHaveCount(0);
+  });
+
+  test("admin can permanently delete a disabled user after confirmation", async ({ page, baseURL }) => {
+    const actionsRequests: string[] = [];
+
+    await clearRoleHintCookie(page, baseURL!);
+    await seedRefreshSession(page, baseURL!);
+    await seedRoleHintCookie(page, baseURL!, "admin");
+    await mockRefreshAuth(page, "admin");
+    await mockAdminApis(page, { actionsRequests });
+
+    await page.goto("/es/admin?accountStatus=disabled", { waitUntil: "domcontentloaded" });
+    await activateAdminDetails(page);
+
+    const disabledRow = findAdminUserRow(page, "admin-visible-1");
+    await expect(disabledRow).toBeVisible();
+    await disabledRow.getByLabel("Borrar definitivamente").click();
+
+    const confirmDeleteButton = page.getByRole("button", { name: "Borrar definitivamente" }).last();
+    await expect(confirmDeleteButton).toBeVisible();
+    await confirmDeleteButton.click();
+
+    await expect(page.getByText("Usuario borrado definitivamente.")).toBeVisible();
+    await expect.poll(() => actionsRequests.some((value) => value.startsWith("DELETE") && value.includes("/api/admin/users/qa-admin-row-1/permanent"))).toBeTruthy();
+    await expect(findAdminUserRow(page, "admin-visible-1")).toHaveCount(0);
   });
 
   test("admin table keeps selected columns after reload", async ({ page, baseURL }) => {

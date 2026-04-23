@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, usePathname } from "@/i18n/navigation";
-import { usePremiumAccess } from "@/hooks/usePremiumAccess";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePremiumAccess } from "@/hooks/usePremiumAccess";
+import { useRouter, usePathname } from "@/i18n/navigation";
 
 interface PremiumGuardProps {
   children: React.ReactNode;
@@ -39,30 +40,31 @@ export function PremiumGuard({
   if (isLoading) {
     return (
       <div className="grid gap-5">
-        <section className="ui-surface-panel-muted relative overflow-hidden rounded-[1.85rem] p-5 sm:p-6">
-          <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-foreground/18 to-transparent" />
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
-            <div className="space-y-4">
-              <div className="h-3 w-28 animate-pulse rounded-full bg-muted/70" />
-              <div className="h-12 w-full max-w-xl animate-pulse rounded-[1.25rem] bg-muted/70" />
-              <div className="h-5 w-full max-w-2xl animate-pulse rounded-full bg-muted/60" />
-              <div className="flex flex-wrap gap-3 pt-3">
-                <div className="h-11 w-36 animate-pulse rounded-full bg-muted/70" />
-                <div className="h-11 w-40 animate-pulse rounded-full bg-muted/55" />
-              </div>
+        <section className="ui-surface-panel-muted rounded-4xl px-4 py-5 sm:px-6 sm:py-6">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="space-y-3 max-w-full">
+              <Skeleton className="h-11 w-28 rounded-[1.25rem]" />
+              <Skeleton className="h-14 w-72 rounded-2xl" />
+              <Skeleton className="h-8 w-28 rounded-full" />
             </div>
-            <div className="ui-surface-panel grid gap-3 rounded-[1.5rem] p-4">
-              <div className="h-32 animate-pulse rounded-[1.2rem] bg-muted/65" />
-              <div className="h-14 animate-pulse rounded-[1rem] bg-muted/55" />
-              <div className="h-14 animate-pulse rounded-[1rem] bg-muted/55" />
+            <div className="w-full max-w-[720px] space-y-3">
+              <Skeleton className="h-12 w-full rounded-full" />
+              <div className="flex justify-end">
+                <Skeleton className="h-11 w-36 rounded-full" />
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <div key={index} className="ui-surface-panel h-32 animate-pulse rounded-[1.5rem] bg-card/70" />
-          ))}
+        <section className="ui-surface-panel min-h-144 rounded-4xl p-3 sm:p-4">
+          <div
+            className="grid gap-3"
+            style={{ gridTemplateColumns: "repeat(auto-fit, minmax(10rem, 1fr))" }}
+          >
+            {Array.from({ length: 12 }).map((_, index) => (
+              <Skeleton key={index} className="h-28 rounded-2xl" />
+            ))}
+          </div>
         </section>
       </div>
     );

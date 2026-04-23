@@ -1,13 +1,13 @@
 "use server";
 
-import { ZCorvusLogo } from "@/components/common/ZCorvusLogo";
-import { AnimatedIcon } from "@/components/common/AnimatedIcon";
-import { getTranslations } from "@/i18n/server";
-import { TypesIcons } from "@/features/icons-explorer";
-import { AppearanceSwitcher } from "@/components/controllers/AppearanceSwitcher";
-import { Link } from "@/i18n/navigation";
-import { UserProfileCard } from "@/features/user/components";
 import { MinaIconName, minaIconNames } from "@zcorvus/z-icons/icons";
+import { AnimatedIcon } from "@/components/common/AnimatedIcon";
+import { ZCorvusLogo } from "@/components/common/ZCorvusLogo";
+import { AppearanceSwitcher } from "@/components/controllers/AppearanceSwitcher";
+import { TypesIcons } from "@/features/icons-explorer";
+import { UserProfileCard } from "@/features/user/index";
+import { Link } from "@/i18n/navigation";
+import { getTranslations } from "@/i18n/server";
 
 export default async function Home() {
   const home = await getTranslations("home");

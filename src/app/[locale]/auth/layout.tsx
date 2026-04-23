@@ -1,9 +1,9 @@
 "use client"
 
+import { MinaIconName, minaIconNames } from "@zcorvus/z-icons/icons";
+import { AnimatedIcon } from "@/components/common/AnimatedIcon";
 import { ZCorvusLogo } from "@/components/common/ZCorvusLogo";
 import { AppearanceSwitcher } from "@/components/controllers/AppearanceSwitcher";
-import { AnimatedIcon } from "@/components/common/AnimatedIcon";
-import { MinaIconName, minaIconNames } from "@zcorvus/z-icons/icons";
 import { Link } from "@/i18n/navigation";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {

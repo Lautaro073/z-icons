@@ -1,11 +1,12 @@
-import { Store } from "../../types";
-import { IconSet, Layer, Theme } from "@/types/icons/icons.types";
+import { IconSet, Layer, Theme } from "@/types";
+import { Store } from "@/types/store";
 
 export interface InitialUIState {
   iconSet: IconSet;
   layer: Layer;
   theme: Theme;
 }
+
 export interface UIState extends InitialUIState {
   hasHydrated: boolean;
 }

@@ -1,5 +1,5 @@
 import { minaIconNames, neoIconNames, coreIconNames, AllIconNames } from '@zcorvus/z-icons/icons';
-import { IconCategory, IconContent, IconSet, IconView, Layer } from '@/types/icons/icons.types';
+import { IconCategory, IconContent, IconSet, IconView, Layer } from '@/types';
 
 export const IconSets: IconSet[] = ["neo", "core", "mina", "fa-solid", "fa-regular"];
 
@@ -36,6 +36,9 @@ export const IconCategoriesInfo: Record<IconSet, IconView> = {
     type: ["regular"],
   },
 };
+
+export const getIconSetInfo = (icon: IconSet) => IconCategoriesInfo[icon]
+export const getIconSetsByCategory = (category: IconCategory) => IconCategories[category]
 
 export const LayerModes: Record<Uppercase<Layer>, Layer> = {
   COMPACT: "compact",
@@ -81,9 +84,4 @@ export const getIconsSVG = async (type: IconSet) => {
   return null;
 };
 
-export interface IconGroup {
-  icons: Partial<AllIconNames>[] | undefined;
-  name: IconSet;
-  type: string[];
-}
 

@@ -1,10 +1,10 @@
+import { useTranslations } from "next-intl";
+import type { MouseEvent } from "react";
+import { getIconsSVG } from "@/features/icons-explorer";
 import { useCallback, useMemo, useState, useEffect } from "react";
 import { toast } from "sonner";
-import type { MouseEvent } from "react";
+import type { IconTypeInfo, IconSet } from "@/types";
 
-import { getIconsSVG } from "@/features/icons-explorer";
-import type { IconTypeInfo, IconSet } from "@/types/icons/icons.types";
-import { useTranslations } from "next-intl";
 
 export type IconExportState = "react" | "svg" | "html";
 
@@ -18,7 +18,7 @@ interface UseIconExportArgs {
 const useIconExport = ({ icon, state }: UseIconExportArgs) => {
   const isFontAwesome = icon.type === 'fa-solid' || icon.type === 'fa-regular';
   const common = useTranslations("common");
-  
+
   const [svgMarkup, setSvgMarkup] = useState<string>("");
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const useIconExport = ({ icon, state }: UseIconExportArgs) => {
     () => ({
       react: reactSnippet,
       svg: svgMarkup,
-      html: isFontAwesome 
+      html: isFontAwesome
         ? `<!DOCTYPE html>
 <html lang="es">
 <head>

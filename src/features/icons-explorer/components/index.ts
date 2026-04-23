@@ -1,4 +1,10 @@
 export { IconGrid } from "./IconGrid";
 export { IconGridList } from "./IconGridList";
 export { IconDetailPanel } from "./IconDetailPanel";
+export { IconCategorySection } from "./IconCategorySection";
+export { IconCategorySetCard } from "./IconCategorySetCard";
+export { IconLandingHero } from "./IconLandingHero";
+export { IconPageHeader } from "./IconPageHeader";
+export { IconPageFrame } from "./IconPageFrame";
+export { IconsLayoutDecoration } from "./IconsLayoutDecoration";
 export { TypesIcons } from "./TypesIcons";

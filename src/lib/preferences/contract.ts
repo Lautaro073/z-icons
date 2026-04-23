@@ -1,4 +1,4 @@
-import type { IconSet, Layer, Theme } from "@/types/icons/icons.types";
+import type { IconSet, Layer, Theme } from "@/types";
 
 export interface UserPreferences {
   theme: Theme;
