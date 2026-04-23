@@ -1,16 +1,15 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useLocale, useTranslations } from "next-intl"
-import { Link } from "@/i18n/navigation"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { cn } from "@/lib/utils"
 import { ZIcon } from "@zcorvus/z-icons/react"
-import { useRouter } from "@/i18n/navigation"
+import { useLocale, useTranslations } from "next-intl"
+import { Button } from "@/components/ui/button"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useAuth } from "@/contexts/AuthContext"
-import { getUserToken, type TokenIcons } from "@/lib/api/backend"
+import { Link, useRouter } from "@/i18n/navigation"
+import { cn } from "@/lib/utils"
+import { useUserToken } from "../hooks"
+import { UserProfileBadges } from "./UserProfileBadges"
 
 const UserProfileCard = () => {
   const { user, isLoading, logout } = useAuth()
@@ -18,29 +17,9 @@ const UserProfileCard = () => {
   const common = useTranslations("common")
   const locale = useLocale()
   const router = useRouter()
-  const [tokenData, setTokenData] = useState<TokenIcons | null>(null)
-
   const userRole = user?.role_name || "user"
-
-  useEffect(() => {
-    let mounted = true
-
-    if (userRole === "pro") {
-      getUserToken()
-        .then((result) => {
-          if (mounted) {
-            setTokenData(result)
-          }
-        })
-        .catch(() => undefined)
-    }
-
-    return () => {
-      mounted = false
-    }
-  }, [userRole])
-
-  const emailInitial = user?.email?.charAt(0)?.toUpperCase() || "?"
+  const tokenData = useUserToken(user?.id ?? null, userRole)
+  const emailInitial = user?.email?.charAt(0)?.toUpperCase() ?? "?"
 
   const handleSignOut = async () => {
     await logout()
@@ -78,7 +57,7 @@ const UserProfileCard = () => {
               <span className="inline-flex size-7 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-foreground">
                 {emailInitial}
               </span>
-              <p className="max-w-[min(44vw,14rem)] truncate text-xs sm:max-w-[12rem] sm:text-sm">
+              <p className="max-w-[min(44vw,14rem)] truncate text-xs sm:max-w-48 sm:text-sm">
                 {user.username}
               </p>
               <div className="size-2 rounded-full bg-emerald-500" />
@@ -96,23 +75,14 @@ const UserProfileCard = () => {
         <div className="grid gap-5">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="grid size-16 place-items-center rounded-[1.4rem] bg-accent text-xl font-semibold text-foreground shadow-[var(--shadow-soft)]">
+              <div className="grid size-16 place-items-center rounded-[1.4rem] bg-accent text-xl font-semibold text-foreground shadow-(--shadow-soft)">
                 {emailInitial}
               </div>
               <div className="space-y-1">
                 <p className="ui-section-header">{common("profile.name")}</p>
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="leading-tight text-foreground">{user?.username}</p>
-                  {userRole === "pro" && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/12 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-amber-700 dark:text-amber-300">
-                      PRO
-                    </span>
-                  )}
-                  {user?.two_factor_enabled && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/12 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-300">
-                      2FA
-                    </span>
-                  )}
+                  <UserProfileBadges userRole={userRole} twoFactorEnabled={user?.two_factor_enabled} />
                 </div>
               </div>
             </div>
@@ -125,7 +95,7 @@ const UserProfileCard = () => {
                         asChild
                         variant="ghost"
                         size="icon-sm"
-                        className="border border-border/60 bg-card/24 text-muted-foreground transition-[transform,background-color,border-color,color] duration-[160ms] ease-[var(--ease-out)] hover:border-border hover:bg-card/60 hover:text-foreground active:scale-[0.985]"
+                        className="border border-border/60 bg-card/24 text-muted-foreground transition-[transform,background-color,border-color,color] duration-160 ease-out hover:border-border hover:bg-card/60 hover:text-foreground active:scale-[0.985]"
                       >
                         <Link href="/admin" aria-label={common("actions.openAdmin")}>
                           <ZIcon type="mina" name="user-settings" className="size-4 text-current" />

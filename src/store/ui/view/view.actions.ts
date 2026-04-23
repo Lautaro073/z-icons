@@ -1,5 +1,6 @@
 import { LayerModes as LM } from "@/features/icons-explorer";
-import type { UIActions, UIState } from "./view.types";
+import type { IconSet } from "@/types";
+import type { UIActions, UIState } from "@/types";
 
 export const uiActions = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,7 +23,8 @@ export const uiActions = (
         if (currentIndex === -1) {
           state.iconSet = freeIconSets[0];
         } else {
-          state.iconSet = freeIconSets[(currentIndex + 1) % freeIconSets.length];
+          const nextIndex = (currentIndex + 1) % freeIconSets.length;
+          state.iconSet = freeIconSets[nextIndex] as IconSet;
         }
       }
     ),

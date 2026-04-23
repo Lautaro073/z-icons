@@ -13,6 +13,12 @@ export type IconTypeInfo =
   | { type: 'fa-solid', name: FontAwesomeIconName, variant: string }
   | { type: 'fa-regular', name: FontAwesomeIconName, variant: string };
 
+export interface IconGroup {
+  name: IconSet;
+  icons?: AllIconNames[];
+  type: IconView['type'];
+}
+
 export interface IconView {
   label: string;
   subLabel: string;

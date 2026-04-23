@@ -11,16 +11,20 @@
 !.yarn/releases
 !.yarn/versions
 skills-lock.json
+Plan-refactor.md
 
 # testing
 /coverage
-
+/scripts
+/reports
 # next.js
 /.next/
 /out/
 
 # production
 /build
+/scripts
+/reports
 
 # misc
 .DS_Store
