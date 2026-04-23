@@ -35,7 +35,7 @@ export const PremiumPlanCard = ({ plan, isLoading, onCheckout, t }: PremiumPlanC
                     : "bg-card/90"
             )}
         >
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="space-y-3">
                     <span className="inline-flex rounded-full bg-background/82 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.28em] text-muted-foreground">
                         {t(plan.badge)}
@@ -44,8 +44,8 @@ export const PremiumPlanCard = ({ plan, isLoading, onCheckout, t }: PremiumPlanC
                         <h2 className="text-3xl tracking-tight text-foreground sm:text-4xl">
                             {t(`plans.${plan.id}.name`)}
                         </h2>
-                        <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground">
-                            {plan.summary}
+                        <p className="mt-3 max-w-full text-sm leading-6 text-muted-foreground sm:max-w-md">
+                            {t(plan.summary)}
                         </p>
                     </div>
                 </div>
@@ -61,7 +61,7 @@ export const PremiumPlanCard = ({ plan, isLoading, onCheckout, t }: PremiumPlanC
                 </span>
             </div>
 
-            <div className="mt-8 flex items-end gap-3 border-b border-border/60 pb-6">
+            <div className="mt-8 flex flex-col items-start gap-2 border-b border-border/60 pb-6 sm:flex-row sm:items-end">
                 <span className="font-display text-5xl leading-none tracking-tight sm:text-6xl">{plan.price}</span>
                 <span className="pb-1 text-sm uppercase tracking-[0.28em] text-muted-foreground">
                     {t("plans.billing")}

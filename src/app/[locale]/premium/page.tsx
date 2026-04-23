@@ -56,14 +56,14 @@ export default function PremiumPage() {
             className="group h-auto justify-start rounded-none px-0 py-0 text-left transition-opacity duration-200 hover:bg-transparent hover:opacity-100"
             aria-label={t("backToIcons")}
           >
-            <div className="flex items-start gap-4 sm:gap-5">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-5">
               <ZIcon
                 type="mina"
                 name="arrow-left"
                 className="mt-3 size-5 shrink-0 text-muted-foreground transition-all duration-200 group-hover:-translate-x-0.5 group-hover:text-foreground"
               />
-              <div className="space-y-4">
-                <h1 className="ui-display-title text-foreground/92 transition-colors duration-200 group-hover:text-foreground text-4xl leading-[0.94] sm:text-5xl lg:text-6xl">
+              <div className="space-y-4 min-w-0">
+                <h1 className="ui-display-title text-foreground/92 transition-colors duration-200 group-hover:text-foreground text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-[0.94] whitespace-normal max-w-full">
                   {t("title")}
                 </h1>
                 <p className="ui-section-header transition-colors duration-200 group-hover:text-foreground/82">
@@ -78,7 +78,7 @@ export default function PremiumPage() {
         </div>
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-2">
+      <section className="grid gap-5 lg:grid-cols-2">
         {plans.map((plan) => {
           const isLoading = loadingPlan === plan.id;
 
