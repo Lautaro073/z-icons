@@ -5,9 +5,6 @@ import { IconGrid } from "@/features/icons-explorer";
 import type { IconGroup } from "@/types";
 import { IconPageHeader } from "./IconPageHeader";
 
-
-
-
 interface IconPageFrameProps {
   title: string;
   backHref: string;
@@ -46,7 +43,7 @@ export const IconPageFrame = ({
       layerButtonLabel={layerButtonLabel}
     />
 
-    <section className="ui-surface-panel min-h-144 rounded-4xl p-3 sm:p-4">
+    <section className="ui-surface-panel min-h-144 rounded-4xl p-3 sm:p-4 overflow-hidden overflow-y-auto">
       <IconGrid data={data} />
     </section>
   </div>
