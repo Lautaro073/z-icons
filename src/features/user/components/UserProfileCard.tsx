@@ -8,7 +8,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useAuth } from "@/contexts/AuthContext"
 import { Link, useRouter } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
-import { useUserToken } from "../hooks"
 import { UserProfileBadges } from "./UserProfileBadges"
 
 const UserProfileCard = () => {
@@ -18,7 +17,7 @@ const UserProfileCard = () => {
   const locale = useLocale()
   const router = useRouter()
   const userRole = user?.role_name || "user"
-  const tokenData = useUserToken(user?.id ?? null, userRole)
+  const tokenFinishDate = user?.token_finish_date
   const emailInitial = user?.email?.charAt(0)?.toUpperCase() ?? "?"
 
   const handleSignOut = async () => {
@@ -133,7 +132,7 @@ const UserProfileCard = () => {
               <p className="ui-section-header">{common("profile.role")}</p>
               <p className="text-sm leading-6 text-foreground capitalize">{common(`profile.roles.${userRole}`)}</p>
             </div>
-            {userRole === "pro" && tokenData?.finish_date && (
+            {userRole === "pro" && tokenFinishDate && (
               <div className="space-y-1">
                 <p className="ui-section-header">{common("profile.tokenExpires")}</p>
                 <p className="text-sm leading-6 text-foreground">
@@ -141,7 +140,7 @@ const UserProfileCard = () => {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
-                  }).format(new Date(tokenData.finish_date))}
+                  }).format(new Date(tokenFinishDate))}
                 </p>
               </div>
             )}

@@ -21,6 +21,7 @@ export interface User {
   roles_id: number;
   role_name: 'admin' | 'user' | 'pro';
   token_id: string | null;
+  token_finish_date?: string | null;
   settings_icons_id: string | null;
   two_factor_enabled: boolean;
   created_at: string;
