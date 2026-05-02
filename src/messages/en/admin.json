@@ -46,7 +46,7 @@
   },
   "table": {
     "users": {
-      "title": "Users",
+      "title": "Users report",
       "username": "Username",
       "email": "Email",
       "role": "Role",

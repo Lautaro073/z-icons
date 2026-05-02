@@ -72,7 +72,9 @@ export function AdminTablesView({
         <section className="grid gap-4 overflow-x-clip">
             <article className="ui-surface-panel flex min-h-120 min-w-0 flex-col rounded-[1.85rem] p-4 sm:p-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div />
+                    <div className="text-lg font-semibold text-foreground">
+                        {admin("table.users.title")}
+                    </div>
 
                     {!isLoading && !isError && !isEmpty && (
                         <AdminTableColumnsControl
