@@ -16,6 +16,7 @@
     "copy": "Copy",
     "download": "Download",
     "showAll": "Show all",
+    "pageOf": "Page {current} of {total}",
     "cancel": "Cancel",
     "apply": "Apply",
     "signOut": "Sign out",

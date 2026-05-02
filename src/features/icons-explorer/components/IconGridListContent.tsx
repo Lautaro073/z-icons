@@ -2,32 +2,34 @@
 
 import type { IconTypeInfo } from "@/types"
 import { IconGridListBody } from "./IconGridListBody"
-import { IconGridShowAllButton } from "./IconGridShowAllButton"
+import { IconGridPagination } from "./IconGridPagination"
 
 interface IconGridListContentProps {
     icons: IconTypeInfo[]
     itemWidth: number
     isCompact: boolean
-    hasMore: boolean
-    showAll: boolean
+    currentPage: number
+    totalPages: number
     onShowDetail: (icon: IconTypeInfo) => void
     onCopyIcon: (name: string) => void
     onCopyReact: (icon: IconTypeInfo) => void
     onCopyHtml: (icon: IconTypeInfo) => void
-    setShowAll: (value: boolean) => void
+    onPrevPage: () => void
+    onNextPage: () => void
 }
 
 export const IconGridListContent = ({
     icons,
     itemWidth,
     isCompact,
-    hasMore,
-    showAll,
+    currentPage,
+    totalPages,
     onShowDetail,
     onCopyIcon,
     onCopyReact,
     onCopyHtml,
-    setShowAll,
+    onPrevPage,
+    onNextPage,
 }: IconGridListContentProps) => (
     <>
         <IconGridListBody
@@ -40,6 +42,11 @@ export const IconGridListContent = ({
             onCopyHtml={onCopyHtml}
         />
 
-        <IconGridShowAllButton hasMore={hasMore} showAll={showAll} setShowAll={setShowAll} />
+        <IconGridPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPrevPage={onPrevPage}
+            onNextPage={onNextPage}
+        />
     </>
 )

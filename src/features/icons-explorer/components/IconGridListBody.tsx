@@ -23,7 +23,7 @@ export const IconGridListBody = ({
     onCopyHtml,
 }: IconGridListBodyProps) => (
     <div
-        className="grid gap-3"
+        className="grid justify-center gap-3"
         style={{ gridTemplateColumns: `repeat(auto-fit, minmax(${itemWidth}px, ${itemWidth}px))` }}
     >
         {icons.map((icon, idx) => {

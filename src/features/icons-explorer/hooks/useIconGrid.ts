@@ -1,17 +1,14 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { useMemo, useState } from "react"
 import type { IconGroup } from "@/features/icons-explorer"
-import { LayerModes } from "@/features/icons-explorer"
+import { LayerModes, ICONS_PER_PAGE, ICONS_PER_PAGE_COMPACT } from "@/features/icons-explorer"
 import { useUIStore } from "@/store"
 import { useExpandedIcons } from "./useExpandedIcons"
 import { useIconClipboard } from "./useIconClipboard"
-
-const MAX_ICONS = 500
+import { useIconPagination } from "./useIconPagination"
 
 export const useIconGrid = (iconsData: IconGroup[]) => {
-  const [showAll, setShowAll] = useState(false)
   const layer = useUIStore((s) => s.layer)
   const isCompact = layer === LayerModes.COMPACT
   const itemWidth = isCompact ? 56 : 120
@@ -20,21 +17,25 @@ export const useIconGrid = (iconsData: IconGroup[]) => {
   const expandedIcons = useExpandedIcons(iconsData)
   const { handleCopyIcon, handleCopyReact, handleCopyHtml } = useIconClipboard(common)
 
-  const icons = useMemo(
-    () => (showAll ? expandedIcons : expandedIcons.slice(0, MAX_ICONS)),
-    [expandedIcons, showAll]
-  )
-
-  const hasMore = expandedIcons.length > MAX_ICONS
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems: icons,
+    goToPage,
+    nextPage,
+    prevPage,
+  } = useIconPagination(expandedIcons, isCompact ? ICONS_PER_PAGE_COMPACT : ICONS_PER_PAGE)
 
   return {
-    showAll,
-    setShowAll,
     isCompact,
     itemWidth,
     icons,
-    hasMore,
-    totalItems: icons.length,
+    totalItems: expandedIcons.length,
+    currentPage,
+    totalPages,
+    goToPage,
+    nextPage,
+    prevPage,
     handleCopyIcon,
     handleCopyReact,
     handleCopyHtml,

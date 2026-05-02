@@ -1,4 +1,5 @@
 import { minaIconNames, neoIconNames, coreIconNames, AllIconNames } from '@zcorvus/z-icons/icons';
+import { minaIcons, coreIcons, neoIcons } from '@zcorvus/z-icons/icons';
 import { IconCategory, IconContent, IconSet, IconView, Layer } from '@/types';
 
 export const IconSets: IconSet[] = ["neo", "core", "mina", "fa-solid", "fa-regular"];
@@ -45,7 +46,19 @@ export const LayerModes: Record<Uppercase<Layer>, Layer> = {
   EXPANDED: "expanded",
 };
 
-import { minaIcons, coreIcons, neoIcons } from '@zcorvus/z-icons/icons';
+/**
+ * Número de iconos que se muestran por página en el grid (modo expandido).
+ * Cambiá este valor para ajustar la cantidad de iconos por página.
+ */
+export const ICONS_PER_PAGE = 40;
+
+/**
+ * Número de iconos que se muestran por página en el grid (modo compacto).
+ * Cambiá este valor para ajustar la cantidad de iconos por página en modo compacto.
+ */
+export const ICONS_PER_PAGE_COMPACT = 152;
+
+
 
 export const getIconContentData = async (): Promise<IconContent> => {
   // Las colecciones grandes se importan dinamicamente para no bloquear el bundle inicial

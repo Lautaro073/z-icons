@@ -16,6 +16,7 @@
     "copy": "Copiar",
     "download": "Descargar",
     "showAll": "Mostrar todos",
+    "pageOf": "Página {current} de {total}",
     "cancel": "Cancelar",
     "apply": "Aplicar",
     "signOut": "Cerrar sesión",

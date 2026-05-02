@@ -11,12 +11,13 @@ interface IconGridListProps {
 
 const IconGridListComponent = ({ iconsData, onShowDetail }: IconGridListProps) => {
   const {
-    showAll,
-    setShowAll,
     isCompact,
     itemWidth,
     icons,
-    hasMore,
+    currentPage,
+    totalPages,
+    prevPage,
+    nextPage,
     handleCopyIcon,
     handleCopyReact,
     handleCopyHtml,
@@ -28,13 +29,14 @@ const IconGridListComponent = ({ iconsData, onShowDetail }: IconGridListProps) =
         icons={icons}
         itemWidth={itemWidth}
         isCompact={isCompact}
-        hasMore={hasMore}
-        showAll={showAll}
-        setShowAll={setShowAll}
+        currentPage={currentPage}
+        totalPages={totalPages}
         onShowDetail={onShowDetail}
         onCopyIcon={handleCopyIcon}
         onCopyReact={handleCopyReact}
         onCopyHtml={handleCopyHtml}
+        onPrevPage={prevPage}
+        onNextPage={nextPage}
       />
     </div>
   )
