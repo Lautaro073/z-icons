@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { use } from "react";
+import { use, useEffect } from "react";
 import { PremiumGuard } from "@/components/guards/PremiumGuard";
-import { IconPageFrame, useIconTypePage } from "@/features/icons-explorer";
+import { IconPageFrame, useIconTypePage, clearIconContentCache } from "@/features/icons-explorer";
 import { useUIStore } from "@/store";
 import type { IconCategory, IconSet } from "@/types";
 
@@ -12,6 +12,10 @@ interface IconsTypeIdPageProps {
 }
 
 export default function IconsTypeIdPage({ params }: IconsTypeIdPageProps) {
+  useEffect(() => {
+    clearIconContentCache();
+  }, []);
+
   const common = useTranslations("common");
   const setLayerDynamic = useUIStore((e) => e.setLayerDynamic);
   const { type, id } = use(params);

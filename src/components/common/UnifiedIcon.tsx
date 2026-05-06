@@ -1,9 +1,10 @@
 "use client";
+
 import { ZIcon } from '@zcorvus/z-icons/react';
 import dynamic from 'next/dynamic';
+import { customIconsCache } from "@/features/icons-explorer";
 import { cn } from "@/lib/utils";
 import { IconTypeInfo } from '@/types';
-import { customIconsCache } from '@/features/icons-explorer/constants/icon.constants';
 
 const FASolidRenderer = dynamic(() => import('./FASolidRenderer'), { ssr: false });
 const FARegularRenderer = dynamic(() => import('./FARegularRenderer'), { ssr: false });
@@ -19,6 +20,7 @@ export const UnifiedIcon = ({ type, name, variant, className, size }: UnifiedIco
     const svgContent = customIconsCache[name as string] || "";
     return (
       <div
+        suppressHydrationWarning
         className={cn(className, "[&>svg]:w-full [&>svg]:h-full [&>svg]:text-current")}
         style={{ width: size || 24, height: size || 24 }}
         dangerouslySetInnerHTML={{ __html: svgContent }}

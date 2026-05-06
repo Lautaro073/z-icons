@@ -5,7 +5,7 @@ import { getCustomIcons } from '@/lib/api/backend';
 
 export let customIconsCache: Record<string, string> = {};
 
-export const IconSets: IconSet[] = ["neo", "core", "mina", "custom", "fa-solid", "fa-regular"];
+export const IconSets: IconSet[] = ["neo", "core", "custom","mina", "fa-solid", "fa-regular"];
 
 export const IconCategories: Record<IconCategory, IconSet[]> = {
   local: ["core", "neo", "custom"],
