@@ -7,6 +7,7 @@ import { ZCorvusLogo } from "@/components/common/ZCorvusLogo";
 import { AppearanceSwitcher } from "@/components/controllers/AppearanceSwitcher";
 import { TypesIcons } from "@/features/icons-explorer";
 import { UserProfileCard } from "@/features/user/index";
+import { AdminHeaderShortcuts } from "@/features/admin/components/AdminHeaderShortcuts";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "@/i18n/server";
 
@@ -60,6 +61,7 @@ export default async function Home() {
 
         <div className="flex min-w-0 items-center justify-end gap-2 sm:gap-3">
           <AppearanceSwitcher />
+          <AdminHeaderShortcuts />
           <UserProfileCard />
         </div>
       </header>

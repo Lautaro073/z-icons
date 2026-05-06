@@ -17,7 +17,7 @@ export function AppearanceSwitcher() {
   const validIconType = iconSet === "neo" || iconSet === "core" || iconSet === "mina" ? iconSet : "mina"
 
   return (
-    <div className="ui-glass inline-flex items-center gap-1 rounded-full p-1">
+    <div className="ui-glass fixed bottom-6 right-6 z-50 inline-flex items-center gap-1 rounded-full p-1 shadow-lg shadow-black/20">
       <Button
         variant="ghost"
         size="icon-sm"
@@ -36,6 +36,7 @@ export function AppearanceSwitcher() {
           />
         </Link>
       </Button>
+      {/* 
       <Button
         variant="ghost"
         size="icon-sm"
@@ -45,6 +46,7 @@ export function AppearanceSwitcher() {
       >
         <ZIcon name="anchor" type={validIconType} className="size-4" />
       </Button>
+      */}
     </div>
   )
 }

@@ -11,9 +11,9 @@ export const useIconClipboard = (translate: TranslationFn) => {
       if (!iconName) return
 
       navigator.clipboard.writeText(iconName)
-      toast.success(translate("toasts.iconNameCopied"), {
-        description: iconName,
-      })
+      // toast.success(translate("toasts.iconNameCopied"), {
+      //   description: iconName,
+      // })
     },
     [translate]
   )

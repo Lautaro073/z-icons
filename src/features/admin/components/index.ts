@@ -11,3 +11,4 @@ export { AdminCustomRangePicker } from "./AdminCustomRangePicker";
 export { AdminSelect } from "./AdminSelect";
 export { defaultVisibleColumns } from "./AdminTablesSection";
 export type { UserColumnKey } from "./AdminTablesSection";
+export { AdminHeaderShortcuts } from "./AdminHeaderShortcuts";

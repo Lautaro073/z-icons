@@ -1,12 +1,12 @@
 "use client";
 
 import { ZIcon } from "@zcorvus/z-icons/react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useTranslations } from "next-intl";
 
 interface InstallCommandBlockProps {
-  variant?: "terminal" | "badge" | "banner" | "dock";
+  variant?: "terminal" | "badge" | "banner" | "dock" | "fab";
 }
 
 export function InstallCommandBlock({ variant = "terminal" }: InstallCommandBlockProps) {
@@ -60,6 +60,21 @@ export function InstallCommandBlock({ variant = "terminal" }: InstallCommandBloc
           <ZIcon type="mina" name={copied ? "check" : "copy"} className="size-4" />
         </button>
       </div>
+    );
+  }
+
+  if (variant === "fab") {
+    return (
+      <button
+        onClick={handleCopy}
+        className="group fixed bottom-6 right-6 z-50 flex items-center justify-center gap-2 overflow-hidden rounded-full border border-border/50 bg-background/80 p-3 text-muted-foreground shadow-lg shadow-black/20 backdrop-blur-xl transition-all hover:bg-muted/40 hover:text-foreground active:scale-95"
+        aria-label="Copy installation command"
+      >
+        <span className="max-w-0 overflow-hidden whitespace-nowrap pl-1 font-mono text-sm tracking-tight transition-all duration-300 ease-out group-hover:max-w-[200px] group-hover:pr-2">
+          {command}
+        </span>
+        <ZIcon type="mina" name={copied ? "check" : "terminal"} className="size-5 transition-transform" />
+      </button>
     );
   }
 

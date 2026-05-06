@@ -4,7 +4,7 @@ import { ZIcon } from "@zcorvus/z-icons/react"
 import { useLocale, useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+//import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useAuth } from "@/contexts/AuthContext"
 import { Link, useRouter } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
@@ -85,8 +85,8 @@ const UserProfileCard = () => {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {userRole === "admin" && (
+             <div className="flex items-center gap-2">
+              {/* {userRole === "admin" && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -104,7 +104,7 @@ const UserProfileCard = () => {
                     <TooltipContent>{common("actions.openAdmin")}</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              )}
+              )} */}
               <Button
                 variant="ghost"
                 size="icon-sm"
@@ -114,7 +114,7 @@ const UserProfileCard = () => {
               >
                 <ZIcon type="mina" name="logout" className="size-4 text-destructive" />
               </Button>
-            </div>
+            </div> 
           </div>
 
           <div className="ui-divider" />
