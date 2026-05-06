@@ -20,7 +20,7 @@ export const UnifiedIcon = ({ type, name, variant, className, size }: UnifiedIco
     const svgContent = customIconsCache[name as string] || "";
     return (
       <div
-        className={cn(className, "[&>svg]:w-full [&>svg]:h-full [&>svg]:text-current [&>svg]:fill-current")}
+        className={cn(className, "[&>svg]:w-full [&>svg]:h-full [&>svg]:text-current")}
         style={{ width: size || 24, height: size || 24 }}
         dangerouslySetInnerHTML={{ __html: svgContent }}
       />
