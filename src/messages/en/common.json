@@ -30,7 +30,8 @@
     "htmlCodeCopied": "HTML code copied!",
     "codeSnippetCopied": "Code snippet copied!",
     "errorCopyIcon": "Could not copy icon name.",
-    "errorCopyCode": "Could not copy code snippet."
+    "errorCopyCode": "Failed to copy the installation command.",
+    "commandCopied": "Installation command copied!"
   },
   "icons": {
     "library": "Icon library",

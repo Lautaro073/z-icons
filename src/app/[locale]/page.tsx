@@ -2,6 +2,7 @@
 
 import { MinaIconName, minaIconNames } from "@zcorvus/z-icons/icons";
 import { AnimatedIcon } from "@/components/common/AnimatedIcon";
+import { InstallCommandBlock } from "@/components/common/InstallCommandBlock";
 import { ZCorvusLogo } from "@/components/common/ZCorvusLogo";
 import { AppearanceSwitcher } from "@/components/controllers/AppearanceSwitcher";
 import { TypesIcons } from "@/features/icons-explorer";
@@ -102,6 +103,9 @@ export default async function Home() {
                 <h2 className="home-hero-brand font-display text-[clamp(3rem,6vw,5.6rem)] leading-none tracking-tight text-foreground">
                   Z-ICONS
                 </h2>
+                <div className="mb-2 ml-2 hidden sm:block">
+                  <InstallCommandBlock variant="badge" />
+                </div>
                 <div className="ui-divider mb-1 hidden flex-1 lg:block" />
               </div>
               <div className="flex flex-wrap gap-2">

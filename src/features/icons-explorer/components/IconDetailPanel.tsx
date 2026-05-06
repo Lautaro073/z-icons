@@ -8,6 +8,7 @@ import { IconTypeInfo } from "@/types"
 import { IconDetailActions } from "./IconDetailActions"
 import { IconDetailExportTabs } from "./IconDetailExportTabs"
 import { IconDetailPreview } from "./IconDetailPreview"
+import { InstallCommandBlock } from "@/components/common/InstallCommandBlock"
 
 interface IconDetailPanelProps {
   icon: IconTypeInfo
@@ -60,6 +61,10 @@ const IconDetailPanel = ({ icon, onClose }: IconDetailPanelProps) => {
               <code className="block max-w-full select-all whitespace-pre-wrap wrap-anywhere">
                 {codeSnippet}
               </code>
+            </div>
+            
+            <div className="flex justify-end pt-1">
+              <InstallCommandBlock variant="badge" />
             </div>
           </div>
         </div>
