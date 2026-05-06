@@ -157,7 +157,7 @@ export function IconSheetForm({
                               dangerouslySetInnerHTML={{ __html: svgContent }} 
                             />
                             <div className="flex flex-col gap-0.5">
-                              <span className="text-xs font-semibold text-foreground">SVG Cargado</span>
+                              <span className="text-xs font-semibold text-foreground">{admin("form.svgLoaded")}</span>
                               <button
                                 type="button"
                                 onClick={() => setShowCode(!showCode)}
@@ -166,12 +166,12 @@ export function IconSheetForm({
                                 {showCode ? (
                                   <>
                                     <EyeOff className="size-3" />
-                                    Ocultar código
+                                    {admin("form.hideCode")}
                                   </>
                                 ) : (
                                   <>
                                     <Eye className="size-3" />
-                                    Ver código
+                                    {admin("form.showCode")}
                                   </>
                                 )}
                               </button>
@@ -239,7 +239,7 @@ export function IconSheetForm({
                               onClick={() => setPasteManually(true)}
                               className="text-xs text-muted-foreground hover:text-foreground self-center h-auto py-0"
                             >
-                              O pegar código SVG manualmente
+                              {admin("form.pasteManual")}
                             </Button>
                           </div>
                         ) : (
@@ -258,7 +258,7 @@ export function IconSheetForm({
                               onClick={() => setPasteManually(false)}
                               className="text-xs text-muted-foreground hover:text-foreground self-center h-auto py-0"
                             >
-                              Volver a subir archivo
+                              {admin("form.backToUpload")}
                             </Button>
                           </div>
                         )}

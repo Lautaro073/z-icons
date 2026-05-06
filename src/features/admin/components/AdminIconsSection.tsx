@@ -4,6 +4,7 @@ import { ZIcon } from "@zcorvus/z-icons/react";
 import { Loader2, PencilLine, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,10 +29,23 @@ import { AdminTablePagination } from "./AdminTablePagination";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useCustomIcons, type CustomIcon, type CustomIconPayload } from "@/features/admin/hooks/useCustomIcons";
 import { IconSheetForm } from "./IconSheetForm";
+import { useAdminUsers } from "@/features/admin/hooks/useAdminUsers";
+
 export function AdminIconsSection() {
   const admin = useTranslations("admin.customIcons");
   const common = useTranslations("common");
   const { icons, isLoading, isError, createIcon, updateIcon, deleteIcon } = useCustomIcons();
+  
+  const { data: usersData } = useAdminUsers({ pageSize: 100 });
+  const users = usersData?.data || [];
+
+  const getUserName = (icon: CustomIcon) => {
+    const userId = icon.created_by || icon.create_by;
+    if (!userId) return "Admin";
+    const match = users.find((u) => u.id === userId);
+    return match ? match.username : userId;
+  };
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
@@ -71,9 +85,14 @@ export function AdminIconsSection() {
     try {
       if (editingIcon) {
         await updateIcon({ id: editingIcon.id, payload: data });
+        toast.success(admin("toasts.updated"));
       } else {
         await createIcon(data);
+        toast.success(admin("toasts.created"));
       }
+      setIsSheetOpen(false);
+    } catch {
+      toast.error(admin("toasts.error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -84,7 +103,10 @@ export function AdminIconsSection() {
     setIsSubmitting(true);
     try {
       await deleteIcon(deleteId);
+      toast.success(admin("toasts.deleted"));
       setDeleteId(null);
+    } catch {
+      toast.error(admin("toasts.error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -127,6 +149,7 @@ export function AdminIconsSection() {
                   <TableHead className="h-10 text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-bold">{admin("columns.name")}</TableHead>
                   <TableHead className="w-16 h-10 text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-bold">{admin("columns.svg")}</TableHead>
                   <TableHead className="h-10 text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-bold">{admin("columns.category")}</TableHead>
+                  <TableHead className="h-10 text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-bold">{admin("columns.createdBy")}</TableHead>
                   <TableHead className="h-10 text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-bold">{admin("columns.createdAt")}</TableHead>
                   <TableHead className="h-10 text-right text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-bold">{admin("columns.actions")}</TableHead>
                 </TableRow>
@@ -158,6 +181,9 @@ export function AdminIconsSection() {
                         <span className="inline-flex rounded-full border border-border/60 bg-muted/30 px-2.5 py-1 text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-semibold">
                           {icon.category}
                         </span>
+                      </TableCell>
+                      <TableCell className="py-3 text-sm text-muted-foreground font-medium">
+                        {getUserName(icon)}
                       </TableCell>
                       <TableCell className="py-3 text-sm text-muted-foreground">{formatDate(icon.created_at)}</TableCell>
                       <TableCell className="py-3 text-right p-0">

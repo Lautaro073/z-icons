@@ -1301,6 +1301,8 @@ export interface CustomIcon {
   status: string;
   svg_content?: string;
   created_at: string;
+  created_by?: string;
+  create_by?: string;
 }
 
 export interface CustomIconPayload {
