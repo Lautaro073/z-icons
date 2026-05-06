@@ -1,6 +1,12 @@
 {
   "title": "Admin dashboard",
-  "description": "Monitor users, subscriptions, and business metrics in real time.",
+  "tabs": {
+    "users": "Users",
+    "stats": "Statistics"
+  },
+  "description": "Monitor users, plans, and account statuses in real time.",
+  "statsTitle": "Charts",
+  "statsDescription": "Track sales, revenue, and metric registrations over time.",
   "chartDescription": "Track sales, revenue, and registrations without leaving the admin panel.",
   "kpis": {
     "registrations": "Registrations",

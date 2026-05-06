@@ -82,23 +82,27 @@ export function AdminTableRowCells({
             {visibleColumns.tokenExpiry && (
                 <AdminTableCell className="text-muted-foreground">{formatDate(subscriptionFinishDate)}</AdminTableCell>
             )}
-            <AdminTableCell>
-                <AdminTableRowActions
-                    item={item}
-                    currentUserId={currentUserId}
-                    accountStatus={accountStatus}
-                    common={common}
-                    admin={admin}
-                    openEditModal={openEditModal}
-                    setPendingAction={setPendingAction}
-                    reEnableMutation={reEnableMutation}
-                    disableMutation={disableMutation}
-                    deleteMutation={deleteMutation}
-                    updateMutationIsPending={updateMutationIsPending}
-                    editingUser={editingUser}
-                    pendingAction={pendingAction}
-                    isDisabledAccountsView={isDisabledAccountsView}
-                />
+            <AdminTableCell className="sticky right-0 relative p-0">
+                <div className="absolute inset-0 -z-20 bg-background" />
+                <div className="absolute inset-0 -z-10 bg-surface transition-colors duration-150 group-hover:bg-muted/16" />
+                <div className="relative z-10 flex items-center justify-end px-3 py-3">
+                    <AdminTableRowActions
+                        item={item}
+                        currentUserId={currentUserId}
+                        accountStatus={accountStatus}
+                        common={common}
+                        admin={admin}
+                        openEditModal={openEditModal}
+                        setPendingAction={setPendingAction}
+                        reEnableMutation={reEnableMutation}
+                        disableMutation={disableMutation}
+                        deleteMutation={deleteMutation}
+                        updateMutationIsPending={updateMutationIsPending}
+                        editingUser={editingUser}
+                        pendingAction={pendingAction}
+                        isDisabledAccountsView={isDisabledAccountsView}
+                    />
+                </div>
             </AdminTableCell>
         </>
     );

@@ -1,6 +1,12 @@
 {
   "title": "Panel de administración",
-  "description": "Monitorea usuarios, suscripciones y métricas de negocio en tiempo real.",
+  "tabs": {
+    "users": "Usuarios",
+    "stats": "Estadísticas"
+  },
+  "description": "Monitorea usuarios, planes y estados de cuenta en tiempo real.",
+  "statsTitle": "Gráficas",
+  "statsDescription": "Seguimiento de ventas, ingresos y registros métricos a lo largo del tiempo.",
   "chartDescription": "Seguimiento de ventas, ingresos y registros sin salir del panel.",
   "kpis": {
     "registrations": "Registros",

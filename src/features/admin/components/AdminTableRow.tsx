@@ -47,7 +47,7 @@ export function AdminTableRow({
     isDisabledAccountsView,
 }: AdminTableRowProps) {
     return (
-        <tr className="border-b border-border/40 transition-colors duration-150 hover:bg-muted/16">
+        <tr className="group border-b border-border/40 transition-colors duration-150 hover:bg-muted/16">
             <AdminTableRowCells
                 item={item}
                 currentUserId={currentUserId}

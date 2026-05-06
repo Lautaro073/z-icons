@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DateRange } from "react-day-picker";
 import { useAuth } from "@/contexts/AuthContext";
+import type { AdminTab } from "@/features/admin/components/AdminDashboardTabs";
 import {
   defaultVisibleColumns,
   type UserColumnKey,
@@ -37,6 +38,11 @@ export function useAdminDashboardPage() {
     return rawPlanType === "pro" || rawPlanType === "enterprise"
       ? (rawPlanType as "pro" | "enterprise")
       : undefined;
+  }, [searchParams]);
+
+  const activeTab = useMemo<AdminTab>(() => {
+    const rawTab = searchParams.get("tab");
+    return rawTab === "stats" ? "stats" : "users";
   }, [searchParams]);
 
   const [isRangePopoverOpen, setIsRangePopoverOpen] = useState(false);
@@ -288,6 +294,15 @@ export function useAdminDashboardPage() {
     [updateUrl]
   );
 
+  const onTabChange = useCallback(
+    (tab: AdminTab) => {
+      updateUrl((params) => {
+        setSearchParam(params, "tab", tab === "users" ? undefined : tab);
+      });
+    },
+    [updateUrl]
+  );
+
   const onUsersPageChange = useCallback(
     (page: number) => {
       updateUrl(
@@ -346,6 +361,8 @@ export function useAdminDashboardPage() {
   ];
 
   return {
+    activeTab,
+    onTabChange,
     usersParams,
     metricsParams,
     selectedPlanType,

@@ -21,6 +21,8 @@ const ADMIN_SORT_BY_VALUES: ReadonlyArray<AdminSortBy> = ["id", "created_at", "u
 const ADMIN_SORT_DIR_VALUES: ReadonlyArray<AdminSortDir> = ["asc", "desc"];
 const ADMIN_GRANULARITIES = ["day", "month", "year", "custom"] as const;
 
+export const ADMIN_USERS_PAGE_SIZE = 6;
+
 function isAdminMetricsGranularity(value: string): value is AdminMetricsGranularity {
   return ADMIN_GRANULARITIES.includes(value as (typeof ADMIN_GRANULARITIES)[number]);
 }
@@ -55,7 +57,7 @@ export function parseUsersParamsFromSearch(searchParams: URLSearchParams): GetAd
 
   return {
     page: isNumberInRange(pageRaw, 1, 100000) ?? 1,
-    pageSize: isNumberInRange(pageSizeRaw, 1, 100) ?? 20,
+    pageSize: isNumberInRange(pageSizeRaw, 1, 100) ?? ADMIN_USERS_PAGE_SIZE,
     search: searchParams.get("search") || undefined,
     role: ADMIN_USER_ROLES.includes(roleRaw as AdminRole) ? (roleRaw as AdminRole) : undefined,
     subscriptionStatus: ADMIN_SUBSCRIPTION_STATUSES.includes(statusRaw as AdminSubscriptionStatus)

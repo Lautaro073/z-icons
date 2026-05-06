@@ -18,7 +18,11 @@ export function AdminTableHeader({ columnOptions, visibleColumns, admin }: Admin
                             </th>
                         )
                 )}
-                <th className="px-3 py-3 text-right">{admin("table.users.actions")}</th>
+                <th className="sticky right-0 relative px-3 py-3 text-right">
+                    <div className="absolute inset-0 -z-20 bg-background" />
+                    <div className="absolute inset-0 -z-10 bg-surface" />
+                    <span className="relative z-10">{admin("table.users.actions")}</span>
+                </th>
             </tr>
         </thead>
     );

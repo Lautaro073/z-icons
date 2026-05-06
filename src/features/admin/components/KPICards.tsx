@@ -35,7 +35,7 @@ export function KPICards({ items }: KPICardsProps) {
   );
 
   return (
-    <div className="mt-6 grid min-h-[7rem] gap-3 md:grid-cols-3">
+    <div className="grid min-h-[7rem] gap-3 md:grid-cols-3">
       {items.map((item) => (
         <article
           key={item.key}

@@ -1,3 +1,4 @@
+export { AdminDashboardTabs, type AdminTab } from "./AdminDashboardTabs";
 export { KPICards } from "./KPICards";
 export { MetricsCharts } from "./MetricsCharts";
 export { AdminTablesSection } from "./AdminTablesSection";
