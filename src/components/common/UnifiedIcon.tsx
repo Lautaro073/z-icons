@@ -1,9 +1,8 @@
 "use client";
-import { cn } from "@/lib/utils";
 import { ZIcon } from '@zcorvus/z-icons/react';
-import { IconTypeInfo } from '@/types';
 import dynamic from 'next/dynamic';
-
+import { cn } from "@/lib/utils";
+import { IconTypeInfo } from '@/types';
 import { customIconsCache } from '@/features/icons-explorer/constants/icon.constants';
 
 const FASolidRenderer = dynamic(() => import('./FASolidRenderer'), { ssr: false });
