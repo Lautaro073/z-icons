@@ -131,6 +131,7 @@
     "deleteConfirmTitle": "Are you sure?",
     "deleteConfirmDesc": "This action cannot be undone. This will permanently delete the icon.",
     "columns": {
+      "svg": "SVG",
       "name": "Name",
       "category": "Category",
       "status": "Status",

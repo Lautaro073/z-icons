@@ -131,6 +131,7 @@
     "deleteConfirmTitle": "¿Estás seguro?",
     "deleteConfirmDesc": "Esta acción no se puede deshacer. Esto eliminará permanentemente el ícono.",
     "columns": {
+      "svg": "SVG",
       "name": "Nombre",
       "category": "Categoría",
       "status": "Estado",

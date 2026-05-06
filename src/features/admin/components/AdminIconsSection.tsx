@@ -124,10 +124,9 @@ export function AdminIconsSection() {
             <Table>
               <TableHeader>
                 <TableRow className="border-b border-border/60 hover:bg-transparent">
-                  <TableHead className="w-16 h-10"></TableHead>
                   <TableHead className="h-10 text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-bold">{admin("columns.name")}</TableHead>
+                  <TableHead className="w-16 h-10 text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-bold">{admin("columns.svg")}</TableHead>
                   <TableHead className="h-10 text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-bold">{admin("columns.category")}</TableHead>
-                  <TableHead className="h-10 text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-bold">{admin("columns.status")}</TableHead>
                   <TableHead className="h-10 text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-bold">{admin("columns.createdAt")}</TableHead>
                   <TableHead className="h-10 text-right text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-bold">{admin("columns.actions")}</TableHead>
                 </TableRow>
@@ -151,22 +150,14 @@ export function AdminIconsSection() {
                 ) : (
                   paginatedIcons.map((icon) => (
                     <TableRow key={icon.id} className="border-b border-border/40 transition-colors hover:bg-muted/12 group">
+                      <TableCell className="py-3 font-semibold text-foreground text-sm">{icon.name}</TableCell>
                       <TableCell className="py-3">
                         <div className="flex size-10 items-center justify-center rounded-xl border border-border/50 bg-background shadow-sm text-foreground" dangerouslySetInnerHTML={{ __html: icon.svg_content || "" }} />
                       </TableCell>
-                      <TableCell className="py-3 font-semibold text-foreground text-sm">{icon.name}</TableCell>
                       <TableCell className="py-3">
                         <span className="inline-flex rounded-full border border-border/60 bg-muted/30 px-2.5 py-1 text-[11px] uppercase tracking-[0.18em] text-muted-foreground font-semibold">
                           {icon.category}
                         </span>
-                      </TableCell>
-                      <TableCell className="py-3">
-                        <div className="inline-flex min-w-0 items-center gap-2">
-                          <span className={`size-2 rounded-full ${icon.status === "disabled" ? "bg-amber-300/85" : "bg-emerald-300/85"}`} />
-                          <span className={`text-sm ${icon.status === "disabled" ? "text-amber-100/90" : "text-foreground/88"}`}>
-                            {icon.status === "disabled" ? "Deshabilitado" : "Activo"}
-                          </span>
-                        </div>
                       </TableCell>
                       <TableCell className="py-3 text-sm text-muted-foreground">{formatDate(icon.created_at)}</TableCell>
                       <TableCell className="py-3 text-right p-0">
