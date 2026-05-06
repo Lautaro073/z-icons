@@ -1,11 +1,14 @@
 import { minaIconNames, neoIconNames, coreIconNames, AllIconNames } from '@zcorvus/z-icons/icons';
 import { minaIcons, coreIcons, neoIcons } from '@zcorvus/z-icons/icons';
 import { IconCategory, IconContent, IconSet, IconView, Layer } from '@/types';
+import { getCustomIcons } from '@/lib/api/backend';
 
-export const IconSets: IconSet[] = ["neo", "core", "mina", "fa-solid", "fa-regular"];
+export let customIconsCache: Record<string, string> = {};
+
+export const IconSets: IconSet[] = ["neo", "core", "mina", "custom", "fa-solid", "fa-regular"];
 
 export const IconCategories: Record<IconCategory, IconSet[]> = {
-  local: ["core", "neo"],
+  local: ["core", "neo", "custom"],
   external: ["mina"],
   premium: ["fa-solid", "fa-regular"],
 } as const;
@@ -19,6 +22,11 @@ export const IconCategoriesInfo: Record<IconSet, IconView> = {
   neo: {
     label: "Neo",
     subLabel: "Light",
+    type: ["light"],
+  },
+  custom: {
+    label: "zIcons",
+    subLabel: "Internos",
     type: ["light"],
   },
   mina: {
@@ -66,10 +74,26 @@ export const getIconContentData = async (): Promise<IconContent> => {
     import('@/lib/fontawesome')
   ]);
 
+  let customIconNames: string[] = [];
+  try {
+    const customIcons = await getCustomIcons();
+    if (Array.isArray(customIcons)) {
+      const activeIcons = customIcons.filter(icon => icon.status !== "disabled");
+      customIconNames = activeIcons.map(icon => icon.name);
+      customIconsCache = activeIcons.reduce((acc, icon) => {
+        acc[icon.name] = icon.svg_content || "";
+        return acc;
+      }, {} as Record<string, string>);
+    }
+  } catch (err) {
+    console.error("Failed to fetch custom icons in explorer:", err);
+  }
+
   return {
     local: {
       core: coreIconNames as Partial<AllIconNames>[],
       neo: neoIconNames as Partial<AllIconNames>[],
+      custom: customIconNames as unknown as Partial<AllIconNames>[],
     },
     external: {
       mina: minaIconNames as Partial<AllIconNames>[],
@@ -79,6 +103,19 @@ export const getIconContentData = async (): Promise<IconContent> => {
       "fa-regular": faRegularIconNames as unknown as Partial<AllIconNames>[],
     },
   };
+};
+
+let cachedIconContentPromise: Promise<IconContent> | null = null;
+
+export const getIconContentPromise = (): Promise<IconContent> => {
+  if (!cachedIconContentPromise) {
+    cachedIconContentPromise = getIconContentData();
+  }
+  return cachedIconContentPromise;
+};
+
+export const clearIconContentCache = () => {
+  cachedIconContentPromise = null;
 };
 
 // Objeto asíncrono para obtener SVGs y evitar bundles masivos
@@ -94,6 +131,12 @@ export const getIconsSVG = async (type: IconSet) => {
   if (type === 'core') return coreIcons;
   if (type === 'neo') return neoIcons;
   if (type === 'mina') return minaIcons;
+  if (type === 'custom') {
+    return {
+      "light": customIconsCache,
+      "": customIconsCache
+    };
+  }
   return null;
 };
 

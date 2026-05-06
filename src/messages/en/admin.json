@@ -2,11 +2,14 @@
   "title": "Admin dashboard",
   "tabs": {
     "users": "Users",
-    "stats": "Statistics"
+    "stats": "Statistics",
+    "icons": "Icons"
   },
   "description": "Monitor users, plans, and account statuses in real time.",
   "statsTitle": "Charts",
   "statsDescription": "Track sales, revenue, and metric registrations over time.",
+  "iconsTitle": "Custom Icons",
+  "iconsDescription": "Manage icons created internally.",
   "chartDescription": "Track sales, revenue, and registrations without leaving the admin panel.",
   "kpis": {
     "registrations": "Registrations",
@@ -118,5 +121,45 @@
     "userDisabled": "User disabled successfully.",
     "userReEnabled": "User re-enabled successfully.",
     "userDeleted": "User deleted permanently."
+  },
+  "customIcons": {
+    "iconsTitle": "Custom Icons",
+    "iconsDescription": "Manage custom SVG icon library.",
+    "addIcon": "Add Icon",
+    "editIcon": "Edit Icon",
+    "deleteIcon": "Delete Icon",
+    "deleteConfirmTitle": "Are you sure?",
+    "deleteConfirmDesc": "This action cannot be undone. This will permanently delete the icon.",
+    "columns": {
+      "name": "Name",
+      "category": "Category",
+      "status": "Status",
+      "createdAt": "Created At",
+      "actions": "Actions"
+    },
+    "form": {
+      "nameLabel": "Icon Name",
+      "namePlaceholder": "e.g. Company Logo",
+      "categoryLabel": "Category",
+      "categoryPlaceholder": "e.g. Brands, Social",
+      "svgContentLabel": "SVG Code",
+      "svgContentPlaceholder": "Paste SVG code here...",
+      "uploadLabel": "Upload .svg file or drag here",
+      "statusLabel": "Status",
+      "submit": "Save Icon",
+      "submitting": "Saving...",
+      "cancel": "Cancel",
+      "validation": {
+        "nameMinLength": "Name is too short",
+        "categoryRequired": "Category is required",
+        "svgInvalid": "Content must be a valid SVG element"
+      }
+    },
+    "toasts": {
+      "created": "Icon created successfully.",
+      "updated": "Icon updated successfully.",
+      "deleted": "Icon deleted successfully.",
+      "error": "An error occurred while processing the icon."
+    }
   }
 }

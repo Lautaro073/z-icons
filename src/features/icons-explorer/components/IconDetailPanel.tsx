@@ -2,13 +2,13 @@
 
 import { ZIcon } from "@zcorvus/z-icons/react"
 import { useState } from "react"
+import { InstallCommandBlock } from "@/components/common/InstallCommandBlock"
 import { Button } from "@/components/ui/button"
 import { IconExportState, useIconExport } from "@/hooks/useIconExport"
 import { IconTypeInfo } from "@/types"
 import { IconDetailActions } from "./IconDetailActions"
 import { IconDetailExportTabs } from "./IconDetailExportTabs"
 import { IconDetailPreview } from "./IconDetailPreview"
-import { InstallCommandBlock } from "@/components/common/InstallCommandBlock"
 
 interface IconDetailPanelProps {
   icon: IconTypeInfo
@@ -22,7 +22,7 @@ type ActionButton = {
 }
 
 const IconDetailPanel = ({ icon, onClose }: IconDetailPanelProps) => {
-  const [state, setState] = useState<IconExportState>("react")
+  const [state, setState] = useState<IconExportState>(icon.type === 'custom' ? 'svg' : 'react')
 
   const { codeSnippet, handleCopyIcon, handleCopyCode, handleDownloadIcon } =
     useIconExport({ icon, state })
@@ -55,7 +55,7 @@ const IconDetailPanel = ({ icon, onClose }: IconDetailPanelProps) => {
           <IconDetailPreview icon={icon} />
 
           <div className="min-w-0 space-y-3 max-[820px]:space-y-2">
-            <IconDetailExportTabs state={state} onChange={setState} />
+            <IconDetailExportTabs state={state} onChange={setState} isCustom={icon.type === 'custom'} />
 
             <div className="ui-code-block min-w-0 max-w-full overflow-auto p-4 max-[820px]:max-h-42 max-[720px]:max-h-32">
               <code className="block max-w-full select-all whitespace-pre-wrap wrap-anywhere">
@@ -63,9 +63,11 @@ const IconDetailPanel = ({ icon, onClose }: IconDetailPanelProps) => {
               </code>
             </div>
             
-            <div className="flex justify-end pt-1">
-              <InstallCommandBlock variant="badge" />
-            </div>
+            {icon.type !== 'custom' && (
+              <div className="flex justify-end pt-1">
+                <InstallCommandBlock variant="terminal" />
+              </div>
+            )}
           </div>
         </div>
       </div>

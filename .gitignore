@@ -20,7 +20,7 @@ Plan-refactor.md
 # next.js
 /.next/
 /out/
-
+custom-icons-frontend-guide.md
 # production
 /build
 /scripts

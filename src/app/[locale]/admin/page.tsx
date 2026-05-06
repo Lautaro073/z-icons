@@ -9,6 +9,7 @@ import {
   AdminMetricsSection,
   useAdminDashboardPage,
   KPICards,
+  AdminIconsSection,
 } from "@/features/admin/index";
 
 const AdminTablesSection = dynamic(
@@ -66,6 +67,7 @@ export default function AdminDashboardPage() {
         labels={{
           users: admin("tabs.users"),
           stats: admin("tabs.stats"),
+          icons: admin("tabs.icons"),
         }}
         usersContent={
           <>
@@ -124,6 +126,7 @@ export default function AdminDashboardPage() {
             />
           </div>
         }
+        iconsContent={<AdminIconsSection />}
       />
     </div>
   );

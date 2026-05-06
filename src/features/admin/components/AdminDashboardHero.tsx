@@ -5,7 +5,7 @@ import { AdminAppearanceControls } from "./AdminAppearanceControls";
 interface DashboardHeroProps {
     admin: (key: string) => string;
     common: (key: string) => string;
-    activeTab: "users" | "stats";
+    activeTab: "users" | "stats" | "icons";
 }
 
 export function AdminDashboardHero({ admin, common, activeTab }: DashboardHeroProps) {
@@ -26,10 +26,10 @@ export function AdminDashboardHero({ admin, common, activeTab }: DashboardHeroPr
                     </Link>
 
                     <h1 className="mt-2 text-[clamp(2.3rem,4.8vw,3.6rem)] leading-[0.95] tracking-tight text-foreground">
-                        {admin(activeTab === "stats" ? "statsTitle" : "title")}
+                        {admin(activeTab === "icons" ? "iconsTitle" : activeTab === "stats" ? "statsTitle" : "title")}
                     </h1>
                     <p className="mt-4 max-w-3xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
-                        {admin(activeTab === "stats" ? "statsDescription" : "description")}
+                        {admin(activeTab === "icons" ? "iconsDescription" : activeTab === "stats" ? "statsDescription" : "description")}
                     </p>
                 </div>
 

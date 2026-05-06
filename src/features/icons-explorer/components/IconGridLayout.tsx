@@ -30,7 +30,7 @@ export const IconGridLayout = ({
 
         {activeIcon && (
             <div className="min-w-0 lg:w-[360px] lg:min-w-[320px]">
-                <IconDetailPanel icon={activeIcon} onClose={onClose} />
+                <IconDetailPanel key={activeIcon.type + ":" + activeIcon.name} icon={activeIcon} onClose={onClose} />
             </div>
         )}
     </div>

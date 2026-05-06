@@ -1291,3 +1291,74 @@ export function isTokenExpired(): boolean {
     return true;
   }
 }
+
+// ==================== CUSTOM ICONS ====================
+
+export interface CustomIcon {
+  id: string;
+  name: string;
+  category: string;
+  status: string;
+  svg_content?: string;
+  created_at: string;
+}
+
+export interface CustomIconPayload {
+  name: string;
+  category: string;
+  svg_content: string;
+  status?: string;
+}
+
+export async function getCustomIcons(): Promise<CustomIcon[]> {
+  const response = await fetch(`${BACKEND_URL}/api/custom-icons`, {
+    headers: createAuthHeaders(),
+  });
+  const data = await parseApiResponse<Record<string, unknown> | CustomIcon[]>(response);
+  const result = data.data;
+
+  if (Array.isArray(result)) {
+    return result as CustomIcon[];
+  }
+  
+  if (result && typeof result === 'object') {
+    const obj = result as Record<string, unknown>;
+    if (Array.isArray(obj.icons)) return obj.icons as CustomIcon[];
+    if (Array.isArray(obj.data)) return obj.data as CustomIcon[];
+  }
+
+  // Fallback if the whole parsed response is an array
+  if (Array.isArray(data)) {
+    return data as CustomIcon[];
+  }
+  
+  return [];
+}
+
+export async function createCustomIcon(payload: CustomIconPayload): Promise<CustomIcon> {
+  const response = await fetch(`${BACKEND_URL}/api/custom-icons`, {
+    method: 'POST',
+    headers: createAuthHeaders(),
+    body: JSON.stringify(payload),
+  });
+  const data = await parseApiResponse<CustomIcon>(response);
+  return data.data!;
+}
+
+export async function updateCustomIcon(id: string, payload: Partial<CustomIconPayload>): Promise<CustomIcon> {
+  const response = await fetch(`${BACKEND_URL}/api/custom-icons/${id}`, {
+    method: 'PUT',
+    headers: createAuthHeaders(),
+    body: JSON.stringify(payload),
+  });
+  const data = await parseApiResponse<CustomIcon>(response);
+  return data.data!;
+}
+
+export async function deleteCustomIcon(id: string): Promise<void> {
+  const response = await fetch(`${BACKEND_URL}/api/custom-icons/${id}`, {
+    method: 'DELETE',
+    headers: createAuthHeaders(),
+  });
+  await parseApiResponse(response);
+}

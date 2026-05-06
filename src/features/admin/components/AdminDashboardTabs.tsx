@@ -2,14 +2,15 @@
 
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 
-type AdminTab = "users" | "stats";
+type AdminTab = "users" | "stats" | "icons";
 
 interface AdminDashboardTabsProps {
   activeTab: AdminTab;
   onTabChange: (tab: AdminTab) => void;
-  labels: { users: string; stats: string };
+  labels: { users: string; stats: string; icons: string };
   usersContent: React.ReactNode;
   statsContent: React.ReactNode;
+  iconsContent: React.ReactNode;
 }
 
 export function AdminDashboardTabs({
@@ -18,6 +19,7 @@ export function AdminDashboardTabs({
   labels,
   usersContent,
   statsContent,
+  iconsContent,
 }: AdminDashboardTabsProps) {
   return (
     <TabsPrimitive.Root
@@ -41,6 +43,13 @@ export function AdminDashboardTabs({
         >
           {labels.stats}
         </TabsPrimitive.Trigger>
+
+        <TabsPrimitive.Trigger
+          value="icons"
+          className="relative flex-1 cursor-pointer rounded-xl px-4 py-2 text-sm font-medium text-muted-foreground transition-colors duration-160 ease-out hover:text-foreground data-[state=active]:bg-background/80 data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+        >
+          {labels.icons}
+        </TabsPrimitive.Trigger>
       </TabsPrimitive.List>
 
       <TabsPrimitive.Content
@@ -55,6 +64,13 @@ export function AdminDashboardTabs({
         className="mt-6 outline-none data-[state=inactive]:hidden"
       >
         {statsContent}
+      </TabsPrimitive.Content>
+
+      <TabsPrimitive.Content
+        value="icons"
+        className="mt-6 outline-none data-[state=inactive]:hidden"
+      >
+        {iconsContent}
       </TabsPrimitive.Content>
     </TabsPrimitive.Root>
   );

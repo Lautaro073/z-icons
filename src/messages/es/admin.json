@@ -2,11 +2,14 @@
   "title": "Panel de administración",
   "tabs": {
     "users": "Usuarios",
-    "stats": "Estadísticas"
+    "stats": "Estadísticas",
+    "icons": "Íconos"
   },
   "description": "Monitorea usuarios, planes y estados de cuenta en tiempo real.",
   "statsTitle": "Gráficas",
   "statsDescription": "Seguimiento de ventas, ingresos y registros métricos a lo largo del tiempo.",
+  "iconsTitle": "Íconos Custom",
+  "iconsDescription": "Gestiona los íconos creados internamente.",
   "chartDescription": "Seguimiento de ventas, ingresos y registros sin salir del panel.",
   "kpis": {
     "registrations": "Registros",
@@ -118,5 +121,45 @@
     "userDisabled": "Usuario deshabilitado correctamente.",
     "userReEnabled": "Usuario reactivado correctamente.",
     "userDeleted": "Usuario borrado definitivamente."
+  },
+  "customIcons": {
+    "iconsTitle": "Íconos Personalizados",
+    "iconsDescription": "Administrá la biblioteca de íconos SVG personalizados",
+    "addIcon": "Añadir Ícono",
+    "editIcon": "Editar Ícono",
+    "deleteIcon": "Eliminar Ícono",
+    "deleteConfirmTitle": "¿Estás seguro?",
+    "deleteConfirmDesc": "Esta acción no se puede deshacer. Esto eliminará permanentemente el ícono.",
+    "columns": {
+      "name": "Nombre",
+      "category": "Categoría",
+      "status": "Estado",
+      "createdAt": "Fecha de Creación",
+      "actions": "Acciones"
+    },
+    "form": {
+      "nameLabel": "Nombre del ícono",
+      "namePlaceholder": "Ej. Logo Empresa",
+      "categoryLabel": "Categoría",
+      "categoryPlaceholder": "Ej. Marcas, Social",
+      "svgContentLabel": "Código SVG",
+      "svgContentPlaceholder": "Pega el código SVG aquí...",
+      "uploadLabel": "Subir archivo .svg o arrastrar aquí",
+      "statusLabel": "Estado",
+      "submit": "Guardar Ícono",
+      "submitting": "Guardando...",
+      "cancel": "Cancelar",
+      "validation": {
+        "nameMinLength": "El nombre es muy corto",
+        "categoryRequired": "La categoría es obligatoria",
+        "svgInvalid": "El contenido debe ser un elemento SVG válido"
+      }
+    },
+    "toasts": {
+      "created": "Ícono creado exitosamente.",
+      "updated": "Ícono actualizado exitosamente.",
+      "deleted": "Ícono eliminado exitosamente.",
+      "error": "Ocurrió un error al procesar el ícono."
+    }
   }
 }

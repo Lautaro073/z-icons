@@ -42,7 +42,7 @@ export function useAdminDashboardPage() {
 
   const activeTab = useMemo<AdminTab>(() => {
     const rawTab = searchParams.get("tab");
-    return rawTab === "stats" ? "stats" : "users";
+    return rawTab === "stats" ? "stats" : rawTab === "icons" ? "icons" : "users";
   }, [searchParams]);
 
   const [isRangePopoverOpen, setIsRangePopoverOpen] = useState(false);
