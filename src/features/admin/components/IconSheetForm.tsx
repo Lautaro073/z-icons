@@ -56,7 +56,24 @@ export function IconSheetForm({
   const iconSchema = z.object({
     name: z.string().min(2, admin("form.validation.nameMinLength")),
     category: z.string().min(2, admin("form.validation.categoryRequired")),
-    svg_content: z.string().startsWith("<svg", admin("form.validation.svgInvalid")),
+    svg_content: z.string()
+      .transform((val) => {
+        let cleaned = val.trim();
+        // Strip XML declaration: <?xml ... ?>
+        cleaned = cleaned.replace(/^<\?xml[^?>]*\?>\s*/i, "");
+        // Strip DOCTYPE: <!DOCTYPE ... >
+        cleaned = cleaned.replace(/^<!DOCTYPE[^>]*>\s*/i, "");
+        // Strip leading XML comments
+        cleaned = cleaned.replace(/^(<!--[\s\S]*?-->\s*)+/i, "");
+        return cleaned.trim();
+      })
+      .refine(
+        (val) => {
+          const normalized = val.toLowerCase();
+          return normalized.includes("<svg") && normalized.includes("</svg>");
+        },
+        { message: admin("form.validation.svgInvalid") }
+      ),
     status: z.enum(["active", "disabled"]),
   });
 
