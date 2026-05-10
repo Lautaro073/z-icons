@@ -68,7 +68,7 @@ export function AdminDashboardTabs({
 
       <TabsPrimitive.Content
         value="icons"
-        className="mt-6 outline-none data-[state=inactive]:hidden"
+        className="mt-6 flex flex-col gap-6 outline-none data-[state=inactive]:hidden"
       >
         {iconsContent}
       </TabsPrimitive.Content>

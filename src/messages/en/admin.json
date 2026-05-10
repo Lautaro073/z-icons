@@ -134,16 +134,38 @@
       "svg": "SVG",
       "name": "Name",
       "category": "Category",
+      "tier": "Access",
       "createdBy": "Created By",
       "status": "Status",
       "createdAt": "Created At",
       "actions": "Actions"
     },
+    "filters": {
+      "searchPlaceholder": "Search icon by name...",
+      "ariaTier": "Filter by Access",
+      "ariaCategory": "Filter by Category",
+      "allCategories": "All Categories",
+      "ariaCreator": "Filter by Creator",
+      "allCreators": "All Creators",
+      "ariaDate": "Filter by Date",
+      "anyDate": "Any Date",
+      "today": "Created Today",
+      "lastWeek": "Last 7 days",
+      "lastMonth": "Last 30 days"
+    },
+    "states": {
+      "emptyInitial": "No icons yet.",
+      "emptyFiltered": "No icons found with current filters."
+    },
     "form": {
       "nameLabel": "Icon Name",
       "namePlaceholder": "e.g. Company Logo",
+      "tierAll": "All Access Levels",
       "categoryLabel": "Category",
       "categoryPlaceholder": "e.g. Brands, Social",
+      "tierLabel": "Access Tier",
+      "tierFree": "Free",
+      "tierPremium": "Pro",
       "svgContentLabel": "SVG Code",
       "svgContentPlaceholder": "Paste SVG code here...",
       "uploadLabel": "Upload .svg file or drag here",
@@ -152,6 +174,7 @@
       "showCode": "View code",
       "pasteManual": "Or paste SVG code manually",
       "backToUpload": "Upload file again",
+      "batchReady": "{count} icons selected for upload",
       "statusLabel": "Status",
       "submit": "Save Icon",
       "submitting": "Saving...",
@@ -164,6 +187,7 @@
     },
     "toasts": {
       "created": "Icon created successfully.",
+      "batchCreated": "{count} icons created successfully.",
       "updated": "Icon updated successfully.",
       "deleted": "Icon deleted successfully.",
       "error": "An error occurred while processing the icon."

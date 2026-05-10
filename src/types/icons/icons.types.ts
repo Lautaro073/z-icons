@@ -1,7 +1,7 @@
 import { CoreIconName, NeoIconName, MinaIconName, AllIconNames } from '@zcorvus/z-icons/icons';
 import { FontAwesomeIconName } from '@/lib/fontawesome';
 
-export type IconSet = "neo" | "core" | "mina" | "fa-solid" | "fa-regular" | "custom";
+export type IconSet = "neo" | "core" | "mina" | "fa-solid" | "fa-regular" | "custom" | "custom-premium";
 export type IconCategory = "local" | "external" | "premium";
 export type Layer = "compact" | "expanded";
 export type Theme = "dark" | "light";
@@ -12,7 +12,8 @@ export type IconTypeInfo =
   | { type: 'mina', name: MinaIconName, variant: string }
   | { type: 'fa-solid', name: FontAwesomeIconName, variant: string }
   | { type: 'fa-regular', name: FontAwesomeIconName, variant: string }
-  | { type: 'custom', name: string, variant: string };
+  | { type: 'custom', name: string, variant: string }
+  | { type: 'custom-premium', name: string, variant: string };
 
 export interface IconGroup {
   name: IconSet;
@@ -24,6 +25,8 @@ export interface IconView {
   label: string;
   subLabel: string;
   type: string[];
+  customBadge?: string;
+  customDescription?: string;
 }
 
 export type IconContent = Record<

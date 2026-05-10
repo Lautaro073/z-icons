@@ -5,9 +5,12 @@ import { useState } from "react"
 import { InstallCommandBlock } from "@/components/common/InstallCommandBlock"
 import { Button } from "@/components/ui/button"
 import { IconExportState, useIconExport } from "@/hooks/useIconExport"
-import { IconTypeInfo } from "@/types"
+import { usePremiumAccess } from "@/hooks/usePremiumAccess"
+import { IconSet, IconTypeInfo } from "@/types"
+import { IconCategories } from "../constants/icon.constants"
 import { IconDetailActions } from "./IconDetailActions"
 import { IconDetailExportTabs } from "./IconDetailExportTabs"
+import { IconDetailPremiumCTA } from "./IconDetailPremiumCTA"
 import { IconDetailPreview } from "./IconDetailPreview"
 
 interface IconDetailPanelProps {
@@ -22,10 +25,15 @@ type ActionButton = {
 }
 
 const IconDetailPanel = ({ icon, onClose }: IconDetailPanelProps) => {
-  const [state, setState] = useState<IconExportState>(icon.type === 'custom' ? 'svg' : 'react')
+  const isAnyCustom = icon.type === 'custom' || icon.type === 'custom-premium'
+  const [state, setState] = useState<IconExportState>(isAnyCustom ? 'svg' : 'react')
+  const { hasAccess } = usePremiumAccess()
 
   const { codeSnippet, handleCopyIcon, handleCopyCode, handleDownloadIcon } =
     useIconExport({ icon, state })
+
+  const isPremiumIcon = IconCategories.premium.includes(icon.type as IconSet)
+  const isLocked = isPremiumIcon && !hasAccess
 
   const actionButtons: ActionButton[] = [
     { key: "download", iconName: "download", onClick: handleDownloadIcon },
@@ -54,25 +62,29 @@ const IconDetailPanel = ({ icon, onClose }: IconDetailPanelProps) => {
         <div className="grid gap-4 max-[820px]:gap-3">
           <IconDetailPreview icon={icon} />
 
-          <div className="min-w-0 space-y-3 max-[820px]:space-y-2">
-            <IconDetailExportTabs state={state} onChange={setState} isCustom={icon.type === 'custom'} />
+          {isLocked ? (
+            <IconDetailPremiumCTA />
+          ) : (
+            <div className="min-w-0 space-y-3 max-[820px]:space-y-2">
+              <IconDetailExportTabs state={state} onChange={setState} isCustom={isAnyCustom} />
 
-            <div className="ui-code-block min-w-0 max-w-full overflow-auto p-4 max-[820px]:max-h-42 max-[720px]:max-h-32">
-              <code className="block max-w-full select-all whitespace-pre-wrap wrap-anywhere">
-                {codeSnippet}
-              </code>
-            </div>
-            
-            {icon.type !== 'custom' && (
-              <div className="flex justify-end pt-1">
-                <InstallCommandBlock variant="terminal" />
+              <div className="ui-code-block min-w-0 max-w-full overflow-auto p-4 max-[820px]:max-h-42 max-[720px]:max-h-32">
+                <code className="block max-w-full select-all whitespace-pre-wrap wrap-anywhere">
+                  {codeSnippet}
+                </code>
               </div>
-            )}
-          </div>
+              
+              {!isAnyCustom && (
+                <div className="flex justify-end pt-1">
+                  <InstallCommandBlock variant="terminal" />
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
-      <IconDetailActions actionButtons={actionButtons} />
+      {!isLocked && <IconDetailActions actionButtons={actionButtons} />}
     </aside>
   )
 }

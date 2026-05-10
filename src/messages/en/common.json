@@ -43,6 +43,11 @@
       "local": "Local",
       "external": "External",
       "premium": "Premium"
+    },
+    "premiumLocked": {
+      "title": "Premium Icon",
+      "description": "Subscribe to unlock icon Pro.",
+      "cta": "Get Pro Icon"
     }
   },
   "states": {

@@ -1,4 +1,4 @@
-import { getCategoryToneByCategory } from "@/features/icons-explorer"
+import { getCategoryToneByCategory, getIconSetInfo } from "@/features/icons-explorer"
 import { Link } from "@/i18n/navigation"
 import type { IconCategory, IconSet } from "@/types"
 import { IconCategorySetCard } from "./IconCategorySetCard"
@@ -42,14 +42,17 @@ export const IconCategorySection = ({
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {sets.map((set) => (
-            <span
-              key={set}
-              className="rounded-full border border-surface-border bg-background/76 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground"
-            >
-              {set}
-            </span>
-          ))}
+          {sets.map((set) => {
+            const { customBadge } = getIconSetInfo(set);
+            return (
+              <span
+                key={set}
+                className="rounded-full border border-surface-border bg-background/76 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground"
+              >
+                {customBadge || set}
+              </span>
+            );
+          })}
         </div>
       </div>
 

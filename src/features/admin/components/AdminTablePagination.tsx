@@ -1,12 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ZIcon } from "@zcorvus/z-icons/react";
-
-export interface AdminPagination {
-    page: number;
-    totalPages: number;
-    hasPrev: boolean;
-    hasNext: boolean;
-}
+import type { AdminPagination } from "../types/table.types";
 
 export interface AdminTablePaginationProps {
     usersPagination: AdminPagination;

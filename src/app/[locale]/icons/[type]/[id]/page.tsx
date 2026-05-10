@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { use, useEffect } from "react";
-import { PremiumGuard } from "@/components/guards/PremiumGuard";
 import { IconPageFrame, useIconTypePage, clearIconContentCache, getIconSetInfo } from "@/features/icons-explorer";
 import { useUIStore } from "@/store";
 import type { IconCategory, IconSet } from "@/types";
@@ -22,9 +21,8 @@ export default function IconsTypeIdPage({ params }: IconsTypeIdPageProps) {
   const { search, setSearch, filteredData, tone } = useIconTypePage({ type, id });
 
   const { label } = getIconSetInfo(id);
-  const isPremiumContent = type === "premium" || id === "fa-solid" || id === "fa-regular";
 
-  const content = (
+  return (
     <IconPageFrame
       title={label}
       backHref="/icons"
@@ -38,10 +36,4 @@ export default function IconsTypeIdPage({ params }: IconsTypeIdPageProps) {
       data={filteredData}
     />
   );
-
-  if (isPremiumContent) {
-    return <PremiumGuard>{content}</PremiumGuard>;
-  }
-
-  return content;
 }

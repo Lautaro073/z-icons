@@ -5,6 +5,7 @@ import { clearIconContentCache } from "@/features/icons-explorer";
 import {
   getCustomIcons,
   createCustomIcon,
+  createCustomIconsBulk,
   updateCustomIcon,
   deleteCustomIcon,
   type CustomIcon,
@@ -23,6 +24,14 @@ export function useCustomIcons() {
 
   const createMutation = useMutation({
     mutationFn: createCustomIcon,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["custom-icons"] });
+      clearIconContentCache();
+    },
+  });
+
+  const createBulkMutation = useMutation({
+    mutationFn: createCustomIconsBulk,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["custom-icons"] });
       clearIconContentCache();
@@ -52,7 +61,8 @@ export function useCustomIcons() {
     isError: iconsQuery.isError,
     refetch: iconsQuery.refetch,
     createIcon: createMutation.mutateAsync,
-    isCreating: createMutation.isPending,
+    createIconsBulk: createBulkMutation.mutateAsync,
+    isCreating: createMutation.isPending || createBulkMutation.isPending,
     updateIcon: updateMutation.mutateAsync,
     isUpdating: updateMutation.isPending,
     deleteIcon: deleteMutation.mutateAsync,

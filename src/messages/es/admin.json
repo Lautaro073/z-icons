@@ -134,16 +134,38 @@
       "svg": "SVG",
       "name": "Nombre",
       "category": "Categoría",
+      "tier": "Acceso",
       "createdBy": "Creado por",
       "status": "Estado",
       "createdAt": "Fecha de Creación",
       "actions": "Acciones"
+    },
+    "filters": {
+      "searchPlaceholder": "Buscar ícono por nombre...",
+      "ariaTier": "Filtrar por Acceso",
+      "ariaCategory": "Filtrar por Categoría",
+      "allCategories": "Todas las Categorías",
+      "ariaCreator": "Filtrar por Creador",
+      "allCreators": "Todos los Creadores",
+      "ariaDate": "Filtrar por Fecha",
+      "anyDate": "Cualquier Fecha",
+      "today": "Creados Hoy",
+      "lastWeek": "Últimos 7 días",
+      "lastMonth": "Últimos 30 días"
+    },
+    "states": {
+      "emptyInitial": "No hay íconos todavía.",
+      "emptyFiltered": "No se encontraron íconos con los filtros actuales."
     },
     "form": {
       "nameLabel": "Nombre del ícono",
       "namePlaceholder": "Ej. Logo Empresa",
       "categoryLabel": "Categoría",
       "categoryPlaceholder": "Ej. Marcas, Social",
+      "tierAll": "Todos los Accesos",
+      "tierLabel": "Tipo de Acceso",
+      "tierFree": "Gratis",
+      "tierPremium": "Pro",
       "svgContentLabel": "Código SVG",
       "svgContentPlaceholder": "Pega el código SVG aquí...",
       "uploadLabel": "Subir archivo .svg o arrastrar aquí",
@@ -152,6 +174,7 @@
       "showCode": "Ver código",
       "pasteManual": "O pegar código SVG manualmente",
       "backToUpload": "Volver a subir archivo",
+      "batchReady": "{count} íconos seleccionados para subir",
       "statusLabel": "Estado",
       "submit": "Guardar Ícono",
       "submitting": "Guardando...",
@@ -164,6 +187,7 @@
     },
     "toasts": {
       "created": "Ícono creado exitosamente.",
+      "batchCreated": "{count} íconos creados exitosamente.",
       "updated": "Ícono actualizado exitosamente.",
       "deleted": "Ícono eliminado exitosamente.",
       "error": "Ocurrió un error al procesar el ícono."

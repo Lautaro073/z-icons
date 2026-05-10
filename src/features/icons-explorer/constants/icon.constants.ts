@@ -5,12 +5,12 @@ import { getCustomIcons } from '@/lib/api/backend';
 
 export let customIconsCache: Record<string, string> = {};
 
-export const IconSets: IconSet[] = ["neo", "core", "custom","mina", "fa-solid", "fa-regular"];
+export const IconSets: IconSet[] = ["neo", "core", "custom", "mina", "custom-premium","fa-solid", "fa-regular"];
 
 export const IconCategories: Record<IconCategory, IconSet[]> = {
   local: ["core", "neo", "custom"],
   external: ["mina"],
-  premium: ["fa-solid", "fa-regular"],
+  premium: ["fa-solid", "fa-regular", "custom-premium"],
 } as const;
 
 export const IconCategoriesInfo: Record<IconSet, IconView> = {
@@ -44,6 +44,13 @@ export const IconCategoriesInfo: Record<IconSet, IconView> = {
     subLabel: "Regular",
     type: ["regular"],
   },
+  "custom-premium": {
+    label: "zIcons +",
+    subLabel: "Premium",
+    type: ["light"],
+    customBadge: "zCorvus-Premium",
+    customDescription: "Iconos Premium de zCorvus",
+  },
 };
 
 export const getIconSetInfo = (icon: IconSet) => IconCategoriesInfo[icon]
@@ -75,11 +82,18 @@ export const getIconContentData = async (): Promise<IconContent> => {
   ]);
 
   let customIconNames: string[] = [];
+  let customPremiumIconNames: string[] = [];
   try {
     const customIcons = await getCustomIcons();
     if (Array.isArray(customIcons)) {
       const activeIcons = customIcons.filter(icon => icon.status !== "disabled");
-      customIconNames = activeIcons.map(icon => icon.name);
+      
+      const freeIcons = activeIcons.filter(icon => !icon.is_premium || icon.is_premium === "false" || icon.is_premium === 0);
+      const premiumIcons = activeIcons.filter(icon => icon.is_premium === true || icon.is_premium === 1 || icon.is_premium === "true");
+
+      customIconNames = freeIcons.map(icon => icon.name);
+      customPremiumIconNames = premiumIcons.map(icon => icon.name);
+
       customIconsCache = activeIcons.reduce((acc, icon) => {
         acc[icon.name] = icon.svg_content || "";
         return acc;
@@ -101,6 +115,7 @@ export const getIconContentData = async (): Promise<IconContent> => {
     premium: {
       "fa-solid": faSolidIconNames as unknown as Partial<AllIconNames>[],
       "fa-regular": faRegularIconNames as unknown as Partial<AllIconNames>[],
+      "custom-premium": customPremiumIconNames as unknown as Partial<AllIconNames>[],
     },
   };
 };
@@ -131,7 +146,7 @@ export const getIconsSVG = async (type: IconSet) => {
   if (type === 'core') return coreIcons;
   if (type === 'neo') return neoIcons;
   if (type === 'mina') return minaIcons;
-  if (type === 'custom') {
+  if (type === 'custom' || type === 'custom-premium') {
     return {
       "light": customIconsCache,
       "": customIconsCache

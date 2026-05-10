@@ -43,6 +43,11 @@
       "local": "Local",
       "external": "Externo",
       "premium": "Premium"
+    },
+    "premiumLocked": {
+      "title": "Ícono Premium",
+      "description": "Suscríbete para desbloquear los iconos Pro.",
+      "cta": "Obtener Ícono Pro"
     }
   },
   "states": {

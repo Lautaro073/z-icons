@@ -16,7 +16,7 @@ interface UnifiedIconProps extends Omit<IconTypeInfo, 'variant'> {
 }
 
 export const UnifiedIcon = ({ type, name, variant, className, size }: UnifiedIconProps) => {
-  if (type === 'custom') {
+  if (type === 'custom' || type === 'custom-premium') {
     const svgContent = customIconsCache[name as string] || "";
     return (
       <div

@@ -1300,6 +1300,7 @@ export interface CustomIcon {
   category: string;
   status: string;
   svg_content?: string;
+  is_premium?: boolean | number;
   created_at: string;
   created_by?: string;
   create_by?: string;
@@ -1310,6 +1311,7 @@ export interface CustomIconPayload {
   category: string;
   svg_content: string;
   status?: string;
+  is_premium?: boolean;
 }
 
 export async function getCustomIcons(): Promise<CustomIcon[]> {
@@ -1345,6 +1347,16 @@ export async function createCustomIcon(payload: CustomIconPayload): Promise<Cust
   });
   const data = await parseApiResponse<CustomIcon>(response);
   return data.data!;
+}
+
+export async function createCustomIconsBulk(payloadArray: CustomIconPayload[]): Promise<CustomIcon[]> {
+  const response = await fetch(`${BACKEND_URL}/api/custom-icons/bulk`, {
+    method: 'POST',
+    headers: createAuthHeaders(),
+    body: JSON.stringify(payloadArray),
+  });
+  const data = await parseApiResponse<CustomIcon[]>(response);
+  return data.data || [];
 }
 
 export async function updateCustomIcon(id: string, payload: Partial<CustomIconPayload>): Promise<CustomIcon> {

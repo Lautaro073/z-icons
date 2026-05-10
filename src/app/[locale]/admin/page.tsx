@@ -126,7 +126,11 @@ export default function AdminDashboardPage() {
             />
           </div>
         }
-        iconsContent={<AdminIconsSection />}
+        iconsContent={
+          <div className="overflow-x-clip" style={{ containIntrinsicSize: "1200px" }}>
+            <AdminIconsSection />
+          </div>
+        }
       />
     </div>
   );
