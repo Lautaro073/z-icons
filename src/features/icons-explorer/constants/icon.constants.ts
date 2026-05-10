@@ -1,7 +1,7 @@
 import { minaIconNames, neoIconNames, coreIconNames, AllIconNames } from '@zcorvus/z-icons/icons';
 import { minaIcons, coreIcons, neoIcons } from '@zcorvus/z-icons/icons';
-import { IconCategory, IconContent, IconSet, IconView, Layer } from '@/types';
 import { getCustomIcons } from '@/lib/api/backend';
+import { IconCategory, IconContent, IconSet, IconView, Layer } from '@/types';
 
 export let customIconsCache: Record<string, string> = {};
 
@@ -88,8 +88,14 @@ export const getIconContentData = async (): Promise<IconContent> => {
     if (Array.isArray(customIcons)) {
       const activeIcons = customIcons.filter(icon => icon.status !== "disabled");
       
-      const freeIcons = activeIcons.filter(icon => !icon.is_premium || icon.is_premium === "false" || icon.is_premium === 0);
-      const premiumIcons = activeIcons.filter(icon => icon.is_premium === true || icon.is_premium === 1 || icon.is_premium === "true");
+      const freeIcons = activeIcons.filter(icon => {
+        const isPrem = icon.is_premium === true || icon.is_premium === 1 || String(icon.is_premium) === "true";
+        return !isPrem;
+      });
+      const premiumIcons = activeIcons.filter(icon => {
+        const isPrem = icon.is_premium === true || icon.is_premium === 1 || String(icon.is_premium) === "true";
+        return isPrem;
+      });
 
       customIconNames = freeIcons.map(icon => icon.name);
       customPremiumIconNames = premiumIcons.map(icon => icon.name);

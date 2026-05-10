@@ -27,15 +27,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { CustomIconPayload, CustomIcon } from "@/features/admin/hooks/useCustomIcons";
 
-const formSchema = z.object({
-  name: z.string(),
-  category: z.string(),
-  svg_content: z.string(),
-  is_premium: z.boolean(),
-  status: z.enum(["active", "disabled"]),
-});
-
-type IconFormValues = z.infer<typeof formSchema>;
+interface IconFormValues {
+  name: string;
+  category: string;
+  svg_content: string;
+  is_premium: boolean;
+  status: "active" | "disabled";
+}
 
 interface IconSheetFormProps {
   open: boolean;
@@ -75,7 +73,7 @@ export function IconSheetForm({
         },
         { message: admin("form.validation.svgInvalid") }
       ),
-    is_premium: z.boolean().default(false),
+    is_premium: z.boolean(),
     status: z.enum(["active", "disabled"]),
   }), [admin]);
 

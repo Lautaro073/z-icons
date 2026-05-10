@@ -13,3 +13,5 @@ export { defaultVisibleColumns } from "./AdminTablesSection";
 export type { UserColumnKey } from "./AdminTablesSection";
 export { AdminHeaderShortcuts } from "./AdminHeaderShortcuts";
 export { AdminIconsSection } from "./AdminIconsSection";
+export { AdminIconFilters } from "./AdminIconFilters";
+export { DeleteIconModal } from "./AdminIconsModals";
