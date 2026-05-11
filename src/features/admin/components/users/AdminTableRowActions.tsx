@@ -1,7 +1,7 @@
 import { PencilLine, RotateCcw, Trash2, UserRoundX } from "lucide-react";
 import type { AdminUser } from "@/lib/api/backend";
 import type { MutationState, PendingAction } from "@/types";
-import { ActionIconButton } from "./AdminTableActionButton";
+import { ActionIconButton } from "../AdminTableActionButton";
 
 export interface AdminTableRowActionsProps {
     item: AdminUser;

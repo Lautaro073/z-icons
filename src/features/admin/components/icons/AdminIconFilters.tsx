@@ -2,7 +2,7 @@
 
 import type { ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
-import { AdminSelect } from "./AdminSelect";
+import { AdminSelect } from "../AdminSelect";
 
 interface AdminIconFiltersProps {
   admin: (key: string) => string;

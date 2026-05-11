@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AdminSelect } from "./AdminSelect";
+import { AdminSelect } from "../AdminSelect";
 import type { AdminUser } from "@/lib/api/backend";
 import type {
     ConfirmActionModalLabels,

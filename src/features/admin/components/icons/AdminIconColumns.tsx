@@ -1,8 +1,8 @@
 "use client";
 
-import type { AdminColumnDef } from "../types/table.types";
+import type { AdminColumnDef } from "../../types/table.types";
 import type { CustomIcon } from "@/features/admin/hooks/useCustomIcons";
-import { ActionIconButton } from "./AdminTableActionButton";
+import { ActionIconButton } from "../AdminTableActionButton";
 import { Crown, PencilLine, Trash2 } from "lucide-react";
 
 interface GetIconColumnsParams {

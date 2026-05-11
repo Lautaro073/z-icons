@@ -1,7 +1,7 @@
 import type { DateRange } from "react-day-picker";
 import { metricGranularityOptions } from "@/features/admin/index";
 import { AdminCustomRangePicker } from "./AdminCustomRangePicker";
-import { AdminSelect } from "./AdminSelect";
+import { AdminSelect } from "../AdminSelect";
 
 interface AdminMetricsFiltersProps {
     admin: (key: string) => string;
