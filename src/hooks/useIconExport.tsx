@@ -123,9 +123,9 @@ const useIconExport = ({ icon, state }: UseIconExportArgs) => {
       const snippet = infoByState[state];
       void navigator.clipboard.writeText(snippet).then(
         () =>
-          toast.success(common("toasts.codeSnippetCopied"), {
-            description: snippet,
-          }),
+        toast.success(common("toasts.codeSnippetCopied"), {
+          description: state === "svg" ? `${icon.name}.svg` : snippet,
+        }),
         () => toast.error(common("toasts.errorCopyCode"))
       );
     },
