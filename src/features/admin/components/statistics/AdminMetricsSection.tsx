@@ -74,6 +74,8 @@ export function AdminMetricsSection({
                     onCustomRangeChange={onCustomRangeChange}
                     cancelCustomRangeDraft={cancelCustomRangeDraft}
                     applyCustomRangeDraft={applyCustomRangeDraft}
+                    timeseriesData={metricsQuery.data?.data?.timeseries ?? []}
+                    isSuccess={metricsQuery.state === "success"}
                 />
             </div>
 

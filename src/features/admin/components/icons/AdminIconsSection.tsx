@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { ZIcon } from "@zcorvus/z-icons/react";
 import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,12 +14,15 @@ import { AdminIconFilters } from "./AdminIconFilters";
 import { DeleteIconModal } from "./AdminIconsModals";
 import { getAdminIconColumns } from "./AdminIconColumns";
 import { useAdminIconsTable } from "@/features/admin/hooks/useAdminIconsTable";
+import { ExportButton } from "../ExportButton";
+import { getIconsReportColumns } from "@/lib/reports/configs/iconsReportConfig";
 
 interface AdminIconsSectionProps {
   itemsPerPage?: number;
 }
 
 export function AdminIconsSection({ itemsPerPage = 6 }: AdminIconsSectionProps) {
+  const tRoot = useTranslations("admin");
   const {
     admin,
     common,
@@ -94,10 +98,42 @@ export function AdminIconsSection({ itemsPerPage = 6 }: AdminIconsSectionProps) 
           title={admin("iconsTitle")}
           description={admin("iconsDescription")}
           headerActions={
-            <Button onClick={handleOpenCreate} variant="secondary" className="gap-2 rounded-full px-5">
-              <ZIcon type="mina" name="plus" className="size-4" />
-              {admin("addIcon")}
-            </Button>
+            <div className="flex items-center gap-3">
+              {!isLoading && !isError && filteredIcons.length > 0 && (
+                <ExportButton<CustomIcon>
+                  data={filteredIcons}
+                  columns={getIconsReportColumns(
+                    (k) => {
+                      if (k === "name") return admin("columns.name");
+                      if (k === "category") return admin("columns.category");
+                      if (k === "status") return admin("columns.status");
+                      if (k === "creator") return admin("columns.createdBy");
+                      if (k === "createdAt") return admin("columns.createdAt");
+                      if (k === "is_premium") return admin("columns.tier");
+                      if (k === "premium") return admin("form.tierPremium");
+                      if (k === "free") return admin("form.tierFree");
+                      return String(k);
+                    },
+                    getUserName,
+                    formatDate
+                  )}
+                  filename={`z-icons-custom-${new Date().toISOString().split('T')[0]}`}
+                  reportTitle={tRoot("export.iconsTitle")}
+                  labels={{
+                    trigger: tRoot("export.trigger"),
+                    csv: tRoot("export.csv"),
+                    excel: tRoot("export.excel"),
+                    pdf: tRoot("export.pdf"),
+                    success: tRoot("export.success"),
+                    error: tRoot("export.error"),
+                  }}
+                />
+              )}
+              <Button onClick={handleOpenCreate} variant="secondary" className="gap-2 rounded-full px-5">
+                <ZIcon type="mina" name="plus" className="size-4" />
+                {admin("addIcon")}
+              </Button>
+            </div>
           }
           isLoading={isLoading}
           isError={isError}

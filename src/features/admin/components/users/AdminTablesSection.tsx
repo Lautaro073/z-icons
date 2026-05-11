@@ -15,6 +15,8 @@ import { getAdminUserColumns } from "./AdminUserColumns";
 import { AdminTableColumnsControl } from "../AdminTableColumnsControl";
 import { AdminTablesPlaceholder } from "../AdminTablesPlaceholder";
 import { ZIcon } from "@zcorvus/z-icons/react";
+import { ExportButton } from "../ExportButton";
+import { getUserReportColumns } from "@/lib/reports/configs/usersReportConfig";
 
 type UserColumnKey = AdminPreferenceColumnKey;
 
@@ -135,13 +137,42 @@ export function AdminTablesSection({
           isEmptyOverride={isEmpty}
           headerActions={
             !isLoading && !isError && !isEmpty && (
-              <AdminTableColumnsControl
-                columnOptions={columnOptions}
-                visibleColumns={visibleColumns}
-                visibleColumnCount={visibleColumnCount}
-                onToggleColumnVisibility={onToggleColumnVisibility}
-                admin={admin}
-              />
+              <div className="flex items-center gap-2">
+                <ExportButton<AdminUser>
+                  data={filteredUsers}
+                  columns={getUserReportColumns(
+                    (k) => {
+                      // Mapeo dinámico para reutilizar las cabeceras de tabla que ya existen
+                      if (k === "username") return admin("table.users.username");
+                      if (k === "email") return admin("table.users.email");
+                      if (k === "role") return admin("table.users.role");
+                      if (k === "accountStatus") return admin("table.users.accountStatus");
+                      if (k === "plan") return admin("table.users.status");
+                      if (k === "createdAt") return admin("table.users.startDate");
+                      // Fallback genérico en caso de error
+                      return String(k);
+                    },
+                    formatDate
+                  )}
+                  filename={`z-icons-usuarios-${new Date().toISOString().split('T')[0]}`}
+                  reportTitle={admin("export.usersTitle")}
+                  labels={{
+                    trigger: admin("export.trigger"),
+                    csv: admin("export.csv"),
+                    excel: admin("export.excel"),
+                    pdf: admin("export.pdf"),
+                    success: admin("export.success"),
+                    error: admin("export.error"),
+                  }}
+                />
+                <AdminTableColumnsControl
+                  columnOptions={columnOptions}
+                  visibleColumns={visibleColumns}
+                  visibleColumnCount={visibleColumnCount}
+                  onToggleColumnVisibility={onToggleColumnVisibility}
+                  admin={admin}
+                />
+              </div>
             )
           }
           loadingComponent={

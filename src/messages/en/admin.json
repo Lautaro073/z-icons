@@ -87,6 +87,16 @@
     "expired": "Expired",
     "none": "No subscription"
   },
+  "export": {
+    "trigger": "Export",
+    "csv": "CSV (.csv)",
+    "excel": "Excel (.xlsx)",
+    "pdf": "PDF (.pdf)",
+    "success": "Report downloaded successfully.",
+    "error": "An error occurred while generating the report.",
+    "usersTitle": "Registered Users Report",
+    "iconsTitle": "Icon Catalog"
+  },
   "accountStatuses": {
     "active": "Active",
     "disabled": "Disabled"

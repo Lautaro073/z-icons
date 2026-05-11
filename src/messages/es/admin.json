@@ -87,6 +87,16 @@
     "expired": "Vencida",
     "none": "Sin suscripción"
   },
+  "export": {
+    "trigger": "Exportar",
+    "csv": "CSV (.csv)",
+    "excel": "Excel (.xlsx)",
+    "pdf": "PDF (.pdf)",
+    "success": "El reporte se ha descargado con éxito.",
+    "error": "Ocurrió un error al generar el reporte.",
+    "usersTitle": "Reporte de Usuarios Registrados",
+    "iconsTitle": "Catálogo de Iconos"
+  },
   "accountStatuses": {
     "active": "Activa",
     "disabled": "Deshabilitada"
