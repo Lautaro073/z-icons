@@ -18,7 +18,7 @@ interface AdminIconsSectionProps {
   itemsPerPage?: number;
 }
 
-export function AdminIconsSection({ itemsPerPage = 7 }: AdminIconsSectionProps) {
+export function AdminIconsSection({ itemsPerPage = 6 }: AdminIconsSectionProps) {
   const {
     admin,
     common,

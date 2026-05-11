@@ -24,7 +24,12 @@ export function useCustomIcons() {
 
   const createMutation = useMutation({
     mutationFn: createCustomIcon,
-    onSuccess: () => {
+    onSuccess: (newIcon) => {
+      if (newIcon) {
+        queryClient.setQueryData(["custom-icons"], (old: CustomIcon[] | undefined) => 
+          old ? [newIcon, ...old] : [newIcon]
+        );
+      }
       queryClient.invalidateQueries({ queryKey: ["custom-icons"] });
       clearIconContentCache();
     },
@@ -32,7 +37,12 @@ export function useCustomIcons() {
 
   const createBulkMutation = useMutation({
     mutationFn: createCustomIconsBulk,
-    onSuccess: () => {
+    onSuccess: (newIcons) => {
+      if (newIcons && newIcons.length > 0) {
+        queryClient.setQueryData(["custom-icons"], (old: CustomIcon[] | undefined) => 
+          old ? [...newIcons, ...old] : [...newIcons]
+        );
+      }
       queryClient.invalidateQueries({ queryKey: ["custom-icons"] });
       clearIconContentCache();
     },
@@ -41,7 +51,12 @@ export function useCustomIcons() {
   const updateMutation = useMutation({
     mutationFn: ({ id, payload }: { id: string; payload: Partial<CustomIconPayload> }) => 
       updateCustomIcon(id, payload),
-    onSuccess: () => {
+    onSuccess: (updatedIcon) => {
+      if (updatedIcon) {
+        queryClient.setQueryData(["custom-icons"], (old: CustomIcon[] | undefined) => 
+          old ? old.map(icon => icon.id === updatedIcon.id ? updatedIcon : icon) : [updatedIcon]
+        );
+      }
       queryClient.invalidateQueries({ queryKey: ["custom-icons"] });
       clearIconContentCache();
     },
@@ -49,7 +64,12 @@ export function useCustomIcons() {
 
   const deleteMutation = useMutation({
     mutationFn: deleteCustomIcon,
-    onSuccess: () => {
+    onSuccess: (_, deletedId) => {
+      queryClient.setQueryData(["custom-icons"], (oldData: CustomIcon[] | undefined) => {
+        if (!oldData) return [];
+        return oldData.filter((icon) => icon.id !== deletedId);
+      });
+      
       queryClient.invalidateQueries({ queryKey: ["custom-icons"] });
       clearIconContentCache();
     },
