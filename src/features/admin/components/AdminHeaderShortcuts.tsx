@@ -28,6 +28,12 @@ export function AdminHeaderShortcuts() {
           <span className="text-[11px] font-medium tracking-wide uppercase">{admin("tabs.stats")}</span>
         </Link>
       </Button>
+      <Button asChild variant="outline" size="sm" className="hidden sm:flex rounded-full gap-2 px-4 border-border/40 bg-card/40 backdrop-blur-md hover:bg-card/80">
+        <Link href="/admin?tab=icons">
+          <ZIcon type="mina" name="grid" className="size-3.5" />
+          <span className="text-[11px] font-medium tracking-wide uppercase">{admin("tabs.icons")}</span>
+        </Link>
+      </Button>
 
       {/* Mobile versions with just icons */}
       <Button asChild variant="outline" size="icon-sm" className="flex sm:hidden rounded-full border-border/40 bg-card/40 backdrop-blur-md">
@@ -38,6 +44,11 @@ export function AdminHeaderShortcuts() {
       <Button asChild variant="outline" size="icon-sm" className="flex sm:hidden rounded-full border-border/40 bg-card/40 backdrop-blur-md">
         <Link href="/admin?tab=stats" aria-label={admin("tabs.stats")}>
           <ZIcon type="mina" name="activity" className="size-4" />
+        </Link>
+      </Button>
+      <Button asChild variant="outline" size="icon-sm" className="flex sm:hidden rounded-full border-border/40 bg-card/40 backdrop-blur-md">
+        <Link href="/admin?tab=icons" aria-label={admin("tabs.icons")}>
+          <ZIcon type="mina" name="grid" className="size-4" />
         </Link>
       </Button>
     </div>
