@@ -447,6 +447,7 @@ async function mockAdminApis(
       const body = request.postDataJSON() as { username?: string; email?: string; role?: string };
       const userId = pathname.split("/").pop()!;
       const user = updateUserState(userId, (state) => {
+        if (!state) return;
         if (typeof body.username === "string") {
           state.username = body.username;
         }
@@ -470,10 +471,12 @@ async function mockAdminApis(
     }
 
     if (request.method() === "PATCH" && /\/api\/admin\/users\/[^/]+\/disable$/.test(pathname)) {
-      const userId = pathname.split("/").slice(-2, -1)[0];
+      const userId = pathname.split("/").slice(-2, -1)[0]!;
       const user = updateUserState(userId, (state) => {
-        state.accountStatus = "disabled";
-        state.disabled_at = new Date().toISOString();
+        if (state) {
+          state.accountStatus = "disabled";
+          state.disabled_at = new Date().toISOString();
+        }
       });
       options.actionsRequests?.push(`${request.method()} ${requestUrl.toString()}`);
       await route.fulfill({
@@ -488,10 +491,12 @@ async function mockAdminApis(
     }
 
     if (request.method() === "PATCH" && /\/api\/admin\/users\/[^/]+\/re-enable$/.test(pathname)) {
-      const userId = pathname.split("/").slice(-2, -1)[0];
+      const userId = pathname.split("/").slice(-2, -1)[0]!;
       const user = updateUserState(userId, (state) => {
-        state.accountStatus = "active";
-        state.disabled_at = null;
+        if (state) {
+          state.accountStatus = "active";
+          state.disabled_at = null;
+        }
       });
       options.actionsRequests?.push(`${request.method()} ${requestUrl.toString()}`);
       await route.fulfill({
@@ -506,7 +511,7 @@ async function mockAdminApis(
     }
 
     if (request.method() === "DELETE" && /\/api\/admin\/users\/[^/]+\/permanent$/.test(pathname)) {
-      const userId = pathname.split("/").slice(-2, -1)[0];
+      const userId = pathname.split("/").slice(-2, -1)[0]!;
       usersStateById.delete(userId);
       deletedUserIds.add(userId);
       options.actionsRequests?.push(`${request.method()} ${requestUrl.toString()}`);

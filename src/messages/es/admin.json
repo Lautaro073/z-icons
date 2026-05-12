@@ -51,7 +51,8 @@
     "reEnableUser": "No se pudo reactivar el usuario.",
     "deleteUser": "No se pudo borrar el usuario definitivamente.",
     "invalidCustomRange": "Para filtro personalizado debes enviar desde y hasta.",
-    "invalidDateRange": "La fecha desde debe ser menor o igual a hasta."
+    "invalidDateRange": "La fecha desde debe ser menor o igual a hasta.",
+    "exportFetchFailed": "No se pudieron obtener todos los datos para exportar."
   },
   "table": {
     "users": {

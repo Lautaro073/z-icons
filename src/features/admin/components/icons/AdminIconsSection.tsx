@@ -5,17 +5,17 @@ import { useTranslations } from "next-intl";
 import { ZIcon } from "@zcorvus/z-icons/react";
 import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AdminDataTableBase } from "../AdminDataTableBase";
-import type { CustomIcon } from "@/features/admin/hooks/useCustomIcons";
-import type { AdminColumnDef } from "../../types/table.types";
-import { AdminTablesPlaceholder } from "../AdminTablesPlaceholder";
+import { AdminDataTableBase } from "../shared/AdminDataTableBase";
+import { IconEntity } from "@/features/icons-explorer/models/IconEntity";
+import type { AdminColumnDef } from "@/types/admin";
+import { AdminTablesPlaceholder } from "../shared/AdminTablesPlaceholder";
 import { IconSheetForm } from "./IconSheetForm";
 import { AdminIconFilters } from "./AdminIconFilters";
 import { DeleteIconModal } from "./AdminIconsModals";
 import { getAdminIconColumns } from "./AdminIconColumns";
 import { useAdminIconsTable } from "@/features/admin/hooks/useAdminIconsTable";
-import { ExportButton } from "../ExportButton";
-import { getIconsReportColumns } from "@/lib/reports/configs/iconsReportConfig";
+import { ExportButton } from "../shared/ExportButton";
+import { getIconsReportColumns } from "@/features/admin/reports/iconsReportConfig";
 
 interface AdminIconsSectionProps {
   itemsPerPage?: number;
@@ -62,7 +62,7 @@ export function AdminIconsSection({ itemsPerPage = 6 }: AdminIconsSectionProps) 
     confirmDelete,
   } = useAdminIconsTable({ itemsPerPage });
 
-  const columns = useMemo<AdminColumnDef<CustomIcon>[]>(() => 
+  const columns = useMemo<AdminColumnDef<IconEntity>[]>(() => 
     getAdminIconColumns({
       admin,
       formatDate,
@@ -92,7 +92,7 @@ export function AdminIconsSection({ itemsPerPage = 6 }: AdminIconsSectionProps) 
           uniqueCreators={uniqueCreators}
         />
 
-        <AdminDataTableBase<CustomIcon>
+        <AdminDataTableBase<IconEntity>
           data={paginatedIcons}
           columns={columns}
           title={admin("iconsTitle")}
@@ -100,7 +100,7 @@ export function AdminIconsSection({ itemsPerPage = 6 }: AdminIconsSectionProps) 
           headerActions={
             <div className="flex items-center gap-3">
               {!isLoading && !isError && filteredIcons.length > 0 && (
-                <ExportButton<CustomIcon>
+                <ExportButton<IconEntity>
                   data={filteredIcons}
                   columns={getIconsReportColumns(
                     (k) => {
@@ -188,3 +188,4 @@ export function AdminIconsSection({ itemsPerPage = 6 }: AdminIconsSectionProps) 
     </TooltipProvider>
   );
 }
+

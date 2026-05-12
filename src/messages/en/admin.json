@@ -51,7 +51,8 @@
     "reEnableUser": "Could not re-enable the user.",
     "deleteUser": "Could not permanently delete the user.",
     "invalidCustomRange": "Custom filter requires both from and to.",
-    "invalidDateRange": "From date must be less than or equal to to date."
+    "invalidDateRange": "From date must be less than or equal to to date.",
+    "exportFetchFailed": "Failed to fetch complete user dataset for export."
   },
   "table": {
     "users": {

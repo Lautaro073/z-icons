@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, FileText, FileSpreadsheet, FileJson } from "lucide-react";
+import { Upload, FileText, FileSpreadsheet, FileJson } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -12,7 +12,8 @@ import {
 } from "@/lib/reports";
 
 export interface ExportButtonProps<T> {
-  data: T[];
+  data?: T[];
+  fetchData?: () => Promise<T[]>;
   columns: ReportColumn<T>[];
   filename: string;
   reportTitle: string;
@@ -25,15 +26,17 @@ export interface ExportButtonProps<T> {
     pdf?: string;
     success?: string;
     error?: string;
+    fetching?: string;
   };
 }
 
 /**
  * Componente genérico de exportación que consume el patrón Strategy/Factory de Reportes.
- * (Polimorfismo UI)
+ * Soporta datos estáticos o un método `fetchData` para carga diferida (ej: todos los registros).
  */
 export function ExportButton<T>({
   data,
+  fetchData,
   columns,
   filename,
   reportTitle,
@@ -43,18 +46,24 @@ export function ExportButton<T>({
   const [open, setOpen] = useState(false);
 
   const handleExport = async (format: ExportFormat) => {
-    if (data.length === 0) {
-      toast.warning("No hay datos disponibles para exportar");
-      return;
-    }
-
     setIsExporting(true);
     setOpen(false);
-    
-    // Pequeño delay para que el loader visual de feedback
-    await new Promise(resolve => setTimeout(resolve, 300));
 
     try {
+      let exportData: T[] = [];
+
+      if (fetchData) {
+        exportData = await fetchData();
+      } else if (data) {
+        exportData = data;
+      }
+
+      if (!exportData || exportData.length === 0) {
+        toast.warning("No hay datos disponibles para exportar");
+        setIsExporting(false);
+        return;
+      }
+
       // Lógica Polimórfica: No sabemos qué clase instancia el Factory, 
       // pero sabemos que todas tienen el método .export().
       const exporter = createExporter<T>(format, reportTitle, columns);
@@ -62,7 +71,7 @@ export function ExportButton<T>({
       // Calcular extensión final
       const finalFilename = `${filename}.${format === 'xlsx' ? 'xlsx' : format}`;
       
-      await exporter.export(data, finalFilename);
+      await exporter.export(exportData, finalFilename);
       
       toast.success(labels?.success || `Exportación ${format.toUpperCase()} completada`);
     } catch (error) {
@@ -82,8 +91,8 @@ export function ExportButton<T>({
           className="rounded-full gap-2 text-xs"
           disabled={isExporting}
         >
-          <Download className="size-3.5" />
-          <span>{isExporting ? "..." : (labels?.trigger || "Exportar")}</span>
+          <Upload className="size-3.5" />
+          <span>{isExporting ? (labels?.fetching || "Exportando...") : (labels?.trigger || "Exportar")}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-48 rounded-[1.4rem] p-2 overflow-hidden">

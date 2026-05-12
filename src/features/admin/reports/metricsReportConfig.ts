@@ -1,5 +1,5 @@
-import { ReportColumn } from "../ReportExporter";
 import { AdminMetricsTimeseriesPoint } from "@/lib/api/backend";
+import { ReportColumn } from "@/lib/reports/ReportExporter";
 
 /**
  * Devuelve la definición de columnas para el reporte de Estadísticas/Métricas.

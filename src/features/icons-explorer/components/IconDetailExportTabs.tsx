@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import type { IconExportState } from "@/hooks/useIconExport"
+import type { IconExportState } from "../hooks/useIconExport"
 import { cn } from "@/lib/utils"
 
 interface IconDetailExportTabsProps {

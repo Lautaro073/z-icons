@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import type { AdminDataTableProps } from "../types/table.types";
+import type { AdminDataTableProps } from "@/types/admin";
 import { AdminTablePagination } from "./AdminTablePagination";
 import { AdminTableCell } from "./AdminTableCell";
 

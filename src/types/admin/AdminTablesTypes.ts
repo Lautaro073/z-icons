@@ -1,8 +1,9 @@
 import type { AdminUser } from "@/lib/api/backend";
+import { UserEntity } from "@/features/user/models/UserEntity";
 
 export type PendingAction =
-  | { type: "disable"; user: AdminUser }
-  | { type: "delete"; user: AdminUser }
+  | { type: "disable"; user: UserEntity }
+  | { type: "delete"; user: UserEntity }
   | null;
 
 export interface EditUserDraft {
@@ -39,3 +40,4 @@ export interface ConfirmActionModalLabels {
   deleteTitle: string;
   deleteBody: string;
 }
+

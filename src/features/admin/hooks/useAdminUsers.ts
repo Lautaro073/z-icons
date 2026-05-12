@@ -10,6 +10,7 @@ import {
   isBackendApiError,
 } from "@/lib/api/backend";
 import { useRouter } from "@/i18n/navigation";
+import { UserEntity } from "@/features/user/models/UserEntity";
 
 const ADMIN_USERS_QUERY_BASE_KEY = "admin-users";
 
@@ -56,7 +57,7 @@ export function useAdminUsers(
   const apiParams = useMemo(() => normalizeUsersApiParams(params), [params]);
   const redirectedRef = useRef(false);
 
-  const query = useQuery<AdminUsersResult, BackendApiError>({
+  const query = useQuery<AdminUsersResult<UserEntity>, BackendApiError>({
     queryKey: [ADMIN_USERS_QUERY_BASE_KEY, keyParams],
     queryFn: () => getAdminUsers(apiParams),
     enabled: isEnabled,
@@ -80,7 +81,7 @@ export function useAdminUsers(
     router.replace('/auth/login?session=expired');
   }, [isEnabled, query.error, router]);
 
-  const isLoadingState = query.status === "pending" || query.isLoading;
+  const isLoadingState = query.isLoading || query.isPending;
   const isEmpty = !isLoadingState && !query.isError && (query.data?.data.length ?? 0) === 0;
   const state = isLoadingState ? 'loading' : query.isError ? 'error' : isEmpty ? 'empty' : 'success';
 
@@ -90,3 +91,4 @@ export function useAdminUsers(
     state,
   };
 }
+

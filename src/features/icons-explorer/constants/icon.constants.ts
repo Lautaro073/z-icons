@@ -86,14 +86,14 @@ export const getIconContentData = async (): Promise<IconContent> => {
   try {
     const customIcons = await getCustomIcons();
     if (Array.isArray(customIcons)) {
-      const activeIcons = customIcons.filter(icon => icon.status !== "disabled");
+      const activeIcons = customIcons.filter(icon => icon.raw.status !== "disabled");
       
       const freeIcons = activeIcons.filter(icon => {
-        const isPrem = icon.is_premium === true || icon.is_premium === 1 || String(icon.is_premium) === "true";
+        const isPrem = icon.isPremium();
         return !isPrem;
       });
       const premiumIcons = activeIcons.filter(icon => {
-        const isPrem = icon.is_premium === true || icon.is_premium === 1 || String(icon.is_premium) === "true";
+        const isPrem = icon.isPremium();
         return isPrem;
       });
 
@@ -101,7 +101,7 @@ export const getIconContentData = async (): Promise<IconContent> => {
       customPremiumIconNames = premiumIcons.map(icon => icon.name);
 
       customIconsCache = activeIcons.reduce((acc, icon) => {
-        acc[icon.name] = icon.svg_content || "";
+        acc[icon.name] = icon.svgContent || "";
         return acc;
       }, {} as Record<string, string>);
     }

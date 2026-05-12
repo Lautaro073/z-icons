@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ZIcon } from "@zcorvus/z-icons/react";
-import type { AdminPagination } from "../types/table.types";
+import type { AdminPagination } from "@/types/admin";
 
 export interface AdminTablePaginationProps {
     usersPagination: AdminPagination;

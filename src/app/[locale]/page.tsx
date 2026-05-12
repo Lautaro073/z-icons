@@ -7,7 +7,7 @@ import { ZCorvusLogo } from "@/components/common/ZCorvusLogo";
 import { AppearanceSwitcher } from "@/components/controllers/AppearanceSwitcher";
 import { TypesIcons } from "@/features/icons-explorer";
 import { UserProfileCard } from "@/features/user/index";
-import { AdminHeaderShortcuts } from "@/features/admin/components/AdminHeaderShortcuts";
+import { AdminHeaderShortcuts } from "@/features/admin/components/layout/AdminHeaderShortcuts";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "@/i18n/server";
 

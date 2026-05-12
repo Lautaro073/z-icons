@@ -5,18 +5,18 @@ import type {
   AdminPreferenceColumnKey,
   AdminPlanType,
   GetAdminUsersParams,
-  AdminUser,
 } from "@/lib/api/backend";
+import { UserEntity } from "@/features/user/models/UserEntity";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAdminTables } from "@/features/admin/index";
 import { ConfirmActionModal, EditUserModal } from "./AdminTablesModals";
-import { AdminDataTableBase } from "../AdminDataTableBase";
+import { AdminDataTableBase } from "../shared/AdminDataTableBase";
 import { getAdminUserColumns } from "./AdminUserColumns";
-import { AdminTableColumnsControl } from "../AdminTableColumnsControl";
-import { AdminTablesPlaceholder } from "../AdminTablesPlaceholder";
+import { AdminTableColumnsControl } from "../shared/AdminTableColumnsControl";
+import { AdminTablesPlaceholder } from "../shared/AdminTablesPlaceholder";
 import { ZIcon } from "@zcorvus/z-icons/react";
-import { ExportButton } from "../ExportButton";
-import { getUserReportColumns } from "@/lib/reports/configs/usersReportConfig";
+import { ExportButton } from "../shared/ExportButton";
+import { getUserReportColumns } from "@/features/admin/reports/usersReportConfig";
 
 type UserColumnKey = AdminPreferenceColumnKey;
 
@@ -82,6 +82,7 @@ export function AdminTablesSection({
     deleteMutation,
     modalLabels,
     confirmLabels,
+    fetchAllUsers,
   } = useAdminTables({ usersParams, planType, enabled });
 
   const finalColumns = useMemo(() => {
@@ -128,7 +129,7 @@ export function AdminTablesSection({
   return (
     <TooltipProvider>
       <div className="flex flex-col gap-6">
-        <AdminDataTableBase<AdminUser>
+        <AdminDataTableBase<UserEntity>
           data={filteredUsers}
           columns={finalColumns}
           title={admin("table.users.title")}
@@ -138,21 +139,44 @@ export function AdminTablesSection({
           headerActions={
             !isLoading && !isError && !isEmpty && (
               <div className="flex items-center gap-2">
-                <ExportButton<AdminUser>
-                  data={filteredUsers}
+                <ExportButton<UserEntity>
+                  fetchData={fetchAllUsers}
                   columns={getUserReportColumns(
                     (k) => {
-                      // Mapeo dinámico para reutilizar las cabeceras de tabla que ya existen
+                      // Column Headers
                       if (k === "username") return admin("table.users.username");
                       if (k === "email") return admin("table.users.email");
                       if (k === "role") return admin("table.users.role");
                       if (k === "accountStatus") return admin("table.users.accountStatus");
-                      if (k === "plan") return admin("table.users.status");
+                      if (k === "subscriptionStatus") return admin("table.users.status");
+                      if (k === "plan") return admin("table.subscriptions.plan");
+                      if (k === "tokenExpiry") return admin("table.users.tokenExpiry");
                       if (k === "createdAt") return admin("table.users.startDate");
-                      // Fallback genérico en caso de error
+
+                      // Values: Roles
+                      if (k === "role.admin") return admin("roles.admin");
+                      if (k === "role.user") return admin("roles.user");
+                      if (k === "role.pro") return admin("roles.pro");
+
+                      // Values: Account Status
+                      if (k === "accountStatus.active") return admin("accountStatuses.active");
+                      if (k === "accountStatus.disabled") return admin("accountStatuses.disabled");
+
+                      // Values: Subscription Status (Fixing User Screenshot Issue)
+                      if (k === "states.active") return admin("statuses.active");
+                      if (k === "states.expiring") return admin("statuses.expiring");
+                      if (k === "states.expired") return admin("statuses.expired");
+                      if (k === "states.none") return admin("statuses.none");
+
+                      // Values: Plan Names
+                      if (k === "plan.pro") return "Pro";
+                      if (k === "plan.enterprise") return "Enterprise";
+                      if (k === "plan.free") return admin("table.users.planFree") || "Gratis";
+
                       return String(k);
                     },
-                    formatDate
+                    formatDate,
+                    planByEmail
                   )}
                   filename={`z-icons-usuarios-${new Date().toISOString().split('T')[0]}`}
                   reportTitle={admin("export.usersTitle")}
@@ -229,3 +253,4 @@ export function AdminTablesSection({
     </TooltipProvider>
   );
 }
+

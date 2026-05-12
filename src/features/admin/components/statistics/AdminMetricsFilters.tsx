@@ -1,9 +1,9 @@
 import type { DateRange } from "react-day-picker";
 import { metricGranularityOptions } from "@/features/admin/index";
 import { AdminCustomRangePicker } from "./AdminCustomRangePicker";
-import { AdminSelect } from "../AdminSelect";
-import { ExportButton } from "../ExportButton";
-import { getMetricsReportColumns } from "@/lib/reports/configs/metricsReportConfig";
+import { AdminSelect } from "../shared/AdminSelect";
+import { ExportButton } from "../shared/ExportButton";
+import { getMetricsReportColumns } from "@/features/admin/reports/metricsReportConfig";
 import type { AdminMetricsTimeseriesPoint } from "@/lib/api/backend";
 
 interface AdminMetricsFiltersProps {

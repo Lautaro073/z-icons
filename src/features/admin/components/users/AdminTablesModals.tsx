@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AdminSelect } from "../AdminSelect";
-import type { AdminUser } from "@/lib/api/backend";
+import { AdminSelect } from "../shared/AdminSelect";
+import { UserEntity } from "@/features/user/models/UserEntity";
 import type {
     ConfirmActionModalLabels,
     EditUserDraft,
@@ -11,7 +11,7 @@ import type {
 
 type EditUserModalProps = {
     open: boolean;
-    user: AdminUser | null;
+    user: UserEntity | null;
     draft: EditUserDraft;
     onDraftChange: (next: EditUserDraft) => void;
     onClose: () => void;
@@ -48,11 +48,11 @@ export function EditUserModal({
                 <div className="flex items-start justify-between gap-4">
                     <div>
                         <p className="ui-section-header">{labels.title}</p>
-                        <h3 className="mt-2 text-2xl font-medium tracking-tight text-foreground">{user.username}</h3>
+                        <h3 className="mt-2 text-2xl font-medium tracking-tight text-foreground">{user.displayName}</h3>
                         <p className="mt-2 text-sm text-muted-foreground">{labels.subtitle}</p>
                     </div>
                     <span className="inline-flex rounded-full border border-border/60 bg-muted/20 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                        {labels.accountStatus}: {user.accountStatus === "disabled" ? labels.disabled : labels.active}
+                        {labels.accountStatus}: {user.raw.accountStatus === "disabled" ? labels.disabled : labels.active}
                     </span>
                 </div>
 
@@ -127,7 +127,7 @@ export function ConfirmActionModal({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4 py-6 backdrop-blur-sm">
             <div className="ui-surface-panel w-full max-w-lg rounded-4xl p-5 sm:p-6">
                 <p className="ui-section-header">{isDelete ? labels.deleteTitle : labels.disableTitle}</p>
-                <h3 className="mt-2 text-2xl font-medium tracking-tight text-foreground">{pendingAction.user.username}</h3>
+                <h3 className="mt-2 text-2xl font-medium tracking-tight text-foreground">{pendingAction.user.displayName}</h3>
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">
                     {isDelete ? labels.deleteBody : labels.disableBody}
                 </p>
@@ -154,3 +154,4 @@ export function ConfirmActionModal({
         </div>
     );
 }
+

@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { clearIconContentCache } from "@/features/icons-explorer";
+import { IconEntity } from "@/features/icons-explorer/models/IconEntity";
 import {
   getCustomIcons,
   createCustomIcon,
@@ -26,8 +27,9 @@ export function useCustomIcons() {
     mutationFn: createCustomIcon,
     onSuccess: (newIcon) => {
       if (newIcon) {
-        queryClient.setQueryData(["custom-icons"], (old: CustomIcon[] | undefined) => 
-          old ? [newIcon, ...old] : [newIcon]
+        const entity = new IconEntity(newIcon);
+        queryClient.setQueryData(["custom-icons"], (old: IconEntity[] | undefined) => 
+          old ? [entity, ...old] : [entity]
         );
       }
       queryClient.invalidateQueries({ queryKey: ["custom-icons"] });
@@ -39,8 +41,9 @@ export function useCustomIcons() {
     mutationFn: createCustomIconsBulk,
     onSuccess: (newIcons) => {
       if (newIcons && newIcons.length > 0) {
-        queryClient.setQueryData(["custom-icons"], (old: CustomIcon[] | undefined) => 
-          old ? [...newIcons, ...old] : [...newIcons]
+        const entities = newIcons.map(i => new IconEntity(i));
+        queryClient.setQueryData(["custom-icons"], (old: IconEntity[] | undefined) => 
+          old ? [...entities, ...old] : [...entities]
         );
       }
       queryClient.invalidateQueries({ queryKey: ["custom-icons"] });
@@ -53,8 +56,9 @@ export function useCustomIcons() {
       updateCustomIcon(id, payload),
     onSuccess: (updatedIcon) => {
       if (updatedIcon) {
-        queryClient.setQueryData(["custom-icons"], (old: CustomIcon[] | undefined) => 
-          old ? old.map(icon => icon.id === updatedIcon.id ? updatedIcon : icon) : [updatedIcon]
+        const entity = new IconEntity(updatedIcon);
+        queryClient.setQueryData(["custom-icons"], (old: IconEntity[] | undefined) => 
+          old ? old.map(icon => icon.id === updatedIcon.id ? entity : icon) : [entity]
         );
       }
       queryClient.invalidateQueries({ queryKey: ["custom-icons"] });
@@ -65,7 +69,7 @@ export function useCustomIcons() {
   const deleteMutation = useMutation({
     mutationFn: deleteCustomIcon,
     onSuccess: (_, deletedId) => {
-      queryClient.setQueryData(["custom-icons"], (oldData: CustomIcon[] | undefined) => {
+      queryClient.setQueryData(["custom-icons"], (oldData: IconEntity[] | undefined) => {
         if (!oldData) return [];
         return oldData.filter((icon) => icon.id !== deletedId);
       });
@@ -89,3 +93,4 @@ export function useCustomIcons() {
     isDeleting: deleteMutation.isPending,
   };
 }
+

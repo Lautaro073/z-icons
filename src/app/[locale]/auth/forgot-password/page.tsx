@@ -15,7 +15,7 @@ import {
   requestPasswordResetOtp,
   resetPasswordWithOtp,
   verifyPasswordResetOtp,
-} from "@/lib/api/auth";
+} from "@/features/auth/services/auth";
 
 export default function ForgotPasswordPage() {
   const auth = useTranslations("auth");

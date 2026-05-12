@@ -3,8 +3,10 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { useCustomIcons, type CustomIcon, type CustomIconPayload } from "./useCustomIcons";
+import { useCustomIcons, type CustomIconPayload } from "./useCustomIcons";
 import { useAdminUsers } from "./useAdminUsers";
+import { IconEntity } from "@/features/icons-explorer/models/IconEntity";
+import { UserEntity } from "@/features/user/models/UserEntity";
 
 export interface UseAdminIconsTableProps {
   itemsPerPage?: number;
@@ -31,20 +33,20 @@ export function useAdminIconsTable({ itemsPerPage = 7 }: UseAdminIconsTableProps
 
   // UI States (Modals)
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [editingIcon, setEditingIcon] = useState<CustomIcon | null>(null);
+  const [editingIcon, setEditingIcon] = useState<IconEntity | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const uniqueCreators = useMemo(() => {
     const creatorIds = icons
-      .map(i => i.created_by || i.create_by)
+      .map(i => i.getCreatorId())
       .filter((id): id is string => typeof id === "string" && id.length > 0);
       
     const uniqueIds = Array.from(new Set(creatorIds));
     
     return uniqueIds.map(id => {
-      const found = users.find(u => u.id === id);
-      return { id, name: found ? found.username : `ID: ${id.substring(0, 6)}` };
+      const found = users.find((u: UserEntity) => u.id === id);
+      return { id, name: found ? found.displayName : `ID: ${id.substring(0, 6)}` };
     }).sort((a, b) => a.name.localeCompare(b.name));
   }, [icons, users]);
 
@@ -60,18 +62,18 @@ export function useAdminIconsTable({ itemsPerPage = 7 }: UseAdminIconsTableProps
         ? icon.name.toLowerCase().includes(searchQuery.toLowerCase())
         : true;
       
-      const isPrem = icon.is_premium === true || icon.is_premium === 1 || String(icon.is_premium) === "true";
+      const isPrem = icon.isPremium();
       const matchesTier = selectedTier === "all" ? true : (selectedTier === "premium" ? isPrem : !isPrem);
       
       const matchesCategory = selectedCategory === "all" ? true : icon.category === selectedCategory;
 
-      const cId = icon.created_by || icon.create_by;
+      const cId = icon.getCreatorId();
       const actualCreatorId = cId || "Admin"; 
       const matchesCreator = selectedCreator === "all" ? true : actualCreatorId === selectedCreator;
 
       let matchesDate = true;
-      if (selectedDateRange !== "all" && icon.created_at) {
-        const createDate = new Date(icon.created_at);
+      if (selectedDateRange !== "all" && icon.raw.created_at) {
+        const createDate = new Date(icon.raw.created_at);
         const diffTime = Math.abs(now.getTime() - createDate.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
@@ -107,11 +109,11 @@ export function useAdminIconsTable({ itemsPerPage = 7 }: UseAdminIconsTableProps
     }
   }, [filteredIcons.length, totalPages, currentPage]);
 
-  const getUserName = useCallback((icon: CustomIcon) => {
-    const userId = icon.created_by || icon.create_by;
+  const getUserName = useCallback((icon: IconEntity) => {
+    const userId = icon.getCreatorId();
     if (!userId) return "Admin";
-    const match = users.find((u) => u.id === userId);
-    return match ? match.username : userId;
+    const match = users.find((u: UserEntity) => u.id === userId);
+    return match ? match.displayName : userId;
   }, [users]);
 
   const formatDate = useCallback((dateString: string) => {
@@ -124,7 +126,7 @@ export function useAdminIconsTable({ itemsPerPage = 7 }: UseAdminIconsTableProps
     setIsSheetOpen(true);
   }, []);
 
-  const handleOpenEdit = useCallback((icon: CustomIcon) => {
+  const handleOpenEdit = useCallback((icon: IconEntity) => {
     setEditingIcon(icon);
     setIsSheetOpen(true);
   }, []);

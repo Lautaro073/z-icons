@@ -1,8 +1,8 @@
-export { AdminDashboardTabs, type AdminTab } from "./AdminDashboardTabs";
-export { AdminAppearanceControls } from "./AdminAppearanceControls";
-export { AdminDashboardHero } from "./AdminDashboardHero";
-export { AdminSelect } from "./AdminSelect";
-export { AdminHeaderShortcuts } from "./AdminHeaderShortcuts";
+export { AdminDashboardTabs, type AdminTab } from "./layout/AdminDashboardTabs";
+export { AdminAppearanceControls } from "./layout/AdminAppearanceControls";
+export { AdminDashboardHero } from "./layout/AdminDashboardHero";
+export { AdminHeaderShortcuts } from "./layout/AdminHeaderShortcuts";
+export { AdminSelect } from "./shared/AdminSelect";
 
 // Statistics exports
 export { KPICards } from "./statistics/KPICards";

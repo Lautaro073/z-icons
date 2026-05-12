@@ -1,6 +1,6 @@
 import type { ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
-import { AdminSelect } from "../AdminSelect";
+import { AdminSelect } from "../shared/AdminSelect";
 
 interface UserFiltersParams {
     role?: string;

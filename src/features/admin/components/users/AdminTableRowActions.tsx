@@ -1,21 +1,21 @@
 import { PencilLine, RotateCcw, Trash2, UserRoundX } from "lucide-react";
-import type { AdminUser } from "@/lib/api/backend";
+import { UserEntity } from "@/features/user/models/UserEntity";
 import type { MutationState, PendingAction } from "@/types";
-import { ActionIconButton } from "../AdminTableActionButton";
+import { ActionIconButton } from "../shared/AdminTableActionButton";
 
 export interface AdminTableRowActionsProps {
-    item: AdminUser;
+    item: UserEntity;
     currentUserId?: string;
     accountStatus: "active" | "disabled";
     common: (key: string) => string;
     admin: (key: string) => string;
-    openEditModal: (user: AdminUser) => void;
+    openEditModal: (user: UserEntity) => void;
     setPendingAction: (action: PendingAction) => void;
     reEnableMutation: MutationState<string>;
     disableMutation: MutationState<string>;
     deleteMutation: MutationState<string>;
     updateMutationIsPending: boolean;
-    editingUser: AdminUser | null;
+    editingUser: UserEntity | null;
     pendingAction: PendingAction;
     isDisabledAccountsView: boolean;
 }
@@ -36,7 +36,7 @@ export function AdminTableRowActions({
     pendingAction,
     isDisabledAccountsView,
 }: AdminTableRowActionsProps) {
-    const isSelf = currentUserId === item.id;
+    const isSelfProtected = currentUserId ? !item.canBeDeletedBy(currentUserId) : false;
     const isMutatingRow =
         (updateMutationIsPending && editingUser?.id === item.id) ||
         (reEnableMutation.isPending && reEnableMutation.variables === item.id) ||
@@ -48,16 +48,16 @@ export function AdminTableRowActions({
             {accountStatus === "active" ? (
                 <>
                     <ActionIconButton
-                        label={`${common("actions.update")} ${item.username}`}
+                        label={`${common("actions.update")} ${item.displayName}`}
                         onClick={() => openEditModal(item)}
                         disabled={isMutatingRow}
                     >
                         <PencilLine className="size-3.5" />
                     </ActionIconButton>
                     <ActionIconButton
-                        label={isSelf ? admin("actions.selfProtected") : admin("actions.disable")}
+                        label={isSelfProtected ? admin("actions.selfProtected") : admin("actions.disable")}
                         onClick={() => setPendingAction({ type: "disable", user: item })}
-                        disabled={isMutatingRow || isSelf}
+                        disabled={isMutatingRow || isSelfProtected}
                     >
                         <UserRoundX className="size-3.5" />
                     </ActionIconButton>
@@ -74,9 +74,9 @@ export function AdminTableRowActions({
                         </ActionIconButton>
                     )}
                     <ActionIconButton
-                        label={isSelf ? admin("actions.selfProtected") : admin("actions.deletePermanent")}
+                        label={isSelfProtected ? admin("actions.selfProtected") : admin("actions.deletePermanent")}
                         onClick={() => setPendingAction({ type: "delete", user: item })}
-                        disabled={isMutatingRow || isSelf}
+                        disabled={isMutatingRow || isSelfProtected}
                         destructive
                     >
                         <Trash2 className="size-3.5" />
@@ -86,3 +86,4 @@ export function AdminTableRowActions({
         </div>
     );
 }
+

@@ -7,14 +7,15 @@ import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import type {
   AdminPlanType,
-  AdminUser,
   GetAdminUsersParams,
   UpdateAdminUserPayload,
 } from "@/lib/api/backend";
+import { UserEntity } from "@/features/user/models/UserEntity";
 import {
   BackendApiError,
   deleteAdminUserPermanently,
   disableAdminUser,
+  getAdminUsers,
   reEnableAdminUser,
   updateAdminUser,
 } from "@/lib/api/backend";
@@ -66,7 +67,7 @@ export function useAdminTables({
   const shouldLoadPlans = usersParams.subscriptionStatus !== "none" || isPlanFilterEnabled;
   const isDisabledAccountsView = usersParams.accountStatus === "disabled";
 
-  const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
+  const [editingUser, setEditingUser] = useState<UserEntity | null>(null);
   const [editDraft, setEditDraft] = useState<EditUserDraft>({ username: "", email: "", role: "user" });
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
 
@@ -154,19 +155,68 @@ export function useAdminTables({
   const planByEmail = new Map(
     Array.from(subscriptionByEmail.entries()).map(([email, subscription]) => [email, subscription.plan_type])
   );
-  const usersRows = usersQuery.data?.data ?? [];
-  const accountVisibleUsers = usersRows.filter((item) => {
-    const accountStatus = normalizeAccountStatus(item.accountStatus);
+  const usersRows: UserEntity[] = usersQuery.data?.data ?? [];
 
-    if (usersParams.accountStatus === "disabled") {
-      return accountStatus === "disabled";
+  const applyClientSideFilters = (rows: UserEntity[]) => {
+    const accountVisible = rows.filter((item: UserEntity) => {
+      const accountStatus = normalizeAccountStatus(item.raw.accountStatus);
+      if (usersParams.accountStatus === "disabled") {
+        return accountStatus === "disabled";
+      }
+      return accountStatus === "active";
+    });
+
+    return isPlanFilterEnabled
+      ? accountVisible.filter((item: UserEntity) => resolvePlanForUser(item.raw, planByEmail) === planType)
+      : accountVisible;
+  };
+
+  const filteredUsers = applyClientSideFilters(usersRows);
+
+  /**
+   * Fetch ALL users matching current search/filters for export purposes.
+   * Concatenates all pages from the server using the maximum allowed pageSize (100).
+   */
+  const fetchAllUsers = async () => {
+    try {
+      const MAX_SERVER_PAGE_SIZE = 100;
+      
+      // Primer request para obtener la primera página y el conteo total de páginas
+      const firstPageResult = await getAdminUsers({
+        ...usersParams,
+        page: 1,
+        pageSize: MAX_SERVER_PAGE_SIZE,
+      });
+
+      let allData = [...firstPageResult.data];
+      const totalPages = firstPageResult.pagination.totalPages;
+
+      // Si hay más páginas, lanzamos peticiones concurrentes para el resto
+      if (totalPages > 1) {
+        const remainingPagePromises = [];
+        for (let p = 2; p <= totalPages; p++) {
+          remainingPagePromises.push(
+            getAdminUsers({
+              ...usersParams,
+              page: p,
+              pageSize: MAX_SERVER_PAGE_SIZE,
+            })
+          );
+        }
+
+        const otherPagesResults = await Promise.all(remainingPagePromises);
+        otherPagesResults.forEach((res) => {
+          allData = allData.concat(res.data);
+        });
+      }
+
+      return applyClientSideFilters(allData);
+    } catch (error) {
+      console.error("Failed to fetch all users for export", error);
+      toast.error(admin("errors.exportFetchFailed"));
+      throw error;
     }
-
-    return accountStatus === "active";
-  });
-  const filteredUsers = isPlanFilterEnabled
-    ? accountVisibleUsers.filter((item) => resolvePlanForUser(item, planByEmail) === planType)
-    : accountVisibleUsers;
+  };
 
   const isLoading = usersQuery.state === "loading" || (isPlanFilterEnabled && subscriptionsQuery.state === "loading");
   const isError = usersQuery.state === "error" || (isPlanFilterEnabled && subscriptionsQuery.state === "error");
@@ -185,12 +235,12 @@ export function useAdminTables({
     return parsedDate.toLocaleDateString(locale);
   };
 
-  const openEditModal = (user: AdminUser) => {
+  const openEditModal = (user: UserEntity) => {
     setEditingUser(user);
     setEditDraft({
-      username: user.username,
+      username: user.displayName,
       email: user.email,
-      role: user.role_name,
+      role: user.role,
     });
   };
 
@@ -203,7 +253,7 @@ export function useAdminTables({
     const nextEmail = editDraft.email.trim();
     const nextRole = editDraft.role;
 
-    if (nextUsername === editingUser.username && nextEmail === editingUser.email && nextRole === editingUser.role_name) {
+    if (nextUsername === editingUser.displayName && nextEmail === editingUser.email && nextRole === editingUser.role) {
       setEditingUser(null);
       return;
     }
@@ -284,7 +334,9 @@ export function useAdminTables({
     reEnableMutation,
     deleteMutation,
     invalidateUsers,
+    fetchAllUsers,
     modalLabels,
     confirmLabels,
   } as const;
 }
+

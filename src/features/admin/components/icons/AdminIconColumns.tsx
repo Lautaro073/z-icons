@@ -1,15 +1,15 @@
 "use client";
 
-import type { AdminColumnDef } from "../../types/table.types";
-import type { CustomIcon } from "@/features/admin/hooks/useCustomIcons";
-import { ActionIconButton } from "../AdminTableActionButton";
+import type { AdminColumnDef } from "@/types/admin";
+import { IconEntity } from "@/features/icons-explorer/models/IconEntity";
+import { ActionIconButton } from "../shared/AdminTableActionButton";
 import { Crown, PencilLine, Trash2 } from "lucide-react";
 
 interface GetIconColumnsParams {
   admin: (key: string) => string;
   formatDate: (dateString: string) => string;
-  getUserName: (icon: CustomIcon) => string;
-  handleOpenEdit: (icon: CustomIcon) => void;
+  getUserName: (icon: IconEntity) => string;
+  handleOpenEdit: (icon: IconEntity) => void;
   setDeleteId: (id: string) => void;
 }
 
@@ -19,7 +19,7 @@ export function getAdminIconColumns({
   getUserName,
   handleOpenEdit,
   setDeleteId,
-}: GetIconColumnsParams): AdminColumnDef<CustomIcon>[] {
+}: GetIconColumnsParams): AdminColumnDef<IconEntity>[] {
   return [
     {
       id: "name",
@@ -33,7 +33,7 @@ export function getAdminIconColumns({
       cell: (icon) => (
         <div 
           className="flex size-10 items-center justify-center overflow-hidden rounded-xl border border-border/50 bg-background shadow-sm text-foreground [&>svg]:size-6" 
-          dangerouslySetInnerHTML={{ __html: icon.svg_content || "" }} 
+          dangerouslySetInnerHTML={{ __html: icon.svgContent || "" }} 
         />
       ),
     },
@@ -50,7 +50,7 @@ export function getAdminIconColumns({
       id: "tier",
       header: admin("columns.tier"),
       cell: (icon) => {
-        const isPrem = icon.is_premium === true || icon.is_premium === 1 || String(icon.is_premium) === "true";
+        const isPrem = icon.isPremium();
         return isPrem ? (
           <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.05em] text-amber-600 dark:text-amber-400 whitespace-nowrap">
             <Crown className="size-3 fill-amber-500/20" />
@@ -73,7 +73,7 @@ export function getAdminIconColumns({
       id: "createdAt",
       header: admin("columns.createdAt"),
       className: "text-sm text-muted-foreground",
-      cell: (icon) => formatDate(icon.created_at),
+      cell: (icon) => formatDate(icon.raw.created_at),
     },
     {
       id: "actions",
@@ -92,3 +92,4 @@ export function getAdminIconColumns({
     },
   ];
 }
+

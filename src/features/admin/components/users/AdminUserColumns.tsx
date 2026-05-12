@@ -1,11 +1,11 @@
 "use client";
 
-import type { AdminColumnDef } from "../../types/table.types";
+import type { AdminColumnDef } from "@/types/admin";
 import type {
   AdminPlanType,
   AdminSubscription,
-  AdminUser,
 } from "@/lib/api/backend";
+import { UserEntity } from "@/features/user/models/UserEntity";
 import type { MutationState, PendingAction } from "@/types";
 import { AdminTableRowActions } from "./AdminTableRowActions";
 
@@ -16,13 +16,13 @@ interface GetUserColumnsParams {
   subscriptionByEmail: Map<string, AdminSubscription>;
   planByEmail: Map<string, AdminPlanType>;
   currentUserId?: string;
-  openEditModal: (user: AdminUser) => void;
+  openEditModal: (user: UserEntity) => void;
   setPendingAction: (action: PendingAction) => void;
   reEnableMutation: MutationState<string>;
   disableMutation: MutationState<string>;
   deleteMutation: MutationState<string>;
   updateMutationIsPending: boolean;
-  editingUser: AdminUser | null;
+  editingUser: UserEntity | null;
   pendingAction: PendingAction;
   isDisabledAccountsView: boolean;
 }
@@ -43,13 +43,13 @@ export function getAdminUserColumns({
   editingUser,
   pendingAction,
   isDisabledAccountsView,
-}: GetUserColumnsParams): AdminColumnDef<AdminUser>[] {
+}: GetUserColumnsParams): AdminColumnDef<UserEntity>[] {
   return [
     {
       id: "username",
       header: admin("table.users.username"),
       className: "font-medium text-foreground",
-      cell: (user) => user.username,
+      cell: (user) => user.displayName,
     },
     {
       id: "email",
@@ -60,13 +60,13 @@ export function getAdminUserColumns({
     {
       id: "role",
       header: admin("table.users.role"),
-      cell: (user) => admin(`roles.${user.role_name}`),
+      cell: (user) => admin(`roles.${user.role}`),
     },
     {
       id: "accountStatus",
       header: admin("table.users.accountStatus"),
       cell: (user) => {
-        const accountStatus = user.accountStatus === "disabled" ? "disabled" : "active";
+        const accountStatus = user.raw.accountStatus === "disabled" ? "disabled" : "active";
         return (
           <div className="inline-flex min-w-0 items-center gap-2">
             <span className={`size-2 rounded-full ${accountStatus === "disabled" ? "bg-amber-300/85" : "bg-emerald-300/85"}`} />
@@ -80,13 +80,13 @@ export function getAdminUserColumns({
     {
       id: "status",
       header: admin("table.users.status"),
-      cell: (user) => admin(`statuses.${user.subscriptionStatus}`),
+      cell: (user) => admin(`statuses.${user.raw.subscriptionStatus}`),
     },
     {
       id: "plan",
       header: admin("table.subscriptions.plan"),
       cell: (user) => {
-        const resolvedPlan = planByEmail.get(user.email) ?? (user.role_name === "pro" ? "pro" : undefined);
+        const resolvedPlan = planByEmail.get(user.email) ?? (user.role === "pro" ? "pro" : undefined);
         return (
           <span className="inline-flex rounded-full border border-border/60 bg-muted/30 px-2.5 py-1 text-[11px] uppercase tracking-[0.18em]">
             {resolvedPlan ?? "-"}
@@ -109,7 +109,7 @@ export function getAdminUserColumns({
       className: "text-muted-foreground",
       cell: (user) => {
         const subscription = subscriptionByEmail.get(user.email);
-        const subscriptionFinishDate = user.token_finish_date ?? subscription?.finish_date;
+        const subscriptionFinishDate = user.raw.token_finish_date ?? subscription?.finish_date;
         return formatDate(subscriptionFinishDate);
       },
     },
@@ -118,7 +118,7 @@ export function getAdminUserColumns({
       header: admin("table.users.actions"), // Placeholder if missing
       isStickyRight: true,
       cell: (user) => {
-        const accountStatus = user.accountStatus === "disabled" ? "disabled" : "active";
+        const accountStatus = user.raw.accountStatus === "disabled" ? "disabled" : "active";
         return (
           <AdminTableRowActions
             item={user}
@@ -141,3 +141,4 @@ export function getAdminUserColumns({
     },
   ];
 }
+

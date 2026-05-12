@@ -7,7 +7,7 @@ import {
     logout as backendLogout,
     getRefreshTokenFromServer,
     refreshAccessToken as backendRefreshAccessToken,
-} from '@/lib/api/auth';
+} from '@/features/auth/services/auth';
 import {
     setCurrentAccessToken,
     clearTokens,

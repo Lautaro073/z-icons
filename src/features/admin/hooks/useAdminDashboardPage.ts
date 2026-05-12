@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DateRange } from "react-day-picker";
 import { useAuth } from "@/contexts/AuthContext";
-import type { AdminTab } from "@/features/admin/components/AdminDashboardTabs";
+import type { AdminTab } from "@/features/admin/components/layout/AdminDashboardTabs";
 import {
   defaultVisibleColumns,
   type UserColumnKey,

@@ -25,7 +25,8 @@ import {
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import type { CustomIconPayload, CustomIcon } from "@/features/admin/hooks/useCustomIcons";
+import { IconEntity } from "@/features/icons-explorer/models/IconEntity";
+import type { CustomIconPayload } from "@/features/admin/hooks/useCustomIcons";
 
 interface IconFormValues {
   name: string;
@@ -39,7 +40,7 @@ interface IconSheetFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: CustomIconPayload | CustomIconPayload[]) => Promise<void>;
-  defaultValues?: CustomIcon | null;
+  defaultValues?: IconEntity | null;
   isSubmitting?: boolean;
 }
 
@@ -100,9 +101,9 @@ export function IconSheetForm({
       form.reset({
         name: defaultValues.name,
         category: defaultValues.category,
-        svg_content: defaultValues.svg_content || "",
-        is_premium: Boolean(defaultValues.is_premium === true || defaultValues.is_premium === 1 || String(defaultValues.is_premium) === "true"),
-        status: (defaultValues.status as "active" | "disabled") || "active",
+        svg_content: defaultValues.svgContent || "",
+        is_premium: defaultValues.isPremium(),
+        status: (defaultValues.raw.status as "active" | "disabled") || "active",
       });
     } else if (open && !defaultValues) {
       form.reset({
@@ -393,3 +394,4 @@ export function IconSheetForm({
     </Sheet>
   );
 }
+

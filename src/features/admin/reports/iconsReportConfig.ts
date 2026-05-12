@@ -1,17 +1,17 @@
-import { ReportColumn } from "../ReportExporter";
-import { CustomIcon } from "@/lib/api/backend";
+import { IconEntity } from "@/features/icons-explorer/models/IconEntity";
+import { ReportColumn } from "@/lib/reports/ReportExporter";
 
 /**
  * Devuelve la definición de columnas para el reporte de iconos inyectando traducciones.
  */
 export const getIconsReportColumns = (
   t: (key: string) => string,
-  getUserNameFn: (icon: CustomIcon) => string,
+  getUserNameFn: (icon: IconEntity) => string,
   formatDateFn?: (date: string) => string
-): ReportColumn<CustomIcon>[] => [
+): ReportColumn<IconEntity>[] => [
   {
     header: "Icono",
-    accessor: (icon) => icon.svg_content || "",
+    accessor: (icon) => icon.svgContent || "",
   },
   {
     header: t("name"),
@@ -24,13 +24,13 @@ export const getIconsReportColumns = (
   {
     header: t("is_premium"),
     accessor: (icon) => {
-      const isPrem = icon.is_premium === true || icon.is_premium === 1 || String(icon.is_premium) === "true";
+      const isPrem = icon.isPremium();
       return isPrem ? t("premium") : t("free");
     },
   },
   {
     header: t("status"),
-    accessor: "status",
+    accessor: (icon) => icon.raw.status,
   },
   {
     header: t("creator"),
@@ -38,6 +38,6 @@ export const getIconsReportColumns = (
   },
   {
     header: t("createdAt"),
-    accessor: (icon) => formatDateFn ? formatDateFn(icon.created_at) : new Date(icon.created_at).toLocaleDateString(),
+    accessor: (icon) => formatDateFn ? formatDateFn(icon.raw.created_at) : new Date(icon.raw.created_at).toLocaleDateString(),
   }
 ];
