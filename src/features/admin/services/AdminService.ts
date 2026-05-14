@@ -56,7 +56,7 @@ export class AdminService extends BaseApiClient {
   ): Promise<AdminUser> {
     try {
       const response = await fetch(`${this.baseUrl}/api/admin/users/${userId}`, {
-        method: 'PATCH',
+        method: 'PUT',
         headers: this.createHeaders(true),
         body: JSON.stringify(payload),
       });
@@ -77,7 +77,7 @@ export class AdminService extends BaseApiClient {
   public async disableAdminUser(userId: string): Promise<AdminUser> {
     try {
       const response = await fetch(`${this.baseUrl}/api/admin/users/${userId}/disable`, {
-        method: 'POST',
+        method: 'PATCH',
         headers: this.createHeaders(true),
       });
 
@@ -96,8 +96,8 @@ export class AdminService extends BaseApiClient {
    */
   public async reEnableAdminUser(userId: string): Promise<AdminUser> {
     try {
-      const response = await fetch(`${this.baseUrl}/api/admin/users/${userId}/enable`, {
-        method: 'POST',
+      const response = await fetch(`${this.baseUrl}/api/admin/users/${userId}/re-enable`, {
+        method: 'PATCH',
         headers: this.createHeaders(true),
       });
 
@@ -116,7 +116,7 @@ export class AdminService extends BaseApiClient {
    */
   public async deleteAdminUserPermanently(userId: string): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/api/admin/users/${userId}`, {
+      const response = await fetch(`${this.baseUrl}/api/admin/users/${userId}/permanent`, {
         method: 'DELETE',
         headers: this.createHeaders(true),
       });

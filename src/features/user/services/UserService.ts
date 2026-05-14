@@ -53,7 +53,7 @@ export class UserService extends BaseApiClient {
    */
   public async updateMyProfile(updates: { username?: string; email?: string }): Promise<User> {
     const response = await fetch(`${this.baseUrl}/api/users/profile`, {
-      method: 'PATCH',
+      method: 'PUT',
       headers: this.createHeaders(true),
       body: JSON.stringify(updates),
     });

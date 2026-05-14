@@ -11,7 +11,7 @@ export class IconService extends BaseApiClient {
    * Obtener la configuración visual de la librería del usuario
    */
   public async getMyIconSettings(): Promise<SettingsIcons | null> {
-    const response = await fetch(`${this.baseUrl}/api/settings/icons`, {
+    const response = await fetch(`${this.baseUrl}/api/settings-icons/me`, {
       method: 'GET',
       headers: this.createHeaders(true),
     });
@@ -29,7 +29,7 @@ export class IconService extends BaseApiClient {
   public async updateIconSettings(
     payload: Partial<Omit<SettingsIcons, 'id' | 'created_at'>>
   ): Promise<SettingsIcons> {
-    const response = await fetch(`${this.baseUrl}/api/settings/icons`, {
+    const response = await fetch(`${this.baseUrl}/api/settings-icons`, {
       method: 'POST',
       headers: this.createHeaders(true),
       body: JSON.stringify(payload),
