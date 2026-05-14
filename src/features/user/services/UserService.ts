@@ -114,13 +114,13 @@ export class UserService extends BaseApiClient {
    * Iniciar flujo de suscripción creando sesión Checkout
    */
   public async createCheckoutSession(
-    lookupKey: string,
+    planType: string,
     locale: CheckoutLocale = 'es'
   ): Promise<CheckoutSessionResponse> {
-    const response = await fetch(`${this.baseUrl}/api/payments/create-checkout-session`, {
+    const response = await fetch(`${this.baseUrl}/api/stripe/checkout`, {
       method: 'POST',
       headers: this.createHeaders(true),
-      body: JSON.stringify({ lookup_key: lookupKey, locale }),
+      body: JSON.stringify({ planType, locale }),
     });
 
     return this.parseResponse<CheckoutSessionResponse>(response);
