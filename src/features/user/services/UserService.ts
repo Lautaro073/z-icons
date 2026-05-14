@@ -92,7 +92,8 @@ export class UserService extends BaseApiClient {
     });
 
     try {
-      return await this.parseResponse<TokenIcons>(response);
+      const result = await this.parseResponse<{ token: TokenIcons }>(response);
+      return result.token;
     } catch (e) {
       return null;
     }
@@ -107,7 +108,8 @@ export class UserService extends BaseApiClient {
       headers: this.createHeaders(true),
     });
 
-    return this.parseResponse<TokenIcons[]>(response);
+    const result = await this.parseResponse<{ tokens: TokenIcons[] }>(response);
+    return result.tokens;
   }
 
   /**
