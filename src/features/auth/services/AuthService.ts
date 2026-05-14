@@ -134,7 +134,7 @@ export class AuthService extends BaseApiClient {
       'X-Locale': locale,
     };
 
-    const response = await fetch(`${this.baseUrl}/api/auth/password-reset/reset`, {
+    const response = await fetch(`${this.baseUrl}/api/auth/password-reset/reset-with-otp`, {
       method: 'POST',
       headers: localeHeaders,
       body: JSON.stringify({ email, otp, newPassword, confirmPassword, locale }),
@@ -169,7 +169,7 @@ export class AuthService extends BaseApiClient {
    * Intercambiar Refresh Token local por un nuevo Access Token
    */
   public async refreshAccessToken(storedRefreshToken: string): Promise<RefreshAccessTokenResponse> {
-    const response = await fetch(`${this.baseUrl}/api/auth/refresh-access-token`, {
+    const response = await fetch(`${this.baseUrl}/api/auth/refresh`, {
       method: 'POST',
       headers: this.createHeaders(false),
       body: JSON.stringify({ refreshToken: storedRefreshToken }),
@@ -234,7 +234,7 @@ export class AuthService extends BaseApiClient {
     const response = await fetch(`${this.baseUrl}/api/auth/2fa/disable`, {
       method: 'POST',
       headers: this.createHeaders(true),
-      body: JSON.stringify({ password, twoFactorCode }),
+      body: JSON.stringify({ password, token: twoFactorCode }),
     });
 
     await this.parseResponse<void>(response);

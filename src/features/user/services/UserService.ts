@@ -86,7 +86,7 @@ export class UserService extends BaseApiClient {
    * Obtener token de iconos activo del usuario
    */
   public async getUserToken(): Promise<TokenIcons | null> {
-    const response = await fetch(`${this.baseUrl}/api/tokens/my-token`, {
+    const response = await fetch(`${this.baseUrl}/api/tokens/me`, {
       method: 'GET',
       headers: this.createHeaders(true),
     });
