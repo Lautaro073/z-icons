@@ -27,13 +27,13 @@ type ActionButton = {
 const IconDetailPanel = ({ icon, onClose }: IconDetailPanelProps) => {
   const isAnyCustom = icon.type === 'custom' || icon.type === 'custom-premium'
   const [state, setState] = useState<IconExportState>(isAnyCustom ? 'svg' : 'react')
-  const { hasAccess } = usePremiumAccess()
+  const { hasAccess, isLoading } = usePremiumAccess()
 
   const { codeSnippet, handleCopyIcon, handleCopyCode, handleDownloadIcon } =
     useIconExport({ icon, state })
 
   const isPremiumIcon = IconCategories.premium.includes(icon.type as IconSet)
-  const isLocked = isPremiumIcon && !hasAccess
+  const isLocked = isPremiumIcon && !hasAccess && !isLoading
 
   const actionButtons: ActionButton[] = [
     { key: "download", iconName: "download", onClick: handleDownloadIcon },
