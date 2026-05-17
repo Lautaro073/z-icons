@@ -30,6 +30,15 @@ export function useLoginForm({
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setFormError(null);
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|hotmail\.com|outlook\.com|icloud\.com)$/i;
+    if (!emailRegex.test(formData.email)) {
+      const message = t("errors.invalidEmailProvider");
+      setFormError(message);
+      toast.error(message);
+      return;
+    }
+
     setIsLoading(true);
 
     try {

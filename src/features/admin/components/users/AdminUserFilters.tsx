@@ -45,7 +45,7 @@ export function AdminUserFilters({
                     onChange={onRoleChange}
                     ariaLabel={admin("filters.role")}
                     options={[
-                        { value: "", label: admin("filters.role") },
+                        { value: "", label: admin("filters.allRoles") },
                         { value: "admin", label: admin("roles.admin") },
                         { value: "user", label: admin("roles.user") },
                         { value: "pro", label: admin("roles.pro") },
@@ -57,7 +57,7 @@ export function AdminUserFilters({
                     onChange={onSubscriptionStatusChange}
                     ariaLabel={admin("filters.subscriptionStatus")}
                     options={[
-                        { value: "", label: admin("filters.subscriptionStatus") },
+                        { value: "", label: admin("filters.allSubscriptionStatuses") },
                         { value: "active", label: admin("statuses.active") },
                         { value: "expiring", label: admin("statuses.expiring") },
                         { value: "expired", label: admin("statuses.expired") },
@@ -70,7 +70,7 @@ export function AdminUserFilters({
                     onChange={onAccountStatusChange}
                     ariaLabel={admin("filters.accountStatus")}
                     options={[
-                        { value: "", label: admin("filters.accountStatus") },
+                        { value: "", label: admin("filters.allAccountStatuses") },
                         { value: "active", label: admin("accountStatuses.active") },
                         { value: "disabled", label: admin("accountStatuses.disabled") },
                     ]}
@@ -81,7 +81,7 @@ export function AdminUserFilters({
                     onChange={onPlanTypeChange}
                     ariaLabel={admin("filters.planType")}
                     options={[
-                        { value: "", label: admin("filters.planType") },
+                        { value: "", label: admin("filters.allPlanTypes") },
                         { value: "pro", label: "PRO" },
                         { value: "enterprise", label: "ENTERPRISE" },
                     ]}

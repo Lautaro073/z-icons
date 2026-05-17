@@ -19,9 +19,13 @@
   "filters": {
     "search": "Buscar usuario o email",
     "role": "Rol",
+    "allRoles": "Todos los roles",
     "subscriptionStatus": "Estado de suscripción",
+    "allSubscriptionStatuses": "Cualquier suscripción",
     "accountStatus": "Estado de cuenta",
+    "allAccountStatuses": "Cualquier estado de cuenta",
     "planType": "Plan",
+    "allPlanTypes": "Todos los planes",
     "sortBy": "Ordenar por",
     "sortDir": "Dirección",
     "granularity": "Granularidad",

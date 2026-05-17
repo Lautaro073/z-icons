@@ -60,6 +60,14 @@ export function useRegisterForm({
     event.preventDefault();
     setFieldErrors({});
 
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|hotmail\.com|outlook\.com|icloud\.com)$/i;
+    if (!emailRegex.test(formData.email)) {
+      const message = t("errors.invalidEmailProvider");
+      setFieldErrors({ email: message, form: message });
+      toast.error(message);
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       const message = t("errors.passwordMismatch");
       setFieldErrors({ password: message, confirmPassword: message, form: message });
