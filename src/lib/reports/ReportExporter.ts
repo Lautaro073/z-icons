@@ -5,9 +5,6 @@ export interface ReportColumn<T> {
 
 export type ExportFormat = 'csv' | 'xlsx' | 'pdf';
 
-/**
- * Template Method / Strategy Pattern: Clase Base Abstracta para Exportadores
- */
 export abstract class ReportExporter<T> {
   protected title: string;
   protected columns: ReportColumn<T>[];
@@ -17,10 +14,6 @@ export abstract class ReportExporter<T> {
     this.columns = columns;
   }
 
-  /**
-   * El Template Method: Define el esqueleto del algoritmo de exportación.
-   * Ahora asíncrono para soportar generación de recursos (imágenes, canvas).
-   */
   public async export(data: T[], filename: string): Promise<void> {
     if (!data || data.length === 0) {
       console.warn("No hay datos para exportar");
@@ -31,10 +24,8 @@ export abstract class ReportExporter<T> {
       const headers = this.columns.map(col => col.header);
       const rows = this.transformData(data);
       
-      // Paso abstracto delegado a las subclases (Polimorfismo)
       const blobOrVoid = await this.generateFile(rows, headers);
       
-      // Si devolvió un Blob (ej: CSV), desencadenar descarga
       if (blobOrVoid instanceof Blob) {
         this.triggerDownload(blobOrVoid, filename);
       }
@@ -44,10 +35,6 @@ export abstract class ReportExporter<T> {
     }
   }
 
-  /**
-   * Transforma los datos tipados en una matriz de strings bidimensional plana.
-   * (Encapsulamiento y lógica compartida)
-   */
   protected transformData(data: T[]): string[][] {
     return data.map((item) => {
       return this.columns.map((column) => {
@@ -59,10 +46,8 @@ export abstract class ReportExporter<T> {
           value = item[column.accessor];
         }
 
-        // Normalizar nulls/undefineds a string vacío
         if (value === null || value === undefined) return "";
         
-        // Formato booleano si aplica
         if (typeof value === 'boolean') return value ? "Sí" : "No";
         
         return String(value);
@@ -70,14 +55,8 @@ export abstract class ReportExporter<T> {
     });
   }
 
-  /**
-   * Método Gancho/Abstracto que deben implementar las subclases.
-   */
   protected abstract generateFile(rows: string[][], headers: string[]): Promise<Blob | void>;
 
-  /**
-   * Lógica de navegador compartida para disparar la descarga física del archivo.
-   */
   private triggerDownload(blob: Blob, filename: string): void {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');

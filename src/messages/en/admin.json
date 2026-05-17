@@ -11,6 +11,8 @@
   "iconsTitle": "Custom Icons",
   "iconsDescription": "Manage icons created internally.",
   "chartDescription": "Track sales, revenue, and registrations without leaving the admin panel.",
+  "chartDescriptionRegistrations": "New users registered during the selected period.",
+  "chartDescriptionRevenue": "Subscriptions and revenue generated during the selected period.",
   "kpis": {
     "registrations": "Registrations",
     "salesCount": "Subscription",
@@ -69,6 +71,7 @@
       "startDate": "Start date",
       "columnsControl": "Columns",
       "tokenExpiry": "Token expiry",
+      "planFree": "Free",
       "actions": "Actions"
     },
     "subscriptions": {

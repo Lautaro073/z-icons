@@ -1,7 +1,7 @@
 import type { DateRange } from "react-day-picker";
 import type { AdminMetricsTimeseriesPoint } from "@/lib/api/backend";
 import { AdminMetricsFilters } from "./AdminMetricsFilters";
-import { MetricsCharts } from "./MetricsCharts";
+import { RegistrationsChart, RevenueChart } from "./MetricsCharts";
 
 function PlaceholderBlock({ className }: { className?: string }) {
     return <div className={`rounded-2xl bg-muted/70 ${className ?? ""}`} />;
@@ -51,43 +51,62 @@ export function AdminMetricsSection({
     applyCustomRangeDraft,
     metricsQuery,
 }: AdminMetricsSectionProps) {
+    const timeseries = metricsQuery.data?.data?.timeseries ?? [];
+
     return (
-        <section
-            className="ui-surface-panel rounded-[1.85rem] p-4 sm:p-5"
-            style={{ contentVisibility: "auto", containIntrinsicSize: "360px" }}
-        >
-            <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-5">
+            {/* ── Filtros compartidos ───────────────────────────── */}
+            <AdminMetricsFilters
+                admin={admin}
+                common={common}
+                metricsParams={metricsParams}
+                isRangePopoverOpen={isRangePopoverOpen}
+                customRangeDraft={customRangeDraft}
+                customRangeValue={customRangeValue}
+                customRangeLabel={customRangeLabel}
+                maxSelectableDate={maxSelectableDate}
+                maxSelectableDateInput={maxSelectableDateInput}
+                onGranularityChange={onGranularityChange}
+                onRangePopoverOpenChange={onRangePopoverOpenChange}
+                onCustomRangeInputChange={onCustomRangeInputChange}
+                onCustomRangeChange={onCustomRangeChange}
+                cancelCustomRangeDraft={cancelCustomRangeDraft}
+                applyCustomRangeDraft={applyCustomRangeDraft}
+                timeseriesData={timeseries}
+                isSuccess={metricsQuery.state === "success"}
+            />
 
-                <AdminMetricsFilters
-                    admin={admin}
-                    common={common}
-                    metricsParams={metricsParams}
-                    isRangePopoverOpen={isRangePopoverOpen}
-                    customRangeDraft={customRangeDraft}
-                    customRangeValue={customRangeValue}
-                    customRangeLabel={customRangeLabel}
-                    maxSelectableDate={maxSelectableDate}
-                    maxSelectableDateInput={maxSelectableDateInput}
-                    onGranularityChange={onGranularityChange}
-                    onRangePopoverOpenChange={onRangePopoverOpenChange}
-                    onCustomRangeInputChange={onCustomRangeInputChange}
-                    onCustomRangeChange={onCustomRangeChange}
-                    cancelCustomRangeDraft={cancelCustomRangeDraft}
-                    applyCustomRangeDraft={applyCustomRangeDraft}
-                    timeseriesData={metricsQuery.data?.data?.timeseries ?? []}
-                    isSuccess={metricsQuery.state === "success"}
-                />
-            </div>
+            {/* ── Gráfica 1: Registros ─────────────────────────── */}
+            <section
+                className="ui-surface-panel rounded-[1.85rem] p-4 sm:p-5"
+                style={{ contentVisibility: "auto", containIntrinsicSize: "320px" }}
+            >
+                <p className="ui-section-header">{admin("kpis.registrations")}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{admin("chartDescriptionRegistrations")}</p>
 
-            <div className="mt-5 min-h-88 min-w-0 overflow-x-clip">
-                {metricsQuery.state === "loading" && <PlaceholderBlock className="h-72 w-full" />}
-                {metricsQuery.state === "error" && <p className="text-sm text-destructive">{admin("errors.loadMetrics")}</p>}
-                {metricsQuery.state === "empty" && <p className="text-sm text-muted-foreground">{admin("states.emptyMetrics")}</p>}
+                <div className="mt-4 min-h-72 min-w-0 overflow-x-clip">
+                    {metricsQuery.state === "loading" && <PlaceholderBlock className="h-72 w-full" />}
+                    {metricsQuery.state === "error" && <p className="text-sm text-destructive">{admin("errors.loadMetrics")}</p>}
+                    {metricsQuery.state === "empty" && <p className="text-sm text-muted-foreground">{admin("states.emptyMetrics")}</p>}
+                    {metricsQuery.state === "success" && <RegistrationsChart points={timeseries} />}
+                </div>
+            </section>
 
-                {metricsQuery.state === "success" && (
-                    <MetricsCharts points={metricsQuery.data?.data?.timeseries ?? []} />
-                )}
-            </div>
-        </section>
+            {/* ── Gráfica 2: Suscripciones + Ingresos ──────────── */}
+            <section
+                className="ui-surface-panel rounded-[1.85rem] p-4 sm:p-5"
+                style={{ contentVisibility: "auto", containIntrinsicSize: "320px" }}
+            >
+                <p className="ui-section-header">{admin("kpis.salesCount")} / {admin("kpis.revenue")}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{admin("chartDescriptionRevenue")}</p>
+
+                <div className="mt-4 min-h-72 min-w-0 overflow-x-clip">
+                    {metricsQuery.state === "loading" && <PlaceholderBlock className="h-72 w-full" />}
+                    {metricsQuery.state === "error" && <p className="text-sm text-destructive">{admin("errors.loadMetrics")}</p>}
+                    {metricsQuery.state === "empty" && <p className="text-sm text-muted-foreground">{admin("states.emptyMetrics")}</p>}
+                    {metricsQuery.state === "success" && <RevenueChart points={timeseries} />}
+                </div>
+            </section>
+        </div>
     );
 }

@@ -53,8 +53,8 @@ export function AdminMetricsFilters({
             <div className="flex flex-col gap-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                        <p className="ui-section-header">{admin("kpis.salesCount")} / {admin("kpis.revenue")}</p>
-                        <p className="mt-1 text-sm text-muted-foreground">{admin("chartDescription")}</p>
+                        <p className="ui-section-header">{admin("statsTitle")}</p>
+                        <p className="mt-1 text-sm text-muted-foreground">{admin("statsDescription")}</p>
                     </div>
                     {isSuccess && timeseriesData.length > 0 && (
                         <div className="shrink-0">

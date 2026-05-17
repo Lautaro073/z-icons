@@ -18,7 +18,6 @@ export interface ExportButtonProps<T> {
   filename: string;
   reportTitle: string;
   label?: string;
-  // Traducciones o labels básicos
   labels?: {
     trigger?: string;
     csv?: string;
@@ -30,10 +29,6 @@ export interface ExportButtonProps<T> {
   };
 }
 
-/**
- * Componente genérico de exportación que consume el patrón Strategy/Factory de Reportes.
- * Soporta datos estáticos o un método `fetchData` para carga diferida (ej: todos los registros).
- */
 export function ExportButton<T>({
   data,
   fetchData,
@@ -64,11 +59,8 @@ export function ExportButton<T>({
         return;
       }
 
-      // Lógica Polimórfica: No sabemos qué clase instancia el Factory, 
-      // pero sabemos que todas tienen el método .export().
       const exporter = createExporter<T>(format, reportTitle, columns);
       
-      // Calcular extensión final
       const finalFilename = `${filename}.${format === 'xlsx' ? 'xlsx' : format}`;
       
       await exporter.export(exportData, finalFilename);
@@ -97,7 +89,7 @@ export function ExportButton<T>({
       </PopoverTrigger>
       <PopoverContent align="end" className="w-48 rounded-[1.4rem] p-2 overflow-hidden">
         <div className="flex flex-col">
-          <button
+          {/* <button
             type="button"
             onClick={() => handleExport('csv')}
             className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-left transition-colors hover:bg-muted text-foreground"
@@ -106,7 +98,7 @@ export function ExportButton<T>({
               <FileJson className="size-4" />
             </div>
             <span className="font-medium">{labels?.csv || "CSV (.csv)"}</span>
-          </button>
+          </button> */}
           
           <button
             type="button"

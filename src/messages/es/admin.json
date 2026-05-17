@@ -11,6 +11,8 @@
   "iconsTitle": "Íconos Custom",
   "iconsDescription": "Gestiona los íconos creados internamente.",
   "chartDescription": "Seguimiento de ventas, ingresos y registros sin salir del panel.",
+  "chartDescriptionRegistrations": "Nuevos usuarios registrados en el período seleccionado.",
+  "chartDescriptionRevenue": "Suscripciones e ingresos generados en el período seleccionado.",
   "kpis": {
     "registrations": "Registros",
     "salesCount": "Suscripciones",
@@ -69,6 +71,7 @@
       "startDate": "Inicio",
       "columnsControl": "Columnas",
       "tokenExpiry": "Vencimiento",
+      "planFree": "Gratis",
       "actions": "Acciones"
     },
     "subscriptions": {

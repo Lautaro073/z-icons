@@ -6,7 +6,7 @@ export { AdminSelect } from "./shared/AdminSelect";
 
 // Statistics exports
 export { KPICards } from "./statistics/KPICards";
-export { MetricsCharts } from "./statistics/MetricsCharts";
+export { RegistrationsChart, RevenueChart } from "./statistics/MetricsCharts";
 export { AdminMetricsFilters } from "./statistics/AdminMetricsFilters";
 export { AdminMetricsSection } from "./statistics/AdminMetricsSection";
 export { AdminCustomRangePicker } from "./statistics/AdminCustomRangePicker";

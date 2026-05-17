@@ -2,23 +2,16 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { ReportExporter } from "./ReportExporter";
 
-/**
- * Concrete Strategy: Exportador PDF visual estilizado.
- */
 export class PdfExporter<T> extends ReportExporter<T> {
-  /**
-   * Helper privado para renderizar un string SVG a un PNG DataURL vía Canvas (Asíncrono).
-   */
+
   private convertSvgToPng(svgString: string, size: number = 64): Promise<string | null> {
     return new Promise((resolve) => {
       try {
-        // Sanitización mínima de namespaces si faltaran (algunos SVGs los omiten)
         let finalSvg = svgString;
         if (!finalSvg.includes('xmlns="http://www.w3.org/2000/svg"')) {
           finalSvg = finalSvg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
         }
 
-        // Crear URL blob del SVG
         const svgBlob = new Blob([finalSvg], { type: 'image/svg+xml;charset=utf-8' });
         const url = URL.createObjectURL(svgBlob);
         
@@ -27,7 +20,6 @@ export class PdfExporter<T> extends ReportExporter<T> {
         
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          // Escalamos para mantener buena calidad en el PDF (2x retina ratio)
           canvas.width = size * 2;
           canvas.height = size * 2;
           
@@ -37,7 +29,6 @@ export class PdfExporter<T> extends ReportExporter<T> {
             return resolve(null);
           }
           
-          // Dibujar fondo transparente implícito, luego el icono
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           
           const dataUrl = canvas.toDataURL('image/png');
@@ -58,15 +49,9 @@ export class PdfExporter<T> extends ReportExporter<T> {
     });
   }
 
-  /**
-   * Crea un documento PDF con soporte para imágenes SVG embebidas en celdas.
-   */
   protected async generateFile(rows: string[][], headers: string[]): Promise<Blob> {
-    // 1. Detección y pre-procesamiento de SVGs asíncronos
-    // Guardaremos Map con key "rowIdx-colIdx" para saber dónde inyectar la imagen luego.
     const svgImageMap = new Map<string, string>();
     
-    // Escaneamos las filas buscando tags SVG
     const svgConversionPromises: Promise<void>[] = [];
 
     for (let r = 0; r < rows.length; r++) {
@@ -76,27 +61,22 @@ export class PdfExporter<T> extends ReportExporter<T> {
       for (let c = 0; c < row.length; c++) {
         const cellContent = (row[c] || "").trim();
         
-        // Detección heurística de contenido SVG
         if (cellContent.startsWith('<svg') && cellContent.includes('</svg>')) {
-          // Convertimos y guardamos el callback en la cola paralela
           const promise = this.convertSvgToPng(cellContent).then((pngDataUrl) => {
             if (pngDataUrl) {
               svgImageMap.set(`${r}-${c}`, pngDataUrl);
             }
           });
           svgConversionPromises.push(promise);
-          // Limpiamos el texto de la celda original para que no se imprima el código fuente crudo
           row[c] = ""; 
         }
       }
     }
 
-    // Esperar a que TODAS las conversiones de SVGs terminen antes de seguir
     if (svgConversionPromises.length > 0) {
       await Promise.all(svgConversionPromises);
     }
 
-    // 2. Generar Documento Base
     const isWide = headers.length > 6;
     const doc = new jsPDF({
       orientation: isWide ? "landscape" : "portrait",
@@ -143,15 +123,12 @@ export class PdfExporter<T> extends ReportExporter<T> {
       },
       margin: { top: 40 },
       
-      // El Hook Mágico: Se dispara cuando se dibuja la celda
       didDrawCell: (data) => {
-        // Verificamos si esta coordenada de celda tiene una imagen SVG precargada
         if (data.section === 'body') {
           const key = `${data.row.index}-${data.column.index}`;
           const pngBase64 = svgImageMap.get(key);
           
           if (pngBase64) {
-            // Calculamos tamaño del icono para que quepa centrado con padding
             const imgSize = Math.min(data.cell.height - 2, data.cell.width - 2, 8);
             const posX = data.cell.x + (data.cell.width - imgSize) / 2;
             const posY = data.cell.y + (data.cell.height - imgSize) / 2;
