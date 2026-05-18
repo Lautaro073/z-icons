@@ -22,7 +22,9 @@
     "signOut": "Sign out",
     "openAdmin": "Open admin",
     "update": "Update",
-    "softDelete": "Soft delete"
+    "softDelete": "Soft delete",
+    "toggleTheme": "Toggle theme",
+    "toggleLanguage": "Change language"
   },
   "toasts": {
     "iconNameCopied": "Icon name copied!",

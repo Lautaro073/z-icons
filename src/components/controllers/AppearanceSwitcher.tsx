@@ -7,6 +7,9 @@ import { Link, usePathname } from "@/i18n/navigation"
 import { useLocale } from "@/hooks/useLocale"
 import { useUIStore } from "@/store"
 
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { useTranslations } from "next-intl"
+
 export function AppearanceSwitcher() {
   const pathname = usePathname()
   const theme = useUIStore((s) => s.theme)
@@ -15,28 +18,41 @@ export function AppearanceSwitcher() {
   const iconSet = useUIStore((s) => s.iconSet)
   const setIconSetDynamic = useUIStore((s) => s.setIconSetDynamic)
   const validIconType = iconSet === "neo" || iconSet === "core" || iconSet === "mina" ? iconSet : "mina"
+  const common = useTranslations("common")
 
   return (
-    <div className="ui-glass fixed bottom-6 right-6 z-50 inline-flex items-center gap-1 rounded-full p-1 shadow-lg shadow-black/20">
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        onClick={setTheme}
-        aria-label="Toggle theme"
-        className="rounded-full"
-      >
-        <ThemeComponent theme={theme} />
-      </Button>
-      <Button asChild variant="ghost" size="icon-sm" className="rounded-full">
-        <Link href={pathname} locale={nextLocale} aria-label="Change language">
-          <ZIcon
-            name="language"
-            type={validIconType}
-            className="size-4 transition-transform duration-200 ease-[var(--ease-out)]"
-          />
-        </Link>
-      </Button>
-      {/* 
+    <TooltipProvider>
+      <div className="ui-glass fixed bottom-6 right-6 z-50 inline-flex items-center gap-1 rounded-full p-1 shadow-lg shadow-black/20">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={setTheme}
+              aria-label={common("actions.toggleTheme")}
+              className="rounded-full"
+            >
+              <ThemeComponent theme={theme} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{common("actions.toggleTheme")}</TooltipContent>
+        </Tooltip>
+        
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button asChild variant="ghost" size="icon-sm" className="rounded-full">
+              <Link href={pathname} locale={nextLocale} aria-label={common("actions.toggleLanguage")}>
+                <ZIcon
+                  name="language"
+                  type={validIconType}
+                  className="size-4 transition-transform duration-200 ease-[var(--ease-out)]"
+                />
+              </Link>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{common("actions.toggleLanguage")}</TooltipContent>
+        </Tooltip>
+        {/* 
       <Button
         variant="ghost"
         size="icon-sm"
@@ -47,7 +63,8 @@ export function AppearanceSwitcher() {
         <ZIcon name="anchor" type={validIconType} className="size-4" />
       </Button>
       */}
-    </div>
+      </div>
+    </TooltipProvider>
   )
 }
 
