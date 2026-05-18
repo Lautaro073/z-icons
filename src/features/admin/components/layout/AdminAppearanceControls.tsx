@@ -8,6 +8,8 @@ import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { DEFAULT_LOCALE, type Locale, LOCALES } from "@/i18n/routing"
 import { useUIStore } from "@/store"
+import { useAuth } from "@/contexts/AuthContext"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 function getValidIconType(iconSet: string): "neo" | "core" | "mina" {
   if (iconSet === "neo" || iconSet === "core" || iconSet === "mina") {
@@ -29,6 +31,7 @@ function getNextLocale(currentLocale: string): Locale {
 
 export function AdminAppearanceControls() {
   const admin = useTranslations("admin")
+  const common = useTranslations("common")
   const theme = useUIStore((state) => state.theme)
   const setTheme = useUIStore((state) => state.setTheme)
   const iconSet = useUIStore((state) => state.iconSet)
@@ -39,6 +42,12 @@ export function AdminAppearanceControls() {
   const params = useParams()
   const currentLocale = String(params.locale ?? DEFAULT_LOCALE)
   const nextLocale = useMemo(() => getNextLocale(currentLocale), [currentLocale])
+  const { logout } = useAuth()
+
+  const handleSignOut = async () => {
+    await logout()
+    router.push("/auth/login")
+  }
 
   const queryString = searchParams.toString()
   const href = queryString ? `${pathname}?${queryString}` : pathname
@@ -48,33 +57,60 @@ export function AdminAppearanceControls() {
   }, [href, nextLocale, router])
 
   return (
-    <div className="ui-glass inline-flex items-center gap-1 rounded-full p-1">
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        onClick={setTheme}
-        aria-label={admin("controls.toggleTheme")}
-        title={admin("controls.toggleTheme")}
-        className="rounded-full"
-      >
-        <ZIcon
-          name={theme === "dark" ? "moon" : "sun"}
-          type={validIconType}
-          className="size-4"
-        />
-      </Button>
+    <TooltipProvider>
+      <div className="ui-glass inline-flex items-center gap-1 rounded-full p-1">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={setTheme}
+              aria-label={admin("controls.toggleTheme")}
+              className="rounded-full"
+            >
+              <ZIcon
+                name={theme === "dark" ? "moon" : "sun"}
+                type={validIconType}
+                className="size-4"
+              />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{admin("controls.toggleTheme")}</TooltipContent>
+        </Tooltip>
 
-      <Button asChild variant="ghost" size="icon-sm" className="rounded-full">
-        <Link
-          href={href}
-          locale={nextLocale}
-          scroll={false}
-          aria-label={admin("controls.toggleLocale")}
-          title={admin("controls.toggleLocale")}
-        >
-          <ZIcon name="language" type={validIconType} className="size-4" />
-        </Link>
-      </Button>
-    </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button asChild variant="ghost" size="icon-sm" className="rounded-full">
+              <Link
+                href={href}
+                locale={nextLocale}
+                scroll={false}
+                aria-label={admin("controls.toggleLocale")}
+              >
+                <ZIcon name="language" type={validIconType} className="size-4" />
+              </Link>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{admin("controls.toggleLocale")}</TooltipContent>
+        </Tooltip>
+
+        <div className="w-[1px] h-4 bg-border/60 mx-0.5" />
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={handleSignOut}
+              aria-label={common("actions.signOut")}
+              className="rounded-full hover:bg-destructive/10 hover:text-destructive"
+            >
+              <ZIcon type="mina" name="logout" className="size-4 text-destructive" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{common("actions.signOut")}</TooltipContent>
+        </Tooltip>
+      </div>
+    </TooltipProvider>
   )
 }
