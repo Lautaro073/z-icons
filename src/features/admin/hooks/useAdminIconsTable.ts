@@ -23,10 +23,10 @@ export function useAdminIconsTable({ itemsPerPage = 7 }: UseAdminIconsTableProps
 
   // Filters state
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTier, setSelectedTier] = useState("all");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedCreator, setSelectedCreator] = useState("all");
-  const [selectedDateRange, setSelectedDateRange] = useState("all");
+  const [selectedTier, setSelectedTier] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCreator, setSelectedCreator] = useState("");
+  const [selectedDateRange, setSelectedDateRange] = useState("");
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -63,16 +63,16 @@ export function useAdminIconsTable({ itemsPerPage = 7 }: UseAdminIconsTableProps
         : true;
       
       const isPrem = icon.isPremium();
-      const matchesTier = selectedTier === "all" ? true : (selectedTier === "premium" ? isPrem : !isPrem);
+      const matchesTier = selectedTier === "" ? true : (selectedTier === "premium" ? isPrem : !isPrem);
       
-      const matchesCategory = selectedCategory === "all" ? true : icon.category === selectedCategory;
+      const matchesCategory = selectedCategory === "" ? true : icon.category === selectedCategory;
 
       const cId = icon.getCreatorId();
       const actualCreatorId = cId || "Admin"; 
-      const matchesCreator = selectedCreator === "all" ? true : actualCreatorId === selectedCreator;
+      const matchesCreator = selectedCreator === "" ? true : actualCreatorId === selectedCreator;
 
       let matchesDate = true;
-      if (selectedDateRange !== "all" && icon.raw.created_at) {
+      if (selectedDateRange !== "" && icon.raw.created_at) {
         const createDate = new Date(icon.raw.created_at);
         const diffTime = Math.abs(now.getTime() - createDate.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));

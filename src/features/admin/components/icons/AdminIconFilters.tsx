@@ -49,7 +49,7 @@ export function AdminIconFilters({
           onChange={onTierChange}
           ariaLabel={admin("filters.ariaTier")}
           options={[
-            { value: "all", label: admin("form.tierAll") },
+            { value: "", label: admin("form.tierAll") },
             { value: "free", label: admin("form.tierFree") },
             { value: "premium", label: admin("form.tierPremium") }
           ]}
@@ -60,7 +60,7 @@ export function AdminIconFilters({
           onChange={onCategoryChange}
           ariaLabel={admin("filters.ariaCategory")}
           options={[
-            { value: "all", label: admin("filters.allCategories") },
+            { value: "", label: admin("filters.allCategories") },
             ...uniqueCategories.map(cat => ({ value: cat, label: cat }))
           ]}
         />
@@ -70,7 +70,7 @@ export function AdminIconFilters({
           onChange={onCreatorChange}
           ariaLabel={admin("filters.ariaCreator")}
           options={[
-            { value: "all", label: admin("filters.allCreators") },
+            { value: "", label: admin("filters.allCreators") },
             ...uniqueCreators.map(c => ({ value: c.id, label: c.name }))
           ]}
         />
@@ -80,7 +80,7 @@ export function AdminIconFilters({
           onChange={onDateRangeChange}
           ariaLabel={admin("filters.ariaDate")}
           options={[
-            { value: "all", label: admin("filters.anyDate") },
+            { value: "", label: admin("filters.anyDate") },
             { value: "today", label: admin("filters.today") },
             { value: "week", label: admin("filters.lastWeek") },
             { value: "month", label: admin("filters.lastMonth") },
