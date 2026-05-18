@@ -9,7 +9,8 @@ import type {
 import { UserEntity } from "@/features/user/models/UserEntity";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAdminTables } from "@/features/admin/index";
-import { ConfirmActionModal, EditUserModal } from "./AdminTablesModals";
+import { ConfirmActionModal } from "./AdminUserModals";
+import { UserSheetForm } from "./UserSheetForm";
 import { AdminDataTableBase } from "../shared/AdminDataTableBase";
 import { getAdminUserColumns } from "./AdminUserColumns";
 import { AdminTableColumnsControl } from "../shared/AdminTableColumnsControl";
@@ -223,7 +224,7 @@ export function AdminTablesSection({
           tableMinWidthClassName="w-full min-w-304 text-left text-sm md:min-w-6xl"
         />
 
-        <EditUserModal
+        <UserSheetForm
           open={Boolean(editingUser)}
           user={editingUser}
           draft={editDraft}

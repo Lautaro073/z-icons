@@ -68,7 +68,7 @@ export function useAdminTables({
   const isDisabledAccountsView = usersParams.accountStatus === "disabled";
 
   const [editingUser, setEditingUser] = useState<UserEntity | null>(null);
-  const [editDraft, setEditDraft] = useState<EditUserDraft>({ username: "", email: "", role: "user" });
+  const [editDraft, setEditDraft] = useState<EditUserDraft>({ username: "", email: "", role: "user",accountStatus:"active"  });
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
 
   const columnOptions = useMemo(
@@ -241,6 +241,7 @@ export function useAdminTables({
       username: user.displayName,
       email: user.email,
       role: user.role,
+      accountStatus: user.raw.accountStatus === "disabled" ? "disabled" : "active",
     });
   };
 
@@ -252,20 +253,38 @@ export function useAdminTables({
     const nextUsername = editDraft.username.trim();
     const nextEmail = editDraft.email.trim();
     const nextRole = editDraft.role;
+    const nextAccountStatus = editDraft.accountStatus;
+    
+    const initialAccountStatus = editingUser.raw.accountStatus === "disabled" ? "disabled" : "active";
 
-    if (nextUsername === editingUser.displayName && nextEmail === editingUser.email && nextRole === editingUser.role) {
+    const isProfileChanged = nextUsername !== editingUser.displayName || nextEmail !== editingUser.email || nextRole !== editingUser.role;
+    const isStatusChanged = nextAccountStatus !== initialAccountStatus;
+
+    if (!isProfileChanged && !isStatusChanged) {
       setEditingUser(null);
       return;
     }
 
-    updateMutation.mutate({
-      userId: editingUser.id,
-      payload: {
-        username: nextUsername,
-        email: nextEmail,
-        role: nextRole,
-      },
-    });
+    if (isStatusChanged) {
+      if (nextAccountStatus === "disabled") {
+        disableMutation.mutate(editingUser.id);
+      } else {
+        reEnableMutation.mutate(editingUser.id);
+      }
+    }
+
+    if (isProfileChanged) {
+      updateMutation.mutate({
+        userId: editingUser.id,
+        payload: {
+          username: nextUsername,
+          email: nextEmail,
+          role: nextRole,
+        },
+      });
+    } else if (isStatusChanged) {
+      setEditingUser(null);
+    }
   };
 
   const confirmPendingAction = () => {

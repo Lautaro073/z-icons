@@ -4,7 +4,7 @@ import { ZIcon } from "@zcorvus/z-icons/react"
 import { useLocale, useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-//import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useAuth } from "@/contexts/AuthContext"
 import { Link, useRouter } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
@@ -70,6 +70,7 @@ const UserProfileCard = () => {
         align="end"
         sideOffset={12}
         alignOffset={0}
+        onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <div className="grid gap-5">
           <div className="flex items-start justify-between gap-4">
@@ -105,15 +106,21 @@ const UserProfileCard = () => {
                   </Tooltip>
                 </TooltipProvider>
               )} */}
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                onClick={handleSignOut}
-                aria-label={common("actions.signOut")}
-                title={common("actions.signOut")}
-              >
-                <ZIcon type="mina" name="logout" className="size-4 text-destructive" />
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={handleSignOut}
+                      aria-label={common("actions.signOut")}
+                    >
+                      <ZIcon type="mina" name="logout" className="size-4 text-destructive" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{common("actions.signOut")}</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div> 
           </div>
 

@@ -10,6 +10,7 @@ export interface EditUserDraft {
   username: string;
   email: string;
   role: "admin" | "user" | "pro";
+  accountStatus: "active" | "disabled";
 }
 
 export interface MutationState<TVariables = void> {
